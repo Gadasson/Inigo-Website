@@ -85,9 +85,9 @@ export default function Home() {
         <p>Burnt‑out dreamers. Sensitive souls in a loud world. Creatives, seekers, lovers. Young people tired of scrolling and ready to feel.</p>
         <div className="faces">
           <img loading="lazy" src="/images/face1-compressed.jpg" alt="Smiling person in nature" />
-          <img loading="lazy" src="/images/face2.jpg" alt="Group of friends hugging" />
+          <img loading="lazy" src="/images/face2-compressed.jpg" alt="Group of friends hugging" />
           <img loading="lazy" src="/images/face3-compressed.jpg" alt="Mountains and sky" />
-          <img loading="lazy" src="/images/face4.jpg" alt="Person meditating at sunset" />
+          <img loading="lazy" src="/images/face4-compressed.jpg" alt="Person meditating at sunset" />
         </div>
       </section>
 
