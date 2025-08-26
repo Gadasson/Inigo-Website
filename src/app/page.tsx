@@ -1,8 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
   useEffect(() => {
     // Interactive progress bar functionality
     const mins = document.getElementById('mins');
@@ -27,6 +30,42 @@ export default function Home() {
       return () => clearInterval(interval);
     }
   }, []);
+
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      source: formData.get('source'),
+      device: formData.get('device'),
+      motivation: formData.get('motivation'),
+      readiness: formData.get('readiness'),
+      timestamp: new Date().toISOString()
+    };
+
+    try {
+      // For now, we'll log the data. You'll replace this with your Google Apps Script URL
+      console.log('Form data:', data);
+      
+      // Simulate API call - replace with actual Google Apps Script URL
+      // const response = await fetch('YOUR_GOOGLE_APPS_SCRIPT_URL', {
+      //   method: 'POST',
+      //   body: JSON.stringify(data),
+      //   headers: { 'Content-Type': 'application/json' }
+      // });
+      
+      setIsSubmitted(true);
+      e.currentTarget.reset();
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('There was an error submitting your application. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <>
@@ -143,7 +182,7 @@ export default function Home() {
           <p className="early-access-cta">Join the waitlist and be the first to experience the shift from plastic to ecstatic.</p>
           
           <div className="early-access-form">
-            <form onSubmit={(e) => e.preventDefault()}>
+            <form onSubmit={handleFormSubmit}>
               <div className="form-row">
                 <div className="form-group">
                   <label htmlFor="name">Full Name *</label>
@@ -207,10 +246,15 @@ export default function Home() {
               </div>
               
               <div className="form-actions">
-                <button type="submit" className="btn btn-primary btn-large">
-                  Join the Revolution
+                <button type="submit" className="btn btn-primary btn-large" disabled={isSubmitting}>
+                  {isSubmitting ? 'Joining...' : 'Join the Revolution'}
                 </button>
-                <p className="form-note">* Only 30 founding spots available. We&apos;ll get back to you soon!</p>
+                                 {isSubmitted && (
+                   <p className="form-note success">🎉 Thank you for your application! We&apos;ll get back to you soon.</p>
+                 )}
+                 {!isSubmitted && (
+                   <p className="form-note">* Only 30 founding spots available. We&apos;ll get back to you soon!</p>
+                 )}
               </div>
             </form>
           </div>

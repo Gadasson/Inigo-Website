@@ -543,11 +543,28 @@ p {
   min-width: 200px;
 }
 
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.btn:disabled:hover {
+  box-shadow: 0 10px 24px rgba(0,0,0,.18);
+  transform: none;
+}
+
 .form-note {
   margin-top: 1rem;
   font-size: 0.9rem;
   color: var(--earth-brown);
   opacity: 0.8;
+}
+
+.form-note.success {
+  color: var(--inigo-green);
+  font-weight: 600;
+  opacity: 1;
 }
 
 /* Responsive adjustments for form */
