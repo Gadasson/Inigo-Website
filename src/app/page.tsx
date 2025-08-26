@@ -330,47 +330,87 @@ export default function Home() {
                     {isSubmitting ? 'Joining...' : cooldown > 0 ? 'Submission Cooldown' : 'Join the Revolution'}
                   </button>
                   
-                  {/* Duplicate Email Message */}
-                  {duplicateEmail && (
-                    <div className="form-message duplicate">
-                      <div className="message-icon">⚠️</div>
-                      <h4>Already Applied</h4>
-                      <p>We found an existing application with this email address. You can only submit one application per email.</p>
-                      <div className="message-details">
-                        <span>📧 Check your email for your original application</span>
-                        <span>🔄 If you need to update your application, please contact us</span>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* Success Message */}
-                  {isSubmitted && !duplicateEmail && (
-                    <div className="form-message success">
-                      <div className="message-icon">🎉</div>
-                      <h4>Application Submitted!</h4>
-                      <p>Thank you for applying to join the First 30. We&apos;ll review your application and get back to you soon.</p>
-                      <div className="message-details">
-                        <span>📧 Check your email for confirmation</span>
-                        <span>⏰ Response within 48 hours</span>
-                      </div>
-                    </div>
-                  )}
-                  
                   {/* Default Note */}
                   {!isSubmitted && !duplicateEmail && cooldown === 0 && (
                     <p className="form-note">* Only 30 founding spots available. We&apos;ll get back to you soon!</p>
                   )}
                 </div>
-            </form>
+              </form>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* FOOTER */}
-      <footer className="footer">
-        <p>Inigo — Plastic to Ecstatic · Quiet is the new power · Stillness is our protest</p>
-        <p>#PlasticToEcstatic · #StillTogether · #InigoMoments</p>
-      </footer>
+        {/* FOOTER */}
+        <footer className="footer">
+          <p>Inigo — Plastic to Ecstatic · Quiet is the new power · Stillness is our protest</p>
+          <p>#PlasticToEcstatic · #StillTogether · #InigoMoments</p>
+        </footer>
+
+        {/* SUCCESS/DUPLICATE MODAL */}
+        {(isSubmitted || duplicateEmail) && (
+          <div className="modal-overlay" onClick={() => {
+            setIsSubmitted(false);
+            setDuplicateEmail(false);
+          }}>
+            <div className="modal-content form-result-modal" onClick={(e) => e.stopPropagation()}>
+              {/* Success Modal */}
+              {isSubmitted && (
+                <>
+                  <div className="modal-header">
+                    <div className="modal-icon success">🎉</div>
+                    <h3>Application Submitted!</h3>
+                  </div>
+                  <div className="modal-body">
+                    <p>Thank you for applying to join the First 30. We&apos;ll review your application and get back to you soon.</p>
+                    <div className="modal-features">
+                      <div className="feature-item">
+                        <span className="feature-icon">📧</span>
+                        <span>Check your email for confirmation</span>
+                      </div>
+                      <div className="feature-item">
+                        <span className="feature-icon">⏰</span>
+                        <span>Response within 48 hours</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="modal-actions">
+                    <button className="btn btn-primary" onClick={() => setIsSubmitted(false)}>
+                      Got It!
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {/* Duplicate Email Modal */}
+              {duplicateEmail && (
+                <>
+                  <div className="modal-header">
+                    <div className="modal-icon duplicate">⚠️</div>
+                    <h3>Already Applied</h3>
+                  </div>
+                  <div className="modal-body">
+                    <p>We found an existing application with this email address. You can only submit one application per email.</p>
+                    <div className="modal-features">
+                      <div className="feature-item">
+                        <span className="feature-icon">📧</span>
+                        <span>Check your email for your original application</span>
+                      </div>
+                      <div className="feature-item">
+                        <span className="feature-icon">🔄</span>
+                        <span>If you need to update your application, please contact us</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="modal-actions">
+                    <button className="btn btn-primary" onClick={() => setDuplicateEmail(false)}>
+                      Understood
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        )}
 
 
     </>

@@ -858,6 +858,85 @@ p {
   opacity: 0.8;
 }
 
+/* Form Result Modal */
+.form-result-modal {
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+}
+
+.form-result-modal .modal-header {
+  margin-bottom: 1.5rem;
+}
+
+.form-result-modal .modal-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.form-result-modal .modal-icon.success {
+  animation: bounce 0.6s ease-out;
+}
+
+.form-result-modal .modal-icon.duplicate {
+  animation: shake 0.6s ease-out;
+}
+
+.form-result-modal h3 {
+  color: var(--deep-earth);
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.form-result-modal .modal-body p {
+  color: var(--earth-brown);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.form-result-modal .modal-features {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-bottom: 2rem;
+}
+
+.form-result-modal .feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: rgba(79, 121, 66, 0.08);
+  padding: 0.8rem 1.2rem;
+  border-radius: 16px;
+  border: 1px solid rgba(79, 121, 66, 0.15);
+}
+
+.form-result-modal .feature-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.form-result-modal .modal-actions {
+  display: flex;
+  justify-content: center;
+}
+
+/* Animations for modal icons */
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
 /* Responsive */
 @media (min-width: 860px) {
   .split { 
