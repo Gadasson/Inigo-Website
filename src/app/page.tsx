@@ -364,12 +364,12 @@ export default function Home() {
                     <p>Thank you for applying to join the First 30. We&apos;ll review your application and get back to you soon.</p>
                     <div className="modal-features">
                       <div className="feature-item">
-                        <span className="feature-icon">📧</span>
-                        <span>Check your email for confirmation</span>
+                        <span className="feature-icon">📋</span>
+                        <span>Your application has been received</span>
                       </div>
                       <div className="feature-item">
                         <span className="feature-icon">⏰</span>
-                        <span>Response within 48 hours</span>
+                        <span>We&apos;ll contact you soon</span>
                       </div>
                     </div>
                   </div>
@@ -392,8 +392,8 @@ export default function Home() {
                     <p>We found an existing application with this email address. You can only submit one application per email.</p>
                     <div className="modal-features">
                       <div className="feature-item">
-                        <span className="feature-icon">📧</span>
-                        <span>Check your email for your original application</span>
+                        <span className="feature-icon">📋</span>
+                        <span>Your original application is on file</span>
                       </div>
                       <div className="feature-item">
                         <span className="feature-icon">🔄</span>
