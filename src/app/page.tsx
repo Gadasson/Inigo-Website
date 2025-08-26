@@ -53,6 +53,53 @@ export default function Home() {
     };
   }, [cooldown]);
 
+  // Email validation effect
+  useEffect(() => {
+    const emailInput = document.getElementById('email') as HTMLInputElement;
+    const validationDiv = document.getElementById('email-validation');
+    
+    if (emailInput && validationDiv) {
+      const validateEmail = (email: string) => {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailRegex.test(email);
+      };
+
+      const handleEmailInput = () => {
+        const email = emailInput.value;
+        if (email === '') {
+          validationDiv.textContent = '';
+          validationDiv.className = 'validation-message';
+        } else if (validateEmail(email)) {
+          validationDiv.textContent = '✓ Valid email format';
+          validationDiv.className = 'validation-message valid';
+        } else {
+          validationDiv.textContent = '✗ Please enter a valid email address';
+          validationDiv.className = 'validation-message invalid';
+        }
+      };
+
+      emailInput.addEventListener('input', handleEmailInput);
+      emailInput.addEventListener('blur', handleEmailInput);
+
+      return () => {
+        emailInput.removeEventListener('input', handleEmailInput);
+        emailInput.removeEventListener('blur', handleEmailInput);
+      };
+    }
+  }, []);
+
+  const validateForm = (formData: FormData) => {
+    const email = formData.get('email') as string;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    
+    if (!emailRegex.test(email)) {
+      alert('Please enter a valid email address.');
+      return false;
+    }
+    
+    return true;
+  };
+
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
@@ -61,11 +108,17 @@ export default function Home() {
       return;
     }
     
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    
+    // Validate form before submission
+    if (!validateForm(formData)) {
+      return;
+    }
+    
     setIsSubmitting(true);
     setDuplicateEmail(false);
 
-    const form = e.currentTarget;
-    const formData = new FormData(form);
     const data = {
       name: formData.get('name'),
       email: formData.get('email'),
@@ -250,16 +303,25 @@ export default function Home() {
           
           <div className="early-access-form">
             <form onSubmit={handleFormSubmit}>
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="name">Full Name *</label>
-                  <input type="text" id="name" name="name" required placeholder="Your full name" />
+                              <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="name">Full Name *</label>
+                    <input type="text" id="name" name="name" required placeholder="Your full name" />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="email">Email Address *</label>
+                    <input 
+                      type="email" 
+                      id="email" 
+                      name="email" 
+                      required 
+                      placeholder="your.email@example.com"
+                      pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                      title="Please enter a valid email address (e.g., user@example.com)"
+                    />
+                    <div className="validation-message" id="email-validation"></div>
+                  </div>
                 </div>
-                <div className="form-group">
-                  <label htmlFor="email">Email Address *</label>
-                  <input type="email" id="email" name="email" required placeholder="your.email@example.com" />
-                </div>
-              </div>
               
               <div className="form-row">
                 <div className="form-group">

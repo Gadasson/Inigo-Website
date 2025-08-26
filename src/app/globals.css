@@ -532,6 +532,27 @@ p {
   min-height: 100px;
 }
 
+/* Validation Messages */
+.validation-message {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  min-height: 1.2rem;
+}
+
+.validation-message.valid {
+  color: var(--inigo-green);
+}
+
+.validation-message.invalid {
+  color: #dc3545;
+}
+
+.validation-message:empty {
+  display: none;
+}
+
 .form-actions {
   text-align: center;
   margin-top: 2rem;
