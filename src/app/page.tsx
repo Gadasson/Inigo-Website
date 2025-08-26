@@ -233,6 +233,17 @@ export default function Home() {
           <p>We live in a world of filters and fake smiles. A world where everything is fast, loud, and always online. But deep inside, we all know it — something real is missing.</p>
           <p>At Inigo, we believe the way back isn&apos;t forward — it&apos;s inward. Close your eyes. Breathe. Feel your body again. See the sky again. Remember what&apos;s real again.</p>
           <p>We&apos;re not here to escape life — we&apos;re here to enter it fully. It starts in stillness. It spreads in connection. It ends in joy. From plastic… to ecstatic. Together.</p>
+          
+          <div className="manifesto-quote">
+            <p className="quote-text">
+              <em>&ldquo;Hello, my name is Inigo Montoya. You killed my father. Prepare to die.&rdquo;</em>
+            </p>
+            <p className="quote-meaning">
+              We fight back with the silence of meditation. We fight for love. We fight for what&apos;s real. 
+              <br />
+              <span className="quote-echo">&ldquo;As you wish.&rdquo;</span>
+            </p>
+          </div>
         </div>
       </section>
 
