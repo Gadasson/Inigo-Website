@@ -1,8 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
+  const [showModal, setShowModal] = useState(false);
+
   useEffect(() => {
     // Interactive progress bar functionality
     const mins = document.getElementById('mins');
@@ -28,6 +30,15 @@ export default function Home() {
     }
   }, []);
 
+  const handleDownloadClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
   return (
     <>
       {/* HERO */}
@@ -52,8 +63,8 @@ export default function Home() {
             <h3>Performing instead of feeling</h3>
             <p>Fake smiles, scroll addiction, superficial connection, burnout, numbness, auto‑pilot, loneliness in a world full of noise.</p>
             <div className="grid-2">
-              <div style={{ width: '100%', height: '120px', backgroundColor: '#2c3e50', borderRadius: '20px' }}></div>
-              <div style={{ width: '100%', height: '120px', backgroundColor: '#34495e', borderRadius: '20px' }}></div>
+              <img loading="lazy" src="/images/plastic-burnout.jpg" alt="Cold neon city and anonymous crowd" />
+              <img loading="lazy" src="/images/plastic-moments.jpg" alt="Hand scrolling phone in the dark" />
             </div>
           </div>
           <div className="card">
@@ -61,8 +72,8 @@ export default function Home() {
             <h3>Arriving in the moment</h3>
             <p>Real joy, real presence. Feeling your body, breath, and heart again. Connection without masks. Small moments that explode with beauty.</p>
             <div className="grid-2">
-              <img loading="lazy" src="/images/ecstatic-friends.jpg" alt="Friends laughing in golden sunlight" />
-              <div style={{ width: '100%', height: '120px', backgroundColor: '#27ae60', borderRadius: '20px' }}></div>
+              <img loading="lazy" src="/images/ecstatic-family.jpg" alt="Family laughing in golden sunlight" />
+              <img loading="lazy" src="/images/ecstatic-mom.jpg" alt="Person breathing in nature at sunrise" />
             </div>
           </div>
         </div>
@@ -111,7 +122,7 @@ export default function Home() {
         <h2>Be Part of the Movement</h2>
         <p>Not another app. A new world. Meditate socially. Live deeply. Feel again.</p>
         <div className="cta-buttons">
-          <a className="btn btn-primary" id="download" href="#">Download Inigo</a>
+          <button className="btn btn-primary" id="download" onClick={handleDownloadClick}>Download Inigo</button>
           <a className="btn btn-ghost" href="#">Explore More</a>
         </div>
       </section>
@@ -121,6 +132,51 @@ export default function Home() {
         <p>Inigo — Plastic to Ecstatic · Quiet is the new power · Stillness is our protest</p>
         <p>#PlasticToEcstatic · #StillTogether · #InigoMoments</p>
       </footer>
+
+      {/* COMING SOON MODAL */}
+      {showModal && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={closeModal}>×</button>
+            
+            <div className="modal-header">
+              <div className="modal-icon">🌱</div>
+              <h3>Coming Soon</h3>
+            </div>
+            
+            <div className="modal-body">
+              <p className="modal-message">
+                The quiet revolution is brewing. We&apos;re crafting something that will change everything.
+              </p>
+              
+              <div className="modal-features">
+                <div className="feature-item">
+                  <span className="feature-icon">🧘‍♀️</span>
+                  <span>Social meditation</span>
+                </div>
+                <div className="feature-item">
+                  <span className="feature-icon">🌿</span>
+                  <span>Nature connection</span>
+                </div>
+                <div className="feature-item">
+                  <span className="feature-icon">💫</span>
+                  <span>Ecstatic moments</span>
+                </div>
+              </div>
+              
+              <p className="modal-cta">
+                Join the waitlist and be the first to experience the shift from plastic to ecstatic.
+              </p>
+            </div>
+            
+            <div className="modal-actions">
+              <button className="btn btn-primary" onClick={closeModal}>
+                I&apos;ll Wait Patiently
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
