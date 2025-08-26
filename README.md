@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Inigo — Plastic to Ecstatic
 
-## Getting Started
+A movement website that feels **joyful, ecstatic, grounded**, invites people to **join/meditate**, and explains the **Plastic → Ecstatic** shift.
 
-First, run the development server:
+## 🎯 Mission
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+From fake to real. From numb to now. Join the frequency that transforms plastic existence into ecstatic presence.
+
+## 🚀 Tech Stack
+
+- **Next.js 15** (App Router, `src/` directory)
+- **TypeScript**
+- **Tailwind CSS v4**
+- **ESLint**
+- **Turbopack**
+
+## 🎨 Design Tokens
+
+- **Inigo Green**: `#4F7942` - Primary brand color
+- **Earth Brown**: `#6E5849` - Secondary brand color  
+- **Soft Sand**: `#fdf9f2` - Background color
+- **Warm Clay**: `#c08552` - Accent color
+- **Deep Earth**: `#2e2b28` - Text color
+
+## 🏃‍♂️ Getting Started
+
+1. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+2. **Run development server**
+   ```bash
+   npm run dev
+   ```
+
+3. **Open [http://localhost:3000](http://localhost:3000)**
+
+## 📱 Sections
+
+- **Hero**: Main tagline and CTA
+- **Meaning**: Explains "Plastic to Ecstatic"
+- **Audience**: Who this movement is for
+- **Manifesto**: Core beliefs and principles
+- **World State**: Current reality vs. potential
+- **CTA**: Join the movement
+
+## 🌟 Key Messages
+
+- "Quiet is the new revolution. Join the frequency."
+- "The greatest revolution is personal, not political"
+- "Transformation happens through frequency, not force"
+- "Everyone has access to ecstasy"
+
+## 🔮 Roadmap
+
+- [ ] Hook up World State numbers from Django backend
+- [ ] Add Framer Motion animations
+- [ ] Add i18n for Hebrew
+- [ ] Deployment to Vercel/Netlify
+
+## 📁 Project Structure
+
+```
+inigo-project/
+├─ inigo/           # RN client (already exists)
+├─ server/          # Django backend (already exists)
+└─ inigo-website/   # This website (Next.js)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+*"From plastic existence to ecstatic being"*
