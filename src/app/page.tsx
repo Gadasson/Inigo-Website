@@ -9,27 +9,14 @@ export default function Home() {
   const [duplicateEmail, setDuplicateEmail] = useState(false);
 
   useEffect(() => {
-    // Interactive progress bar functionality
-    const mins = document.getElementById('mins');
-    const active = document.getElementById('active');
+    // Set initial progress bar state with some life
     const pct = document.getElementById('pct');
     const fill = document.getElementById('fill');
     
-    if (mins && active && pct && fill) {
-      let minutes = 3472, people = 147, percent = 64;
-      
-      const interval = setInterval(() => {
-        minutes += Math.floor(Math.random() * 5);
-        people += Math.random() > .5 ? 1 : -1;
-        percent = Math.min(99, percent + (Math.random() > .7 ? 1 : 0));
-        
-        mins.textContent = minutes.toLocaleString();
-        active.textContent = Math.max(0, people).toString();
-        pct.textContent = percent + '%';
-        fill.style.width = percent + '%';
-      }, 2500);
-
-      return () => clearInterval(interval);
+    if (pct && fill) {
+      // Start at 5% to show we're just beginning but with some life
+      pct.textContent = '5%';
+      fill.style.width = '5%';
     }
   }, []);
 
@@ -252,16 +239,19 @@ export default function Home() {
       {/* PROGRESS / WORLD STATE */}
       <section className="world-state">
         <h2>Our Collective Pulse</h2>
-        <p>Every meditation slows the world. This is where we are right now:</p>
+        <p>Every meditation slows the world. This is where we&apos;re heading:</p>
         <div className="progress-wrap">
           <div className="bar">
             <div className="fill" id="fill"></div>
           </div>
           <div className="progress-meta">
-            <span>Today: <strong id="mins">3,472</strong> minutes</span>
-            <span>Active now: <strong id="active">147</strong></span>
-            <span>To Magic Number: <strong id="pct">64%</strong></span>
+            <span>Goal: <strong>10,000</strong> collective minutes</span>
+            <span>Target: <strong>100</strong> active members</span>
+            <span>Progress: <strong id="pct">5%</strong></span>
           </div>
+        </div>
+        <div className="pulse-vision">
+          <p>We&apos;re building something special. When we reach our first milestone, the real magic begins.</p>
         </div>
       </section>
 
