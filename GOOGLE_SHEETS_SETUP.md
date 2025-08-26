@@ -29,6 +29,21 @@ function doPost(e) {
     // Get the active spreadsheet
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     
+    // Check if email already exists
+    const email = formData.email || '';
+    if (email) {
+      const existingEmails = sheet.getRange(2, 3, sheet.getLastRow() - 1, 1).getValues(); // Column C (email)
+      const emailExists = existingEmails.flat().some(existingEmail => 
+        existingEmail.toString().toLowerCase() === email.toLowerCase()
+      );
+      
+      if (emailExists) {
+        return ContentService
+          .createTextOutput('Email already exists. You have already applied.')
+          .setMimeType(ContentService.MimeType.TEXT);
+      }
+    }
+    
     // Prepare row data
     const rowData = [
       formData.timestamp || new Date().toISOString(),

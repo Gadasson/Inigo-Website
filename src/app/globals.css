@@ -581,6 +581,11 @@ p {
   border: 2px solid rgba(79, 121, 66, 0.2);
 }
 
+.form-message.duplicate {
+  background: linear-gradient(135deg, rgba(192, 133, 82, 0.08), rgba(192, 133, 82, 0.04));
+  border: 2px solid rgba(192, 133, 82, 0.2);
+}
+
 .message-icon {
   font-size: 3rem;
   margin-bottom: 1rem;

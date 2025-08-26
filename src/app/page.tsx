@@ -6,6 +6,7 @@ export default function Home() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [cooldown, setCooldown] = useState(0);
+  const [duplicateEmail, setDuplicateEmail] = useState(false);
 
   useEffect(() => {
     // Interactive progress bar functionality
@@ -61,6 +62,7 @@ export default function Home() {
     }
     
     setIsSubmitting(true);
+    setDuplicateEmail(false);
 
     const form = e.currentTarget;
     const formData = new FormData(form);
@@ -75,28 +77,53 @@ export default function Home() {
     };
 
     try {
-      // Use a different approach that works with Google Apps Script
+      // Try to submit with CORS first to get proper response
+      let response;
+      try {
+        response = await fetch('https://script.google.com/macros/s/AKfycbw4349nDx2iTAjEp0UqqaEuKmx5m8vgJrdZ0yKfF7bzEp6ChbaUIohLBitmiOn7q_h4/exec', {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: { 'Content-Type': 'application/json' }
+        });
+        
+        if (response.ok) {
+          const result = await response.text();
+          
+          // Check if it's a duplicate email response
+          if (result.includes('Email already exists')) {
+            setDuplicateEmail(true);
+            return;
+          }
+          
+          // Success
+          setIsSubmitted(true);
+          if (form) {
+            form.reset();
+          }
+          setCooldown(300);
+          return;
+        }
+      } catch (corsError) {
+        console.log('CORS failed, trying no-cors mode');
+      }
+      
+      // Fallback to no-cors mode
       const formDataForGoogle = new FormData();
       Object.entries(data).forEach(([key, value]) => {
         formDataForGoogle.append(key, value as string);
       });
 
-      const response = await fetch('https://script.google.com/macros/s/AKfycbw4349nDx2iTAjEp0UqqaEuKmx5m8vgJrdZ0yKfF7bzEp6ChbaUIohLBitmiOn7q_h4/exec', {
+      await fetch('https://script.google.com/macros/s/AKfycbw4349nDx2iTAjEp0UqqaEuKmx5m8vgJrdZ0yKfF7bzEp6ChbaUIohLBitmiOn7q_h4/exec', {
         method: 'POST',
         body: formDataForGoogle,
-        mode: 'no-cors' // This bypasses CORS issues
+        mode: 'no-cors'
       });
       
-      // Since we're using no-cors, we can't read the response
-      // But the data should still be sent to Google Sheets
-      console.log('Form submitted with no-cors mode');
-      
+      // Assume success in no-cors mode
       setIsSubmitted(true);
       if (form) {
         form.reset();
       }
-      
-      // Set cooldown to prevent spam (5 minutes = 300 seconds)
       setCooldown(300);
       
     } catch (error) {
@@ -303,8 +330,21 @@ export default function Home() {
                     {isSubmitting ? 'Joining...' : cooldown > 0 ? 'Submission Cooldown' : 'Join the Revolution'}
                   </button>
                   
+                  {/* Duplicate Email Message */}
+                  {duplicateEmail && (
+                    <div className="form-message duplicate">
+                      <div className="message-icon">⚠️</div>
+                      <h4>Already Applied</h4>
+                      <p>We found an existing application with this email address. You can only submit one application per email.</p>
+                      <div className="message-details">
+                        <span>📧 Check your email for your original application</span>
+                        <span>🔄 If you need to update your application, please contact us</span>
+                      </div>
+                    </div>
+                  )}
+                  
                   {/* Success Message */}
-                  {isSubmitted && (
+                  {isSubmitted && !duplicateEmail && (
                     <div className="form-message success">
                       <div className="message-icon">🎉</div>
                       <h4>Application Submitted!</h4>
@@ -317,7 +357,7 @@ export default function Home() {
                   )}
                   
                   {/* Default Note */}
-                  {!isSubmitted && cooldown === 0 && (
+                  {!isSubmitted && !duplicateEmail && cooldown === 0 && (
                     <p className="form-note">* Only 30 founding spots available. We&apos;ll get back to you soon!</p>
                   )}
                 </div>
