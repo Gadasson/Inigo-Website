@@ -1,189 +1,126 @@
+'use client';
+
+import { useEffect } from 'react';
+
 export default function Home() {
+  useEffect(() => {
+    // Interactive progress bar functionality
+    const mins = document.getElementById('mins');
+    const active = document.getElementById('active');
+    const pct = document.getElementById('pct');
+    const fill = document.getElementById('fill');
+    
+    if (mins && active && pct && fill) {
+      let minutes = 3472, people = 147, percent = 64;
+      
+      const interval = setInterval(() => {
+        minutes += Math.floor(Math.random() * 5);
+        people += Math.random() > .5 ? 1 : -1;
+        percent = Math.min(99, percent + (Math.random() > .7 ? 1 : 0));
+        
+        mins.textContent = minutes.toLocaleString();
+        active.textContent = Math.max(0, people).toString();
+        pct.textContent = percent + '%';
+        fill.style.width = percent + '%';
+      }, 2500);
+
+      return () => clearInterval(interval);
+    }
+  }, []);
+
   return (
-    <div className="min-h-screen bg-soft-sand text-deep-earth">
-      {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center text-center px-4">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-6xl md:text-8xl font-bold mb-6 text-inigo-green">
-            Inigo
-          </h1>
-          <p className="text-2xl md:text-3xl mb-8 text-earth-brown">
-            Plastic to Ecstatic
-          </p>
-          <p className="text-lg md:text-xl mb-12 text-deep-earth max-w-2xl mx-auto">
-            From fake to real. From numb to now. Join the frequency that transforms 
-            plastic existence into ecstatic presence.
-          </p>
-          <button className="bg-inigo-green text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105">
-            Join the Movement
-          </button>
+    <>
+      {/* HERO */}
+      <section className="hero">
+        <div className="hero-inner">
+          <span className="badge">Quiet is the new revolution</span>
+          <h1>Inigo — <em>Plastic to Ecstatic</em></h1>
+          <p>From fake to real. From numb to now. From plastic… to ecstatic. The quiet revolution starts here — together.</p>
+          <div className="cta-buttons">
+            <a className="btn btn-primary" href="#download">Join the Frequency</a>
+            <a className="btn btn-ghost" href="#manifesto">Read the Manifesto</a>
+          </div>
         </div>
       </section>
 
-      {/* Meaning Section */}
-      <section className="py-20 px-4 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-deep-earth">
-            What Does &ldquo;Plastic to Ecstatic&rdquo; Mean?
-          </h2>
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h3 className="text-2xl font-bold mb-6 text-inigo-green">Plastic</h3>
-              <p className="text-lg text-deep-earth mb-4">
-                The artificial, synthetic, disconnected way of living that leaves us 
-                feeling hollow and unfulfilled.
-              </p>
-              <ul className="space-y-2 text-deep-earth">
-                <li>• Endless scrolling and digital numbness</li>
-                <li>• Consumer culture that never satisfies</li>
-                <li>• Disconnection from nature and community</li>
-                <li>• Living through screens instead of senses</li>
-              </ul>
+      {/* MEANING: Plastic → Ecstatic (with images) */}
+      <section className="meaning">
+        <h2>What Does &ldquo;Plastic to Ecstatic&rdquo; Mean?</h2>
+        <div className="split">
+          <div className="card">
+            <span className="tag tag-plastic">Plastic</span>
+            <h3>Performing instead of feeling</h3>
+            <p>Fake smiles, scroll addiction, superficial connection, burnout, numbness, auto‑pilot, loneliness in a world full of noise.</p>
+            <div className="grid-2">
+              <div style={{ width: '100%', height: '120px', backgroundColor: '#2c3e50', borderRadius: '20px' }}></div>
+              <div style={{ width: '100%', height: '120px', backgroundColor: '#34495e', borderRadius: '20px' }}></div>
             </div>
-            <div>
-              <h3 className="text-2xl font-bold mb-6 text-inigo-green">Ecstatic</h3>
-              <p className="text-lg text-deep-earth mb-4">
-                The natural, authentic, connected state of being that fills us with 
-                joy, purpose, and wonder.
-              </p>
-              <ul className="space-y-2 text-deep-earth">
-                <li>• Present moment awareness and gratitude</li>
-                <li>• Deep connection with nature and others</li>
-                <li>• Authentic self-expression and creativity</li>
-                <li>• Living through experience and feeling</li>
-              </ul>
+          </div>
+          <div className="card">
+            <span className="tag tag-ecstatic">Ecstatic</span>
+            <h3>Arriving in the moment</h3>
+            <p>Real joy, real presence. Feeling your body, breath, and heart again. Connection without masks. Small moments that explode with beauty.</p>
+            <div className="grid-2">
+              <img loading="lazy" src="/images/ecstatic-friends.jpg" alt="Friends laughing in golden sunlight" />
+              <div style={{ width: '100%', height: '120px', backgroundColor: '#27ae60', borderRadius: '20px' }}></div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Audience Section */}
-      <section className="py-20 px-4 bg-soft-sand">
-        <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-16 text-deep-earth">
-            Who Is This For?
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white p-8 rounded-2xl shadow-lg">
-              <h3 className="text-2xl font-bold mb-4 text-inigo-green">The Seeker</h3>
-              <p className="text-deep-earth">
-                You feel there&apos;s more to life than what you&apos;re currently experiencing. 
-                You&apos;re ready to break free from the plastic matrix.
-              </p>
-            </div>
-            <div className="bg-white p-8 rounded-2xl shadow-lg">
-              <h3 className="text-2xl font-bold mb-4 text-inigo-green">The Meditator</h3>
-              <p className="text-deep-earth">
-                You practice presence and want to deepen your connection to the 
-                ecstatic nature of reality. Join our community.
-              </p>
-            </div>
-            <div className="bg-white p-8 rounded-2xl shadow-lg">
-              <h3 className="text-2xl font-bold mb-4 text-inigo-green">The Revolutionary</h3>
-              <p className="text-deep-earth">
-                You believe quiet is the new revolution. You&apos;re ready to shift 
-                consciousness and inspire others to do the same.
-              </p>
-            </div>
+      {/* WHO IT'S FOR: faces grid */}
+      <section className="audience">
+        <h2>Who It Speaks To</h2>
+        <p>Burnt‑out dreamers. Sensitive souls in a loud world. Creatives, seekers, lovers. Young people tired of scrolling and ready to feel.</p>
+        <div className="faces">
+          <img loading="lazy" src="/images/face1.jpg" alt="Smiling person in nature" />
+          <img loading="lazy" src="/images/face2.jpg" alt="Group of friends hugging" />
+          <img loading="lazy" src="/images/face3.jpg" alt="Mountains and sky" />
+          <img loading="lazy" src="/images/face4.jpg" alt="Person meditating at sunset" />
+        </div>
+      </section>
+
+      {/* MANIFESTO full-bleed */}
+      <section id="manifesto" className="manifesto">
+        <div className="inner">
+          <h2>Mini‑Manifesto: Plastic to Ecstatic</h2>
+          <p>We live in a world of filters and fake smiles. A world where everything is fast, loud, and always online. But deep inside, we all know it — something real is missing.</p>
+          <p>At Inigo, we believe the way back isn&apos;t forward — it&apos;s inward. Close your eyes. Breathe. Feel your body again. See the sky again. Remember what&apos;s real again.</p>
+          <p>We&apos;re not here to escape life — we&apos;re here to enter it fully. It starts in stillness. It spreads in connection. It ends in joy. From plastic… to ecstatic. Together.</p>
+        </div>
+      </section>
+
+      {/* PROGRESS / WORLD STATE */}
+      <section className="world-state">
+        <h2>Our Collective Pulse</h2>
+        <p>Every meditation slows the world. This is where we are right now:</p>
+        <div className="progress-wrap">
+          <div className="bar">
+            <div className="fill" id="fill"></div>
+          </div>
+          <div className="progress-meta">
+            <span>Today: <strong id="mins">3,472</strong> minutes</span>
+            <span>Active now: <strong id="active">147</strong></span>
+            <span>To Magic Number: <strong id="pct">64%</strong></span>
           </div>
         </div>
       </section>
 
-      {/* Manifesto Section */}
-      <section className="py-20 px-4 bg-earth-brown text-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-12">
-            The Inigo Manifesto
-          </h2>
-          <div className="space-y-8 text-lg">
-            <p>
-              We believe that the greatest revolution of our time is not political, 
-              but personal. It&apos;s the shift from plastic existence to ecstatic being.
-            </p>
-            <p>
-              We believe that quiet is the new revolution. In a world of constant 
-              noise and distraction, the most radical act is to be still and present.
-            </p>
-            <p>
-              We believe that transformation happens through frequency, not force. 
-              When we align with the natural rhythms of life, magic happens.
-            </p>
-            <p>
-              We believe that everyone has access to ecstasy. It&apos;s not a privilege 
-              or a destination, but our natural state when we remove the plastic layers.
-            </p>
-          </div>
+      {/* CTA */}
+      <section className="cta">
+        <h2>Be Part of the Movement</h2>
+        <p>Not another app. A new world. Meditate socially. Live deeply. Feel again.</p>
+        <div className="cta-buttons">
+          <a className="btn btn-primary" id="download" href="#">Download Inigo</a>
+          <a className="btn btn-ghost" href="#">Explore More</a>
         </div>
       </section>
 
-      {/* World State Section */}
-      <section className="py-20 px-4 bg-white">
-        <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-16 text-deep-earth">
-            The State of Our World
-          </h2>
-          <div className="grid md:grid-cols-2 gap-12">
-            <div>
-              <h3 className="text-3xl font-bold mb-6 text-red-600">Plastic Reality</h3>
-              <div className="space-y-4 text-deep-earth">
-                <div className="bg-red-50 p-6 rounded-xl">
-                  <p className="text-2xl font-bold text-red-600">8.3B</p>
-                  <p>Plastic pieces in our oceans</p>
-                </div>
-                <div className="bg-red-50 p-6 rounded-xl">
-                  <p className="text-2xl font-bold text-red-600">6+ hours</p>
-                  <p>Average daily screen time</p>
-                </div>
-                <div className="bg-red-50 p-6 rounded-xl">
-                  <p className="text-2xl font-bold text-red-600">70%</p>
-                  <p>People feel disconnected from nature</p>
-                </div>
-              </div>
-            </div>
-            <div>
-              <h3 className="text-3xl font-bold mb-6 text-inigo-green">Ecstatic Potential</h3>
-              <div className="space-y-4 text-deep-earth">
-                <div className="bg-green-50 p-6 rounded-xl">
-                  <p className="text-2xl font-bold text-inigo-green">∞</p>
-                  <p>Moments of presence available</p>
-                </div>
-                <div className="bg-green-50 p-6 rounded-xl">
-                  <p className="text-2xl font-bold text-inigo-green">100%</p>
-                  <p>Natural joy accessible to all</p>
-                </div>
-                <div className="bg-green-50 p-6 rounded-xl">
-                  <p className="text-2xl font-bold text-inigo-green">24/7</p>
-                  <p>Connection to source available</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 px-4 bg-inigo-green text-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-8">
-            Ready to Shift?
-          </h2>
-          <p className="text-xl mb-12 max-w-2xl mx-auto">
-            Join thousands of others who are already experiencing the transformation 
-            from plastic to ecstatic. Your journey starts now.
-          </p>
-          <div className="space-y-4">
-            <button className="bg-white text-inigo-green px-8 py-4 rounded-full text-lg font-semibold hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105 mr-4">
-              Start Meditating
-            </button>
-            <button className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-inigo-green transition-all duration-300 transform hover:scale-105">
-              Join Community
-            </button>
-          </div>
-          <p className="mt-8 text-sm opacity-80">
-            &ldquo;Quiet is the new revolution. Join the frequency.&rdquo;
-          </p>
-        </div>
-      </section>
-    </div>
+      {/* FOOTER */}
+      <footer className="footer">
+        <p>Inigo — Plastic to Ecstatic · Quiet is the new power · Stillness is our protest</p>
+        <p>#PlasticToEcstatic · #StillTogether · #InigoMoments</p>
+      </footer>
+    </>
   );
 }
