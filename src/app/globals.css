@@ -25,6 +25,12 @@ body {
   font-size: 16px;
 }
 
+html,body{
+  background:var(--soft-sand);
+  color:var(--deep-earth);
+  scroll-behavior: smooth;
+}
+
 img { 
   max-width: 100%; 
   display: block; 
@@ -353,18 +359,214 @@ p {
 }
 
 /* CTA */
-.cta { 
-  background: linear-gradient(135deg, #fffbe9, #ffe9f1); 
+.cta {
+  background: linear-gradient(135deg, #fffbe9, #ffe9f1);
   padding: 8rem 2rem;
 }
 
-.cta p {
-  max-width: 700px;
-  margin: 0 auto 2.5rem;
-  font-size: 1.1rem;
+.cta h2 {
+  margin-bottom: 1.5rem;
 }
 
-/* Footer */
+.cta p {
+  max-width: 600px;
+  margin: 0 auto 3rem;
+  font-size: 1.2rem;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* EARLY ACCESS FORM */
+.early-access {
+  background: linear-gradient(135deg, var(--soft-sand), rgba(79, 121, 66, 0.03));
+  padding: 8rem 2rem;
+  text-align: center;
+}
+
+.early-access-inner {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.early-access-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.early-access-icon {
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  display: block;
+}
+
+.early-access h2 {
+  color: var(--inigo-green);
+  margin-bottom: 1rem;
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.early-access-subtitle {
+  font-size: 1.2rem;
+  color: var(--earth-brown);
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.early-access-features {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.early-access-features .feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(79, 121, 66, 0.08);
+  padding: 0.8rem 1.2rem;
+  border-radius: 20px;
+  border: 1px solid rgba(79, 121, 66, 0.15);
+  transition: all 0.3s ease;
+}
+
+.early-access-features .feature-item:hover {
+  background: rgba(79, 121, 66, 0.12);
+  border-color: rgba(79, 121, 66, 0.25);
+  transform: translateY(-2px);
+}
+
+.early-access-features .feature-icon {
+  font-size: 1.2rem;
+}
+
+.early-access-cta {
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--earth-brown);
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+.early-access-form {
+  background: white;
+  border-radius: 28px;
+  padding: 3.5rem;
+  box-shadow: 0 25px 50px rgba(79, 121, 66, 0.08), 0 8px 25px rgba(0,0,0,0.05);
+  text-align: left;
+  border: 1px solid rgba(79, 121, 66, 0.1);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.8rem;
+  font-weight: 700;
+  color: var(--inigo-green);
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 1rem 1.2rem;
+  border: 2px solid var(--warm-clay);
+  border-radius: 16px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  background: white;
+  color: var(--deep-earth);
+  box-shadow: 0 2px 8px rgba(192, 133, 82, 0.1);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--inigo-green);
+  box-shadow: 0 0 0 4px rgba(79, 121, 66, 0.15), 0 4px 16px rgba(79, 121, 66, 0.1);
+  transform: translateY(-1px);
+}
+
+.form-group select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%234F7942' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.5em;
+  padding-right: 3rem;
+  cursor: pointer;
+  appearance: none;
+}
+
+.form-group select:hover {
+  border-color: var(--inigo-green);
+  background-color: rgba(79, 121, 66, 0.02);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-actions {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.btn-large {
+  padding: 1.2rem 2.5rem;
+  font-size: 1.1rem;
+  min-width: 200px;
+}
+
+.form-note {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--earth-brown);
+  opacity: 0.8;
+}
+
+/* Responsive adjustments for form */
+@media (max-width: 768px) {
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  
+  .early-access-form {
+    padding: 2rem;
+  }
+  
+  .early-access {
+    padding: 6rem 1rem;
+  }
+}
+
+/* FOOTER */
 .footer { 
   background: var(--inigo-green); 
   color: #fff; 

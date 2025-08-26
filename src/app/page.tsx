@@ -1,10 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 export default function Home() {
-  const [showModal, setShowModal] = useState(false);
-
   useEffect(() => {
     // Interactive progress bar functionality
     const mins = document.getElementById('mins');
@@ -30,15 +28,6 @@ export default function Home() {
     }
   }, []);
 
-  const handleDownloadClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setShowModal(true);
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-  };
-
   return (
     <>
       {/* HERO */}
@@ -48,7 +37,7 @@ export default function Home() {
           <h1>Inigo — <em>Plastic to Ecstatic</em></h1>
           <p>From fake to real. From numb to now. From plastic… to ecstatic. The quiet revolution starts here — together.</p>
           <div className="cta-buttons">
-            <a className="btn btn-primary" href="#download">Join the Frequency</a>
+            <a className="btn btn-primary" href="#early-access">Join the Frequency</a>
             <a className="btn btn-ghost" href="#manifesto">Read the Manifesto</a>
           </div>
         </div>
@@ -117,13 +106,114 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="cta">
-        <h2>Be Part of the Movement</h2>
-        <p>Not another app. A new world. Meditate socially. Live deeply. Feel again.</p>
-        <div className="cta-buttons">
-          <button className="btn btn-primary" id="download" onClick={handleDownloadClick}>Download Inigo</button>
-          <a className="btn btn-ghost" href="#">Explore More</a>
+              {/* CTA */}
+        <section className="cta">
+          <h2>Be Part of the Movement</h2>
+          <p>Not another app. A new world. Meditate socially. Live deeply. Feel again.</p>
+          <div className="cta-buttons">
+            <a className="btn btn-primary" href="#early-access">Join the First 30</a>
+            <a className="btn btn-ghost" href="#manifesto">Read the Manifesto</a>
+          </div>
+        </section>
+
+      {/* BECOME ONE OF THE FIRST 30 */}
+      <section id="early-access" className="early-access">
+        <div className="early-access-inner">
+          <div className="early-access-header">
+            <div className="early-access-icon">🌱</div>
+            <h2>Join the First 30</h2>
+            <p className="early-access-subtitle">The quiet revolution is brewing. We&apos;re crafting something that will change everything.</p>
+          </div>
+          
+          <div className="early-access-features">
+            <div className="feature-item">
+              <span className="feature-icon">🧘‍♀️</span>
+              <span>Social meditation</span>
+            </div>
+            <div className="feature-item">
+              <span className="feature-icon">🌿</span>
+              <span>Nature connection</span>
+            </div>
+            <div className="feature-item">
+              <span className="feature-icon">💫</span>
+              <span>Ecstatic moments</span>
+            </div>
+          </div>
+          
+          <p className="early-access-cta">Join the waitlist and be the first to experience the shift from plastic to ecstatic.</p>
+          
+          <div className="early-access-form">
+            <form onSubmit={(e) => e.preventDefault()}>
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="name">Full Name *</label>
+                  <input type="text" id="name" name="name" required placeholder="Your full name" />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="email">Email Address *</label>
+                  <input type="email" id="email" name="email" required placeholder="your.email@example.com" />
+                </div>
+              </div>
+              
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="source">How did you discover Inigo? *</label>
+                  <select id="source" name="source" required>
+                    <option value="">Select an option</option>
+                    <option value="social-media">Social Media</option>
+                    <option value="friend">Friend/Family Recommendation</option>
+                    <option value="search">Search Engine</option>
+                    <option value="article">Article/Blog Post</option>
+                    <option value="podcast">Podcast</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="device">Primary Device OS *</label>
+                  <select id="device" name="device" required>
+                    <option value="">Select your device</option>
+                    <option value="ios">iOS (iPhone/iPad)</option>
+                    <option value="android">Android</option>
+                    <option value="mac">macOS</option>
+                    <option value="windows">Windows</option>
+                    <option value="linux">Linux</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div className="form-group full-width">
+                <label htmlFor="motivation">What motivates you most about joining this community? *</label>
+                <select id="motivation" name="motivation" required>
+                  <option value="">Select what resonates with you</option>
+                  <option value="connection">Finding real human connection</option>
+                  <option value="mindfulness">Living more mindfully</option>
+                  <option value="change">Being part of positive change</option>
+                  <option value="growth">Personal and spiritual growth</option>
+                  <option value="community">Building meaningful community</option>
+                  <option value="purpose">Finding deeper purpose</option>
+                </select>
+              </div>
+              
+              <div className="form-group full-width">
+                <label htmlFor="readiness">How ready do you feel to be a founding member? *</label>
+                <select id="readiness" name="readiness" required>
+                  <option value="">Select your readiness level</option>
+                  <option value="very-ready">Very ready - I&apos;m all in!</option>
+                  <option value="ready">Ready - I&apos;m excited to start</option>
+                  <option value="curious">Curious - I want to learn more</option>
+                  <option value="exploring">Exploring - I&apos;m open to possibilities</option>
+                </select>
+              </div>
+              
+              <div className="form-actions">
+                <button type="submit" className="btn btn-primary btn-large">
+                  Join the Revolution
+                </button>
+                <p className="form-note">* Only 30 founding spots available. We&apos;ll get back to you soon!</p>
+              </div>
+            </form>
+          </div>
         </div>
       </section>
 
@@ -133,50 +223,7 @@ export default function Home() {
         <p>#PlasticToEcstatic · #StillTogether · #InigoMoments</p>
       </footer>
 
-      {/* COMING SOON MODAL */}
-      {showModal && (
-        <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={closeModal}>×</button>
-            
-            <div className="modal-header">
-              <div className="modal-icon">🌱</div>
-              <h3>Coming Soon</h3>
-            </div>
-            
-            <div className="modal-body">
-              <p className="modal-message">
-                The quiet revolution is brewing. We&apos;re crafting something that will change everything.
-              </p>
-              
-              <div className="modal-features">
-                <div className="feature-item">
-                  <span className="feature-icon">🧘‍♀️</span>
-                  <span>Social meditation</span>
-                </div>
-                <div className="feature-item">
-                  <span className="feature-icon">🌿</span>
-                  <span>Nature connection</span>
-                </div>
-                <div className="feature-item">
-                  <span className="feature-icon">💫</span>
-                  <span>Ecstatic moments</span>
-                </div>
-              </div>
-              
-              <p className="modal-cta">
-                Join the waitlist and be the first to experience the shift from plastic to ecstatic.
-              </p>
-            </div>
-            
-            <div className="modal-actions">
-              <button className="btn btn-primary" onClick={closeModal}>
-                I&apos;ll Wait Patiently
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+
     </>
   );
 }
