@@ -63,8 +63,8 @@ export default function Home() {
             <h3>Performing instead of feeling</h3>
             <p>Fake smiles, scroll addiction, superficial connection, burnout, numbness, auto‑pilot, loneliness in a world full of noise.</p>
             <div className="grid-2">
-              <img loading="lazy" src="/images/plastic-burnout.jpg" alt="Cold neon city and anonymous crowd" />
-              <img loading="lazy" src="/images/plastic-moments.jpg" alt="Hand scrolling phone in the dark" />
+              <img loading="lazy" src="/images/plastic-burnout-compressed.jpg" alt="Cold neon city and anonymous crowd" />
+              <img loading="lazy" src="/images/plastic-moments-compressed.jpg" alt="Hand scrolling phone in the dark" />
             </div>
           </div>
           <div className="card">
@@ -72,8 +72,8 @@ export default function Home() {
             <h3>Arriving in the moment</h3>
             <p>Real joy, real presence. Feeling your body, breath, and heart again. Connection without masks. Small moments that explode with beauty.</p>
             <div className="grid-2">
-              <img loading="lazy" src="/images/ecstatic-family.jpg" alt="Family laughing in golden sunlight" />
-              <img loading="lazy" src="/images/ecstatic-mom.jpg" alt="Person breathing in nature at sunrise" />
+              <img loading="lazy" src="/images/ecstatic-friends-compressed.jpg" alt="Family laughing in golden sunlight" />
+              <img loading="lazy" src="/images/ecstatic-mom-compressed.jpg" alt="Person breathing in nature at sunrise" />
             </div>
           </div>
         </div>
@@ -84,9 +84,9 @@ export default function Home() {
         <h2>Who It Speaks To</h2>
         <p>Burnt‑out dreamers. Sensitive souls in a loud world. Creatives, seekers, lovers. Young people tired of scrolling and ready to feel.</p>
         <div className="faces">
-          <img loading="lazy" src="/images/face1.jpg" alt="Smiling person in nature" />
+          <img loading="lazy" src="/images/face1-compressed.jpg" alt="Smiling person in nature" />
           <img loading="lazy" src="/images/face2.jpg" alt="Group of friends hugging" />
-          <img loading="lazy" src="/images/face3.jpg" alt="Mountains and sky" />
+          <img loading="lazy" src="/images/face3-compressed.jpg" alt="Mountains and sky" />
           <img loading="lazy" src="/images/face4.jpg" alt="Person meditating at sunset" />
         </div>
       </section>
