@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 export default function Home() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
 
   useEffect(() => {
     // Interactive progress bar functionality
@@ -31,11 +32,38 @@ export default function Home() {
     }
   }, []);
 
+  // Cooldown timer effect
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    
+    if (cooldown > 0) {
+      interval = setInterval(() => {
+        setCooldown(prev => {
+          if (prev <= 1) {
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [cooldown]);
+
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    // Check if still in cooldown
+    if (cooldown > 0) {
+      return;
+    }
+    
     setIsSubmitting(true);
 
-    const formData = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const formData = new FormData(form);
     const data = {
       name: formData.get('name'),
       email: formData.get('email'),
@@ -47,18 +75,30 @@ export default function Home() {
     };
 
     try {
-      // For now, we'll log the data. You'll replace this with your Google Apps Script URL
-      console.log('Form data:', data);
+      // Use a different approach that works with Google Apps Script
+      const formDataForGoogle = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        formDataForGoogle.append(key, value as string);
+      });
+
+      const response = await fetch('https://script.google.com/macros/s/AKfycbw4349nDx2iTAjEp0UqqaEuKmx5m8vgJrdZ0yKfF7bzEp6ChbaUIohLBitmiOn7q_h4/exec', {
+        method: 'POST',
+        body: formDataForGoogle,
+        mode: 'no-cors' // This bypasses CORS issues
+      });
       
-      // Simulate API call - replace with actual Google Apps Script URL
-      // const response = await fetch('YOUR_GOOGLE_APPS_SCRIPT_URL', {
-      //   method: 'POST',
-      //   body: JSON.stringify(data),
-      //   headers: { 'Content-Type': 'application/json' }
-      // });
+      // Since we're using no-cors, we can't read the response
+      // But the data should still be sent to Google Sheets
+      console.log('Form submitted with no-cors mode');
       
       setIsSubmitted(true);
-      e.currentTarget.reset();
+      if (form) {
+        form.reset();
+      }
+      
+      // Set cooldown to prevent spam (5 minutes = 300 seconds)
+      setCooldown(300);
+      
     } catch (error) {
       console.error('Error submitting form:', error);
       alert('There was an error submitting your application. Please try again.');
@@ -208,15 +248,11 @@ export default function Home() {
                   </select>
                 </div>
                 <div className="form-group">
-                  <label htmlFor="device">Primary Device OS *</label>
+                  <label htmlFor="device">Primary Device *</label>
                   <select id="device" name="device" required>
                     <option value="">Select your device</option>
-                    <option value="ios">iOS (iPhone/iPad)</option>
+                    <option value="iphone">iPhone</option>
                     <option value="android">Android</option>
-                    <option value="mac">macOS</option>
-                    <option value="windows">Windows</option>
-                    <option value="linux">Linux</option>
-                    <option value="other">Other</option>
                   </select>
                 </div>
               </div>
@@ -245,17 +281,46 @@ export default function Home() {
                 </select>
               </div>
               
-              <div className="form-actions">
-                <button type="submit" className="btn btn-primary btn-large" disabled={isSubmitting}>
-                  {isSubmitting ? 'Joining...' : 'Join the Revolution'}
-                </button>
-                                 {isSubmitted && (
-                   <p className="form-note success">🎉 Thank you for your application! We&apos;ll get back to you soon.</p>
-                 )}
-                 {!isSubmitted && (
-                   <p className="form-note">* Only 30 founding spots available. We&apos;ll get back to you soon!</p>
-                 )}
-              </div>
+                              <div className="form-actions">
+                  {/* Cooldown Message */}
+                  {cooldown > 0 && (
+                    <div className="cooldown-message">
+                      <div className="cooldown-icon">⏰</div>
+                      <p>Please wait before submitting another application</p>
+                      <div className="cooldown-timer">
+                        <span>Next submission available in:</span>
+                        <span className="timer">{Math.floor(cooldown / 60)}:{(cooldown % 60).toString().padStart(2, '0')}</span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Submit Button */}
+                  <button 
+                    type="submit" 
+                    className="btn btn-primary btn-large" 
+                    disabled={isSubmitting || cooldown > 0}
+                  >
+                    {isSubmitting ? 'Joining...' : cooldown > 0 ? 'Submission Cooldown' : 'Join the Revolution'}
+                  </button>
+                  
+                  {/* Success Message */}
+                  {isSubmitted && (
+                    <div className="form-message success">
+                      <div className="message-icon">🎉</div>
+                      <h4>Application Submitted!</h4>
+                      <p>Thank you for applying to join the First 30. We&apos;ll review your application and get back to you soon.</p>
+                      <div className="message-details">
+                        <span>📧 Check your email for confirmation</span>
+                        <span>⏰ Response within 48 hours</span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Default Note */}
+                  {!isSubmitted && cooldown === 0 && (
+                    <p className="form-note">* Only 30 founding spots available. We&apos;ll get back to you soon!</p>
+                  )}
+                </div>
             </form>
           </div>
         </div>

@@ -567,6 +567,56 @@ p {
   opacity: 1;
 }
 
+/* Form Success Message */
+.form-message {
+  margin-top: 2rem;
+  padding: 2rem;
+  border-radius: 20px;
+  text-align: center;
+  animation: slideInUp 0.5s ease-out;
+}
+
+.form-message.success {
+  background: linear-gradient(135deg, rgba(79, 121, 66, 0.08), rgba(79, 121, 66, 0.04));
+  border: 2px solid rgba(79, 121, 66, 0.2);
+}
+
+.message-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.form-message h4 {
+  color: var(--inigo-green);
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.form-message p {
+  color: var(--deep-earth);
+  margin: 0 0 1.5rem 0;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.message-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.message-details span {
+  background: rgba(79, 121, 66, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  color: var(--inigo-green);
+  font-weight: 500;
+}
+
 /* Responsive adjustments for form */
 @media (max-width: 768px) {
   .form-row {
@@ -732,6 +782,75 @@ p {
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.05); }
+}
+
+/* Animation for success message */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Cooldown Message */
+.cooldown-message {
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(192, 133, 82, 0.08), rgba(192, 133, 82, 0.04));
+  border: 2px solid rgba(192, 133, 82, 0.2);
+  border-radius: 16px;
+  text-align: center;
+  animation: slideInUp 0.5s ease-out;
+}
+
+.cooldown-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.cooldown-message p {
+  margin: 0 0 1rem 0;
+  color: var(--warm-clay);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.cooldown-timer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.cooldown-timer span:first-child {
+  font-size: 0.9rem;
+  color: var(--earth-brown);
+  opacity: 0.8;
+}
+
+.timer {
+  background: var(--warm-clay);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  font-family: monospace;
+  min-width: 80px;
+  display: inline-block;
+}
+
+/* Disabled button styling for cooldown */
+.btn:disabled.cooldown {
+  background: var(--warm-clay);
+  color: white;
+  cursor: not-allowed;
+  opacity: 0.8;
 }
 
 /* Responsive */

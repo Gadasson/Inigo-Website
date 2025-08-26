@@ -23,21 +23,21 @@ This guide will help you connect your "Join the First 30" form to a Google Sheet
 ```javascript
 function doPost(e) {
   try {
-    // Parse the incoming data
-    const data = JSON.parse(e.postData.contents);
+    // Handle FormData from the website
+    const formData = e.parameter;
     
     // Get the active spreadsheet
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     
     // Prepare row data
     const rowData = [
-      data.timestamp,
-      data.name,
-      data.email,
-      data.source,
-      data.device,
-      data.motivation,
-      data.readiness
+      formData.timestamp || new Date().toISOString(),
+      formData.name || '',
+      formData.email || '',
+      formData.source || '',
+      formData.device || '',
+      formData.motivation || '',
+      formData.readiness || ''
     ];
     
     // Add the row to the sheet
@@ -45,14 +45,14 @@ function doPost(e) {
     
     // Return success response
     return ContentService
-      .createTextOutput(JSON.stringify({ status: 'success', message: 'Application submitted successfully' }))
-      .setMimeType(ContentService.MimeType.JSON);
+      .createTextOutput('Application submitted successfully!')
+      .setMimeType(ContentService.MimeType.TEXT);
       
   } catch (error) {
     // Return error response
     return ContentService
-      .createTextOutput(JSON.stringify({ status: 'error', message: error.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
+      .createTextOutput('Error: ' + error.toString())
+      .setMimeType(ContentService.MimeType.TEXT);
   }
 }
 
