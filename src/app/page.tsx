@@ -322,15 +322,15 @@ export default function Home() {
           <div className="early-access-features">
             <div className="feature-item">
               <span className="feature-icon">🧘‍♀️</span>
-              <span>Social meditation</span>
+              <span className="feature-text">Social meditation</span>
             </div>
             <div className="feature-item">
               <span className="feature-icon">🌿</span>
-              <span>Nature connection</span>
+              <span className="feature-text">Nature connection</span>
             </div>
             <div className="feature-item">
               <span className="feature-icon">💫</span>
-              <span>Ecstatic moments</span>
+              <span className="feature-text">Ecstatic moments</span>
             </div>
           </div>
           

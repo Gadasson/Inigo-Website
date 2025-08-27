@@ -547,23 +547,32 @@ p {
 
 .early-access-features .feature-item {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  background: rgba(79, 121, 66, 0.08);
-  padding: 0.8rem 1.2rem;
+  gap: 0.8rem;
+  background: linear-gradient(135deg, rgba(79, 121, 66, 0.03), rgba(192, 133, 82, 0.02));
+  padding: 1.5rem 2rem;
   border-radius: 20px;
-  border: 1px solid rgba(79, 121, 66, 0.15);
+  border: 1px solid rgba(79, 133, 82, 0.08);
+  text-align: center;
   transition: all 0.3s ease;
 }
 
 .early-access-features .feature-item:hover {
-  background: rgba(79, 121, 66, 0.12);
-  border-color: rgba(79, 121, 66, 0.25);
-  transform: translateY(-2px);
+  background: linear-gradient(135deg, rgba(79, 121, 66, 0.06), rgba(192, 133, 82, 0.04));
+  border-color: rgba(79, 133, 82, 0.12);
+  transform: none;
 }
 
 .early-access-features .feature-icon {
   font-size: 1.2rem;
+}
+
+.feature-text {
+  font-size: 0.95rem;
+  color: var(--earth-brown);
+  font-weight: 500;
+  line-height: 1.4;
 }
 
 .early-access-cta {
