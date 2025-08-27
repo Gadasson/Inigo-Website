@@ -241,7 +241,10 @@ export default function Home() {
             <p className="quote-meaning">
               We fight back with the silence of meditation. We fight for love. We fight for what&apos;s real. 
               <br />
-              <span className="quote-echo">&ldquo;As you wish.&rdquo;</span>
+              <span className="quote-echo">
+                &ldquo;As you wish.&rdquo;
+              </span>
+              <img src="/images/heart_logo.svg" alt="Inigo" className="quote-logo" />
             </p>
           </div>
         </div>
