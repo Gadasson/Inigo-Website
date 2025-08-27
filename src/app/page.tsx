@@ -229,10 +229,41 @@ export default function Home() {
       {/* MANIFESTO full-bleed */}
       <section id="manifesto" className="manifesto">
         <div className="inner">
-          <h2>Mini‑Manifesto: Plastic to Ecstatic</h2>
-          <p>We live in a world of filters and fake smiles. A world where everything is fast, loud, and always online. But deep inside, we all know it — something real is missing.</p>
-          <p>At Inigo, we believe the way back isn&apos;t forward — it&apos;s inward. Close your eyes. Breathe. Feel your body again. See the sky again. Remember what&apos;s real again.</p>
-          <p>We&apos;re not here to escape life — we&apos;re here to enter it fully. It starts in stillness. It spreads in connection. It ends in joy. From plastic… to ecstatic. Together.</p>
+          <h2>Inigo Manifesto — Plastic to Ecstatic</h2>
+          
+          <div className="manifesto-content">
+            <p>We live in a world of filters and fake smiles.</p>
+            <p>Fast, loud, always online.</p>
+            
+            <p>A world forever trying to fix what was never broken.</p>
+            <p>A world feeding on the unpleasant, building systems that depend on pain.</p>
+            <p>Like every false source of energy, it only knows how to grow bigger.</p>
+            <p>It must be stopped.</p>
+            
+            <p>The real change begins when we drop from the head into the heart.</p>
+            <p>There, life becomes ecstatic.</p>
+            <p>There, clarity returns.</p>
+            <p>We act from joy, not hunger.</p>
+            <p>We do what must be done, without the endless chase for more.</p>
+            
+            <p>Inigo is not spirituality against material,</p>
+            <p>nor material against spirit.</p>
+            <p>It is balance — serving what is greater than us:</p>
+            <p>the world itself,</p>
+            <p>what rises above it,</p>
+            <p>what rests beneath it,</p>
+            <p>and all of us who belong to it.</p>
+            
+            <p>This is not escape.</p>
+            <p>This is arrival.</p>
+            <p>In stillness, connection spreads.</p>
+            <p>In connection, joy explodes.</p>
+            
+            <p>From plastic… to ecstatic.</p>
+            <p>The choice is here.</p>
+            <p>The choice is now.</p>
+            <p>Join us.</p>
+          </div>
           
           <div className="manifesto-quote">
             <p className="quote-text">

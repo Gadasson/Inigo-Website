@@ -312,6 +312,31 @@ p {
   font-size: 1.1rem;
 }
 
+/* Manifesto Content */
+.manifesto-content {
+  margin-bottom: 3rem;
+}
+
+.manifesto-content p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  font-size: 1.1rem;
+  color: white;
+  text-align: center;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.manifesto-content p:last-child {
+  margin-bottom: 0;
+  font-weight: 700;
+  color: #6aa363;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+}
+
 /* Manifesto Quote */
 .manifesto-quote {
   margin-top: 3rem;
