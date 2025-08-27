@@ -207,7 +207,7 @@ export default function Home() {
             <h3>Arriving in the moment</h3>
             <p>Real joy, real presence. Feeling your body, breath, and heart again. Connection without masks. Small moments that explode with beauty.</p>
             <div className="grid-2">
-              <img loading="lazy" src="/images/ecstatic-friends-compressed.jpg" alt="Family laughing in golden sunlight" />
+              <img loading="lazy" src="/images/ecstatic-family-compressed.jpg" alt="Family laughing in golden sunlight" />
               <img loading="lazy" src="/images/ecstatic-mom-compressed.jpg" alt="Person breathing in nature at sunrise" />
             </div>
           </div>
