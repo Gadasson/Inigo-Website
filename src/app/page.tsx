@@ -262,7 +262,7 @@ export default function Home() {
             <p>From plastic… to ecstatic.</p>
             <p>The choice is here.</p>
             <p>The choice is now.</p>
-            <p>Join us.</p>
+            <p>Together.</p>
           </div>
           
           <div className="manifesto-quote">
