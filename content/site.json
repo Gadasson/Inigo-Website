@@ -1,0 +1,67 @@
+{
+  "hero": {
+    "headline": "From inner to beyond. From personal to collective. From moments… to world-changing.",
+    "subhead": "Every meditation adds to our collective world state — a live counter of calm built by all of us.",
+    "primaryCta": "Join the Movement",
+    "secondaryCta": "See how it works"
+  },
+  "worldState": {
+    "miniHeadline": "Your minutes matter",
+    "copy": "Each session you meditate flows into the world state score. The more we practice, the stronger the shared frequency becomes.",
+    "bullets": [
+      "Real-time world state counter",
+      "Personal stats feeding collective progress",
+      "Seasonal rituals (full moon, solstice, Earth Day)"
+    ],
+    "cta": "Track my minutes"
+  },
+  "discoverReflect": {
+    "miniHeadline": "Discover new places. Share reflections.",
+    "copy": "Explore local meditation spots, capture your experience, and reflect in ways that inspire others.",
+    "bullets": [
+      "Map of calm spaces near you",
+      "Photos, notes, reflections after each session",
+      "Gentle prompts for deeper insights"
+    ],
+    "cta": "Explore spots"
+  },
+  "community": {
+    "miniHeadline": "Together, softly",
+    "copy": "No noisy feeds, no endless scrolling. Just presence, shared in a calm and safe space.",
+    "pillars": [
+      {"title": "Safe", "icon": "🛡️"},
+      {"title": "Simple", "icon": "✨"},
+      {"title": "Private", "icon": "🔒"},
+      {"title": "Purposeful", "icon": "🎯"}
+    ],
+    "cta": "Join the Movement"
+  },
+  "earlyAdopters": {
+    "miniHeadline": "Why join now?",
+    "bullets": [
+      "Help shape Inigo with real meditator feedback",
+      "Get early access to new features",
+      "Priority access to global rituals",
+      "Direct channel to the team"
+    ],
+    "cta": "Join Early Access"
+  },
+  "faq": [
+    {
+      "q": "Is my data private?",
+      "a": "Yes. Your sessions aggregate into the world state; sharing is optional."
+    },
+    {
+      "q": "Do I need to post?",
+      "a": "No. Meditation first. Sharing optional."
+    },
+    {
+      "q": "What does it cost?",
+      "a": "Early access is free."
+    },
+    {
+      "q": "Which platforms?",
+      "a": "iOS and Android."
+    }
+  ]
+}

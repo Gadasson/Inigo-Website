@@ -1,20 +1,18 @@
 # 🚀 Google Sheets Integration Setup
 
 ## Overview
-This guide will help you connect your "Join the First 30" form to a Google Sheet to automatically collect user applications.
+This guide will help you connect your "Join Early Access" form to a Google Sheet to automatically collect user applications.
 
 ## Step 1: Create Google Sheet
 1. Go to [Google Sheets](https://sheets.google.com)
 2. Create a new spreadsheet
-3. Name it "Inigo - First 30 Applications"
+3. Name it "Inigo - Early Access Applications"
 4. Add these headers in row 1:
    - **A1**: Timestamp
-   - **B1**: Name
+   - **B1**: Full Name
    - **C1**: Email
-   - **D1**: Discovery Source
-   - **E1**: Device OS
-   - **F1**: Motivation
-   - **G1**: Readiness Level
+   - **D1**: Device
+   - **E1**: Thoughts
 
 ## Step 2: Create Google Apps Script
 1. In your Google Sheet, go to **Extensions** → **Apps Script**
@@ -25,44 +23,42 @@ function doPost(e) {
   try {
     // Handle FormData from the website
     const formData = e.parameter;
-    
+
     // Get the active spreadsheet
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    
+
     // Check if email already exists
     const email = formData.email || '';
     if (email) {
-      const existingEmails = sheet.getRange(2, 3, sheet.getLastRow() - 1, 1).getValues(); // Column C (email)
-      const emailExists = existingEmails.flat().some(existingEmail => 
+                    const existingEmails = sheet.getRange(2, 3, sheet.getLastRow() - 1, 1).getValues(); // Column C (email)
+      const emailExists = existingEmails.flat().some(existingEmail =>
         existingEmail.toString().toLowerCase() === email.toLowerCase()
       );
-      
+
       if (emailExists) {
         return ContentService
           .createTextOutput('Email already exists. You have already applied.')
           .setMimeType(ContentService.MimeType.TEXT);
       }
     }
-    
-    // Prepare row data
-    const rowData = [
-      formData.timestamp || new Date().toISOString(),
-      formData.name || '',
-      formData.email || '',
-      formData.source || '',
-      formData.device || '',
-      formData.motivation || '',
-      formData.readiness || ''
-    ];
-    
+
+                // Prepare row data for new structure with full name
+            const rowData = [
+              formData.timestamp || new Date().toISOString(),
+              formData.fullName || '',
+              formData.email || '',
+              formData.device || '',
+              formData.thoughts || ''
+            ];
+
     // Add the row to the sheet
     sheet.appendRow(rowData);
-    
+
     // Return success response
     return ContentService
       .createTextOutput('Application submitted successfully!')
       .setMimeType(ContentService.MimeType.TEXT);
-      
+
   } catch (error) {
     // Return error response
     return ContentService
@@ -85,20 +81,14 @@ function doGet(e) {
 6. **Copy the Web App URL** (you'll need this)
 
 ## Step 4: Update Your Website
-1. Replace `YOUR_GOOGLE_APPS_SCRIPT_URL` in `src/app/page.tsx` with your actual Web App URL
-2. Uncomment the fetch code:
+1. Replace `YOUR_GOOGLE_APPS_SCRIPT_URL` in `src/components/EmailCapture.tsx` with your actual Web App URL
+2. The form is already configured to send the correct data structure
 
-```typescript
-const response = await fetch('YOUR_ACTUAL_GOOGLE_APPS_SCRIPT_URL', {
-  method: 'POST',
-  body: JSON.stringify(data),
-  headers: { 'Content-Type': 'application/json' }
-});
-
-if (!response.ok) {
-  throw new Error('Failed to submit');
-}
-```
+**Current Form Fields:**
+- Full Name (required)
+- Email Address (required)
+- Primary Device (required - iPhone/Android)
+- Additional Thoughts (optional)
 
 ## Step 5: Test the Integration
 1. Fill out the form on your website
