@@ -22,9 +22,9 @@ export default function About() {
             </div>
             
             <div className="manifesto-body">
-              <p>Every time you meditate, your presence adds to something bigger: a collective world state score that grows with each breath, each pause, each reflection.</p>
-              
-              <p>Here, meditation isn't just yours — it's ours.</p>
+                              <p>Every time you meditate, your presence adds to something bigger: a collective world state score that grows with each breath, each pause, each reflection.</p>
+                
+                <p>Here, meditation isn&apos;t just yours — it&apos;s ours.</p>
               
               <div className="manifesto-features">
                 <div className="feature-item">
@@ -45,9 +45,9 @@ export default function About() {
                 </div>
               </div>
               
-              <p>Step through the doorway into calm, connection, and possibility.</p>
-              
-              <p className="manifesto-closing">It's safe. It's exciting. And it's real.</p>
+                              <p>Step through the doorway into calm, connection, and possibility.</p>
+                
+                <p className="manifesto-closing">It&apos;s safe. It&apos;s exciting. And it&apos;s real.</p>
             </div>
           </div>
         </div>
@@ -58,7 +58,7 @@ export default function About() {
         <div className="container">
           <div className="mission-content">
             <h2>Our Mission</h2>
-            <p>We're building a world where meditation isn't just a personal practice — it's a collective force for change. Every session you complete, every moment of stillness you share, contributes to a global frequency of calm and presence.</p>
+            <p>We&apos;re building a world where meditation isn&apos;t just a personal practice — it&apos;s a collective force for change. Every session you complete, every moment of stillness you share, contributes to a global frequency of calm and presence.</p>
             
             <div className="mission-stats">
               <div className="stat-item">

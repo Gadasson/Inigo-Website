@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import emailjs from '@emailjs/browser';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -12,6 +13,11 @@ export default function Contact() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  // Initialize EmailJS
+  useEffect(() => {
+    emailjs.init('YOUR_PUBLIC_KEY'); // Replace with your EmailJS public key
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -24,12 +30,33 @@ export default function Contact() {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate form submission (replace with actual contact form handling)
-    setTimeout(() => {
-      setIsSubmitted(true);
+    try {
+      // Send email using EmailJS
+      const result = await emailjs.send(
+        'YOUR_SERVICE_ID', // Replace with your EmailJS service ID
+        'YOUR_TEMPLATE_ID', // Replace with your EmailJS template ID
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+          to_email: 'inigomeditation@gmail.com'
+        },
+        'YOUR_PUBLIC_KEY' // Replace with your EmailJS public key
+      );
+      
+      if (result.status === 200) {
+        setIsSubmitted(true);
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      } else {
+        throw new Error('Failed to send email');
+      }
+    } catch (error) {
+      console.error('Error sending email:', error);
+      alert('There was an error sending your message. Please try again or email us directly at inigomeditation@gmail.com');
+    } finally {
       setIsSubmitting(false);
-      setFormData({ name: '', email: '', subject: '', message: '' });
-    }, 1000);
+    }
   };
 
   return (
@@ -39,7 +66,7 @@ export default function Contact() {
         <div className="container">
           <div className="contact-hero-content">
             <h1>Get in Touch</h1>
-            <p>Have questions? Want to collaborate? We'd love to hear from you.</p>
+            <p>Have questions? Want to collaborate? We&apos;d love to hear from you.</p>
           </div>
         </div>
       </section>
@@ -51,7 +78,7 @@ export default function Contact() {
             {/* Contact Form */}
             <div className="contact-form-section">
               <h2>Send us a message</h2>
-              <p>We'll get back to you within 24 hours.</p>
+              <p>We&apos;ll get back to you within 24 hours.</p>
               
               {!isSubmitted ? (
                 <form onSubmit={handleSubmit} className="contact-form">
@@ -124,7 +151,7 @@ export default function Contact() {
                 <div className="success-message">
                   <div className="success-icon">✅</div>
                   <h3>Message sent successfully!</h3>
-                  <p>Thank you for reaching out. We'll get back to you soon.</p>
+                  <p>Thank you for reaching out. We&apos;ll get back to you soon.</p>
                   <button
                     onClick={() => setIsSubmitted(false)}
                     className="btn btn-secondary"
@@ -144,7 +171,7 @@ export default function Contact() {
                   <div className="method-icon">📧</div>
                   <div className="method-content">
                     <h3>Email</h3>
-                    <p><a href="mailto:hello@inigo.now">hello@inigo.now</a></p>
+                    <p><a href="mailto:inigomeditation@gmail.com">inigomeditation@gmail.com</a></p>
                     <p>For general inquiries and support</p>
                   </div>
                 </div>
@@ -153,7 +180,7 @@ export default function Contact() {
                   <div className="method-icon">🔒</div>
                   <div className="method-content">
                     <h3>Privacy</h3>
-                    <p><a href="mailto:privacy@inigo.now">privacy@inigo.now</a></p>
+                    <p><a href="mailto:inigomeditation@gmail.com">inigomeditation@gmail.com</a></p>
                     <p>For privacy and data-related questions</p>
                   </div>
                 </div>
@@ -170,7 +197,7 @@ export default function Contact() {
 
               <div className="contact-note">
                 <h3>Response Time</h3>
-                <p>We typically respond within 24 hours during business days. For urgent matters, please include "URGENT" in your subject line.</p>
+                <p>We typically respond within 24 hours during business days. For urgent matters, please include &ldquo;URGENT&rdquo; in your subject line.</p>
               </div>
             </div>
           </div>
@@ -182,7 +209,7 @@ export default function Contact() {
         <div className="container">
           <div className="cta-content">
             <h2>Ready to join the quiet revolution?</h2>
-            <p>While you're here, why not sign up for early access?</p>
+            <p>While you&apos;re here, why not sign up for early access?</p>
             <div className="cta-buttons">
               <Link href="/#early-access" className="btn btn-primary btn-large">
                 Join Early Access

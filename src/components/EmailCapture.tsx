@@ -129,7 +129,7 @@ export default function EmailCapture() {
           setCooldown(300);
           return;
         }
-      } catch (corsError) {
+      } catch {
         console.log('CORS failed, trying no-cors mode');
       }
 

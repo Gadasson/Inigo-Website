@@ -8,7 +8,7 @@ export default function Privacy() {
         <div className="container">
           <div className="privacy-hero-content">
             <h1>Privacy Policy</h1>
-            <p>Your privacy matters to us. Here's how we protect your data.</p>
+            <p>Your privacy matters to us. Here&apos;s how we protect your data.</p>
           </div>
         </div>
       </section>
@@ -66,9 +66,9 @@ export default function Privacy() {
 
             <div className="privacy-section">
               <h2>Contact Us</h2>
-              <p>If you have any questions about your privacy or data, please don't hesitate to reach out:</p>
+              <p>If you have any questions about your privacy or data, please don&apos;t hesitate to reach out:</p>
               <div className="contact-info">
-                <p><strong>Email:</strong> <a href="mailto:privacy@inigo.now">privacy@inigo.now</a></p>
+                <p><strong>Email:</strong> <a href="mailto:inigomeditation@gmail.com">inigomeditation@gmail.com</a></p>
                 <p><strong>Contact Page:</strong> <Link href="/contact">Get in Touch</Link></p>
               </div>
             </div>
