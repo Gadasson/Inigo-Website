@@ -67,7 +67,7 @@ const result = await emailjs.send(
     from_email: formData.email,
     subject: formData.subject,
     message: formData.message,
-    to_email: 'inigomeditation@gmail.com'
+    //to_email: 'inigomeditation@gmail.com'
   },
   'public_key_123' // Your public key
 );

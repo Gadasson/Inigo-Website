@@ -1,63 +1,7 @@
-'use client';
-
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import emailjs from '@emailjs/browser';
+import ContactForm from '../../components/ContactForm';
 
 export default function Contact() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
-  // Initialize EmailJS
-  useEffect(() => {
-    emailjs.init('YOUR_PUBLIC_KEY'); // Replace with your EmailJS public key
-  }, []);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    try {
-      // Send email using EmailJS
-      const result = await emailjs.send(
-        'YOUR_SERVICE_ID', // Replace with your EmailJS service ID
-        'YOUR_TEMPLATE_ID', // Replace with your EmailJS template ID
-        {
-          from_name: formData.name,
-          from_email: formData.email,
-          subject: formData.subject,
-          message: formData.message,
-          to_email: 'inigomeditation@gmail.com'
-        },
-        'YOUR_PUBLIC_KEY' // Replace with your EmailJS public key
-      );
-      
-      if (result.status === 200) {
-        setIsSubmitted(true);
-        setFormData({ name: '', email: '', subject: '', message: '' });
-      } else {
-        throw new Error('Failed to send email');
-      }
-    } catch (error) {
-      console.error('Error sending email:', error);
-      alert('There was an error sending your message. Please try again or email us directly at inigomeditation@gmail.com');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <>
@@ -80,86 +24,7 @@ export default function Contact() {
               <h2>Send us a message</h2>
               <p>We&apos;ll get back to you within 24 hours.</p>
               
-              {!isSubmitted ? (
-                <form onSubmit={handleSubmit} className="contact-form">
-                  <div className="form-group">
-                    <label htmlFor="name">Name *</label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      required
-                      placeholder="Your full name"
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="email">Email *</label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      required
-                      placeholder="your.email@example.com"
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="subject">Subject *</label>
-                    <select
-                      id="subject"
-                      name="subject"
-                      value={formData.subject}
-                      onChange={handleInputChange}
-                      required
-                    >
-                      <option value="">Select a subject</option>
-                      <option value="general">General Inquiry</option>
-                      <option value="support">Technical Support</option>
-                      <option value="partnership">Partnership</option>
-                      <option value="feedback">Feedback</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="message">Message *</label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      value={formData.message}
-                      onChange={handleInputChange}
-                      required
-                      rows={5}
-                      placeholder="Tell us what's on your mind..."
-                    ></textarea>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="btn btn-primary btn-large"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? 'Sending...' : 'Send Message'}
-                  </button>
-                </form>
-              ) : (
-                <div className="success-message">
-                  <div className="success-icon">✅</div>
-                  <h3>Message sent successfully!</h3>
-                  <p>Thank you for reaching out. We&apos;ll get back to you soon.</p>
-                  <button
-                    onClick={() => setIsSubmitted(false)}
-                    className="btn btn-secondary"
-                  >
-                    Send another message
-                  </button>
-                </div>
-              )}
+              <ContactForm />
             </div>
 
             {/* Contact Information */}
