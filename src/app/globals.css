@@ -1510,6 +1510,7 @@ p {
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   position: relative;
   overflow: hidden;
+  animation: gentlePulse 4s ease-in-out infinite;
 }
 
 .counter-circle::before {
@@ -1530,6 +1531,7 @@ p {
   text-shadow: 0 2px 4px rgba(79, 121, 66, 0.3);
   z-index: 1;
   position: relative;
+  animation: gentleBreathe 3s ease-in-out infinite;
 }
 
 .counter-label {
@@ -1542,6 +1544,32 @@ p {
 @keyframes shimmer {
   0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
   100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+@keyframes gentlePulse {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 
+      0 8px 32px rgba(79, 121, 66, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  50% { 
+    transform: scale(1.02);
+    box-shadow: 
+      0 12px 40px rgba(79, 121, 66, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+}
+
+@keyframes gentleBreathe {
+  0%, 100% { 
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% { 
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
 }
 
 /* Responsive Design */

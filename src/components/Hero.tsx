@@ -4,15 +4,19 @@ import { useEffect, useState } from 'react';
 import siteContent from '../../content/site.json';
 
 export default function Hero() {
-  const [worldStateCount, setWorldStateCount] = useState(0);
+  const [worldStateCount, setWorldStateCount] = useState(247);
 
   useEffect(() => {
-    // Animate world state counter on mount
-    const timer = setTimeout(() => {
-      setWorldStateCount(prev => prev + 1);
-    }, 100);
+    // Animate world state counter to show growth
+    const interval = setInterval(() => {
+      setWorldStateCount(prev => {
+        const newCount = prev + Math.floor(Math.random() * 3) + 1;
+        // Cap at 500 to prevent unlimited growth
+        return newCount > 500 ? 500 : newCount;
+      });
+    }, 15000 + Math.random() * 15000); // Random interval between 15-30 seconds
 
-    return () => clearTimeout(timer);
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -36,11 +40,11 @@ export default function Hero() {
         
         <div className="cta-buttons">
           <a 
-            className="btn btn-primary" 
-            href="#early-access"
-            data-event="hero_cta_clicked"
+            className="btn btn-ghost" 
+            href="/about"
+            data-event="hero_about_clicked"
           >
-            {siteContent.hero.primaryCta}
+            About Us
           </a>
           <a 
             className="btn btn-ghost" 
@@ -48,6 +52,13 @@ export default function Hero() {
             data-event="hero_cta_clicked"
           >
             {siteContent.hero.secondaryCta}
+          </a>
+          <a 
+            className="btn btn-primary" 
+            href="#early-access"
+            data-event="hero_cta_clicked"
+          >
+            {siteContent.hero.primaryCta}
           </a>
         </div>
       </div>
