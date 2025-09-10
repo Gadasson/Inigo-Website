@@ -166,6 +166,7 @@ export default function EmailCapture() {
         <div className="section-header">
           <h2>Join Early Access</h2>
           <p>Be part of the quiet revolution. Help shape Inigo from the beginning.</p>
+          <p className="world-change-tagline">Not another app, world change</p>
         </div>
         
         <div className="early-access-form">

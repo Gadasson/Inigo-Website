@@ -1,6 +1,6 @@
-# Inigo — Plastic to Ecstatic
+# Inigo — From inner to beyond
 
-A movement website that feels **joyful, ecstatic, grounded**, invites people to **join/meditate**, and explains the **Plastic → Ecstatic** shift.
+A movement website that feels **joyful, ecstatic, grounded**, invites people to **join/meditate**, and explains the **From inner to beyond** shift.
 
 ## 🎯 Mission
 
@@ -39,7 +39,7 @@ From fake to real. From numb to now. Join the frequency that transforms plastic 
 ## 📱 Sections
 
 - **Hero**: Main tagline and CTA
-- **Meaning**: Explains "Plastic to Ecstatic"
+- **Meaning**: Explains "From inner to beyond"
 - **Audience**: Who this movement is for
 - **Manifesto**: Core beliefs and principles
 - **World State**: Current reality vs. potential

@@ -1,6 +1,14 @@
+'use client';
+
 import siteContent from '../../content/site.json';
 
 export default function WorldState() {
+  const scrollToEarlyAccess = () => {
+    const element = document.getElementById('early-access');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
   return (
     <section id="how-it-works" className="world-state-section">
       <div className="container">
@@ -19,7 +27,7 @@ export default function WorldState() {
         </div>
         
         <div className="section-cta">
-          <button className="btn btn-secondary">
+          <button className="btn btn-secondary" onClick={scrollToEarlyAccess}>
             {siteContent.worldState.cta}
           </button>
         </div>

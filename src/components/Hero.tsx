@@ -47,18 +47,18 @@ export default function Hero() {
             About Us
           </a>
           <a 
-            className="btn btn-ghost" 
-            href="#how-it-works"
-            data-event="hero_cta_clicked"
-          >
-            {siteContent.hero.secondaryCta}
-          </a>
-          <a 
             className="btn btn-primary" 
             href="#early-access"
             data-event="hero_cta_clicked"
           >
             {siteContent.hero.primaryCta}
+          </a>
+          <a 
+            className="btn btn-ghost" 
+            href="/contact?subject=Guided%20meditations%20for%20Inigo&message=Hi%20Inigo%20Team%2C%0A%0AI%E2%80%99m%20a%20meditation%20guide%20and%20I%E2%80%99d%20love%20to%20share%20guided%20meditations%20to%20support%20the%20quiet%20revolution.%0A%0AHere%E2%80%99s%20a%20bit%20about%20me%20and%20what%20I%20can%20offer%3A%0A-%20Style%2FTradition%3A%20%0A-%20Experience%3A%20%0A-%20Sample%20links%3A%20%0A-%20How%20I%E2%80%99d%20like%20to%20contribute%3A%20%0A%0AThank%20you!%0A"
+            data-event="hero_cta_clicked"
+          >
+            Meditation guide? Join us
           </a>
         </div>
       </div>

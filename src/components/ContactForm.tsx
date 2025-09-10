@@ -1,10 +1,12 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import emailjs from "@emailjs/browser";
 
 type Values = { name: string; email: string; subject: string; message: string; website?: string };
 
 export default function ContactForm() {
+  const searchParams = useSearchParams();
   const [values, setValues] = useState<Values>({
     name: "",
     email: "",
@@ -14,6 +16,18 @@ export default function ContactForm() {
   });
   const [sending, setSending] = useState(false);
   const [status, setStatus] = useState<null | { ok: boolean; msg: string }>(null);
+
+  // Prefill from query params when available; ensure clearing when not present
+  useEffect(() => {
+    const subject = searchParams.get('subject') || "";
+    const message = searchParams.get('message') || "";
+
+    if (subject || message) {
+      setValues((v) => ({ ...v, subject, message }));
+    } else {
+      setValues((v) => ({ ...v, subject: "", message: "" }));
+    }
+  }, [searchParams]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;

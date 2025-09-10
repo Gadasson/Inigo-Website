@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import ScrollToTop from "../components/ScrollToTop";
 
 export const metadata: Metadata = {
-  title: "Inigo — Plastic to Ecstatic",
-  description: "From fake to real. From numb to now. Plastic → Ecstatic.",
+  title: "Inigo — From inner to beyond",
+  description: "From fake to real. From numb to now. From inner to beyond.",
   icons: { 
     icon: "/images/heart_logo.svg",
     apple: "/images/heart_logo.svg"
   },
   openGraph: {
-    title: "Inigo — Plastic to Ecstatic",
+    title: "Inigo — From inner to beyond",
     description: "Quiet is the new revolution. Join the frequency.",
     type: "website",
     url: "https://inigo.now",
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Inigo — Plastic to Ecstatic",
+    title: "Inigo — From inner to beyond",
     description: "Quiet is the new revolution. Join the frequency.",
     images: ["/images/heart_logo.svg"],
     creator: "@inigo",
@@ -56,6 +57,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         {children}
+        <ScrollToTop />
       </body>
     </html>
   );
