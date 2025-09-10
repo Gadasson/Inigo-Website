@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
 import ContactForm from '../../components/ContactForm';
 
 export default function Contact() {
@@ -24,7 +25,9 @@ export default function Contact() {
               <h2>Send us a message</h2>
               <p>We&apos;ll get back to you within 24 hours.</p>
               
-              <ContactForm />
+              <Suspense fallback={<div>Loading contact form...</div>}>
+                <ContactForm />
+              </Suspense>
             </div>
 
             {/* Contact Information */}
