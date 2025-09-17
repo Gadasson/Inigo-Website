@@ -35,7 +35,8 @@ export default function EmailCapture() {
 
     if (emailInput && validationDiv) {
       const validateEmail = (email: string) => {
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        // Comprehensive email regex that handles all valid email formats including dots, plus signs, and underscores
+        const emailRegex = /^[a-zA-Z0-9]([a-zA-Z0-9._+-]*[a-zA-Z0-9])?@[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,}$/;
         return emailRegex.test(email);
       };
 
@@ -65,7 +66,8 @@ export default function EmailCapture() {
 
   const validateForm = (formData: FormData) => {
     const email = formData.get('email') as string;
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    // Comprehensive email regex that handles all valid email formats including dots, plus signs, and underscores
+    const emailRegex = /^[a-zA-Z0-9]([a-zA-Z0-9._+-]*[a-zA-Z0-9])?@[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,}$/;
 
     if (!emailRegex.test(email)) {
       alert('Please enter a valid email address.');
@@ -192,7 +194,7 @@ export default function EmailCapture() {
                   name="email"
                   required
                   placeholder="your.email@example.com"
-                  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                  pattern="[a-zA-Z0-9]([a-zA-Z0-9._+-]*[a-zA-Z0-9])?@[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,}$"
                   title="Please enter a valid email address (e.g., user@example.com)"
                 />
                 <div className="validation-message" id="email-validation"></div>

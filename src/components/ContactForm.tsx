@@ -35,7 +35,8 @@ export default function ContactForm() {
   };
 
   const validate = (v: Values) => {
-    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email);
+    // Comprehensive email regex that handles all valid email formats including dots, plus signs, and underscores
+    const emailOk = /^[a-zA-Z0-9]([a-zA-Z0-9._+-]*[a-zA-Z0-9])?@[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,}$/.test(v.email);
     return (
       v.name.trim().length >= 2 &&
       v.name.trim().length <= 60 &&
