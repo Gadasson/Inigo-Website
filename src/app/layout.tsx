@@ -62,6 +62,7 @@ export default function RootLayout({
           <ScrollToTop />
         </WorldStateProvider>
       </body>
+      {/* Deployment trigger */}
     </html>
   );
 }
