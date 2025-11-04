@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ScrollToTop from "../components/ScrollToTop";
+import { WorldStateProvider } from "../contexts/WorldStateContext";
 
 export const metadata: Metadata = {
   title: "Inigo — From inner to beyond",
@@ -56,8 +57,10 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/images/heart_logo.svg" />
       </head>
       <body className="antialiased">
-        {children}
-        <ScrollToTop />
+        <WorldStateProvider>
+          {children}
+          <ScrollToTop />
+        </WorldStateProvider>
       </body>
     </html>
   );

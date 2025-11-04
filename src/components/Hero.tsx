@@ -1,23 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import siteContent from '../../content/site.json';
+import { useWorldStateContext } from '../contexts/WorldStateContext';
 
 export default function Hero() {
-  const [worldStateCount, setWorldStateCount] = useState(247);
-
-  useEffect(() => {
-    // Animate world state counter to show growth
-    const interval = setInterval(() => {
-      setWorldStateCount(prev => {
-        const newCount = prev + Math.floor(Math.random() * 3) + 1;
-        // Cap at 500 to prevent unlimited growth
-        return newCount > 500 ? 500 : newCount;
-      });
-    }, 15000 + Math.random() * 15000); // Random interval between 15-30 seconds
-
-    return () => clearInterval(interval);
-  }, []);
+  const { worldState, loading } = useWorldStateContext();
+  
+  // Get current minutes from API or use fallback
+  // Fallback to 0 if no data available (prevents errors)
+  const currentMinutes = worldState?.state_info?.current_minutes ?? 0;
 
   return (
     <section className="hero">
@@ -32,7 +23,14 @@ export default function Hero() {
         <div className="world-state-counter">
           <div className="counter-display">
             <div className="counter-circle">
-              <span className="counter-number">{worldStateCount.toLocaleString()}</span>
+              {loading && (
+                <div className="counter-skeleton"></div>
+              )}
+              {!loading && (
+                <span className="counter-number">
+                  {currentMinutes.toLocaleString()}
+                </span>
+              )}
             </div>
             <span className="counter-label">collective minutes of calm</span>
           </div>
