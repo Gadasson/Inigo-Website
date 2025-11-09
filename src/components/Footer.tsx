@@ -5,6 +5,7 @@ export default function Footer() {
         <div className="footer-content">
           <div className="footer-nav">
             <a href="/about">About</a>
+            <a href="/terms">Terms</a>
             <a href="/privacy">Privacy</a>
             <a href="/contact">Contact</a>
           </div>

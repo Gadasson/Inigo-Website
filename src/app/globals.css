@@ -2019,12 +2019,13 @@ p {
   }
 }
 
-/* About, Privacy, and Contact Pages */
+/* About, Privacy, Contact, and Terms Pages */
 
 /* Page Hero Sections */
 .about-hero,
 .privacy-hero,
-.contact-hero {
+.contact-hero,
+.terms-hero {
   padding: 8rem 2rem 6rem;
   background: linear-gradient(135deg, var(--soft-sand), rgba(79, 121, 66, 0.03));
   text-align: center;
@@ -2032,7 +2033,8 @@ p {
 
 .about-hero-content h1,
 .privacy-hero-content h1,
-.contact-hero-content h1 {
+.contact-hero-content h1,
+.terms-hero-content h1 {
   font-size: clamp(2.5rem, 6vw, 4rem);
   color: var(--inigo-green);
   margin-bottom: 1rem;
@@ -2196,6 +2198,78 @@ p {
   color: var(--earth-brown);
   line-height: 1.6;
   margin-bottom: 0.8rem;
+}
+
+/* Terms Page Specific */
+.terms-hero-content {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.terms-last-updated {
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  color: var(--earth-brown);
+}
+
+.terms-content {
+  padding: 6rem 2rem;
+  background: white;
+}
+
+.terms-introduction {
+  max-width: 820px;
+  margin: 0 auto 3rem;
+}
+
+.terms-introduction p {
+  font-size: 1.1rem;
+  color: var(--earth-brown);
+  line-height: 1.7;
+}
+
+.terms-sections {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.terms-section h2 {
+  font-size: 1.8rem;
+  color: var(--inigo-green);
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+}
+
+.terms-section p {
+  font-size: 1.1rem;
+  color: var(--earth-brown);
+  line-height: 1.7;
+  margin-bottom: 1.2rem;
+}
+
+.terms-section ul {
+  margin-left: 1.5rem;
+}
+
+.terms-section li {
+  font-size: 1.1rem;
+  color: var(--earth-brown);
+  line-height: 1.6;
+  margin-bottom: 0.8rem;
+}
+
+.terms-section a {
+  color: var(--inigo-green);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-decoration-color: rgba(79, 121, 66, 0.4);
+}
+
+.terms-section a:hover {
+  color: var(--forest-green);
 }
 
 .contact-info {
