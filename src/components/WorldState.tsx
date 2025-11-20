@@ -77,9 +77,9 @@ export default function WorldState() {
   // Helper function to translate with parameter interpolation
   const translateWithParams = (key: string, params?: Record<string, string | number>) => {
     if (!params) {
-      return t(key as any);
+      return t(key as keyof typeof t);
     }
-    return t(key as any, params);
+    return t(key as keyof typeof t, params);
   };
 
   // Find matching state definition using order_index (with fallback to name matching for backward compatibility)

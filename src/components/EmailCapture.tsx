@@ -64,7 +64,7 @@ export default function EmailCapture() {
         emailInput.removeEventListener('blur', handleEmailInput);
       };
     }
-  }, []);
+  }, [t]);
 
   const validateForm = (formData: FormData) => {
     const email = formData.get('email') as string;

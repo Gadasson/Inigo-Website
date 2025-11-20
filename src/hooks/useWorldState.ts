@@ -66,7 +66,7 @@ export function useWorldState() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetchWorldState = useCallback(async (isRefetch = false) => {
+  const fetchWorldState = useCallback(async () => {
     try {
       // Set loading state for both initial load and manual refresh
       // This allows the UI to show loading indicators during refresh
@@ -135,9 +135,9 @@ export function useWorldState() {
 
   useEffect(() => {
     // Fetch once on mount (initial load)
-    fetchWorldState(false);
+    fetchWorldState();
   }, [fetchWorldState]);
 
-  return { worldState, loading, error, refetch: () => fetchWorldState(true) };
+  return { worldState, loading, error, refetch: () => fetchWorldState() };
 }
 

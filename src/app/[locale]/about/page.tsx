@@ -181,10 +181,10 @@ export default function About() {
             <p>{t('about.cta.subtitle')}</p>
             <div className="cta-buttons">
               <Link href={`/${locale}#early-access`} className="btn btn-primary btn-large">
-                {t('common.joinEarlyAccess', {}, { default: 'Join Early Access' })}
+                {t('common.joinEarlyAccess')}
               </Link>
               <Link href={`/${locale}/contact`} className="btn btn-ghost">
-                {t('common.getInTouch', {}, { default: 'Get in Touch' })}
+                {t('common.getInTouch')}
               </Link>
             </div>
           </div>

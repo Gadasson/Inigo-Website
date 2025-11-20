@@ -22,6 +22,7 @@ export async function generateMetadata({
   const { locale } = await params;
   
   return {
+    metadataBase: new URL('https://inigo.now'),
     title: 'Inigo — From inner to beyond',
     description: 'From fake to real. From numb to now. From inner to beyond.',
     icons: { 
@@ -69,7 +70,7 @@ export default async function LocaleLayout({
   const { locale } = await params;
 
   // Validate locale (middleware should handle this, but double-check)
-  if (!locale || !locales.includes(locale as any)) {
+  if (!locale || !locales.includes(locale as (typeof locales)[number])) {
     notFound();
   }
 
