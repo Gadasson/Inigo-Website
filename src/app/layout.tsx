@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import ScrollToTop from "../components/ScrollToTop";
-import { WorldStateProvider } from "../contexts/WorldStateContext";
 
 export const metadata: Metadata = {
   title: "Inigo — From inner to beyond",
@@ -10,43 +8,17 @@ export const metadata: Metadata = {
     icon: "/images/heart_logo.svg",
     apple: "/images/heart_logo.svg"
   },
-  openGraph: {
-    title: "Inigo — From inner to beyond",
-    description: "Quiet is the new revolution. Join the frequency.",
-    type: "website",
-    url: "https://inigo.now",
-    siteName: "Inigo",
-    images: [
-      {
-        url: "/images/heart_logo.svg",
-        width: 512,
-        height: 512,
-        alt: "Inigo - Heart Logo"
-      }
-    ],
-    locale: "en_US"
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Inigo — From inner to beyond",
-    description: "Quiet is the new revolution. Join the frequency.",
-    images: ["/images/heart_logo.svg"],
-    creator: "@inigo",
-    site: "@inigo"
-  },
-  other: {
-    "msapplication-TileColor": "#4F7942",
-    "theme-color": "#4F7942"
-  }
 };
 
+// Root layout - must have html and body tags
+// Locale-specific attributes are set in [locale]/layout.tsx via template
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
+    <html suppressHydrationWarning>
       <head>
         <meta property="og:image" content="/images/heart_logo.svg" />
         <meta property="og:image:width" content="512" />
@@ -55,14 +27,33 @@ export default function RootLayout({
         <meta name="twitter:image" content="/images/heart_logo.svg" />
         <link rel="icon" type="image/svg+xml" href="/images/heart_logo.svg" />
         <link rel="apple-touch-icon" href="/images/heart_logo.svg" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var storedLocale = localStorage.getItem('inigo-locale');
+                  var html = document.documentElement;
+                  if (storedLocale === 'he') {
+                    html.setAttribute('dir', 'rtl');
+                    html.setAttribute('lang', 'he');
+                  } else {
+                    html.setAttribute('dir', 'ltr');
+                    html.setAttribute('lang', 'en');
+                  }
+                } catch (e) {
+                  // Fallback if localStorage is not available
+                  document.documentElement.setAttribute('dir', 'ltr');
+                  document.documentElement.setAttribute('lang', 'en');
+                }
+              })();
+            `,
+          }}
+        />
       </head>
       <body className="antialiased">
-        <WorldStateProvider>
-          {children}
-          <ScrollToTop />
-        </WorldStateProvider>
+        {children}
       </body>
-      {/* Deployment trigger */}
     </html>
   );
 }

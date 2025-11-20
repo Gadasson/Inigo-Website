@@ -1,8 +1,13 @@
+'use client';
+
 import Link from 'next/link';
 import { Suspense } from 'react';
-import ContactForm from '../../components/ContactForm';
+import { useTranslations, useLocale } from 'next-intl';
+import ContactForm from '../../../components/ContactForm';
 
 export default function Contact() {
+  const t = useTranslations();
+  const locale = useLocale();
 
   return (
     <>
@@ -10,8 +15,8 @@ export default function Contact() {
       <section className="contact-hero">
         <div className="container">
           <div className="contact-hero-content">
-            <h1>Get in Touch</h1>
-            <p>Have questions? Want to collaborate? We&apos;d love to hear from you.</p>
+            <h1>{t('contact.title')}</h1>
+            <p>{t('contact.subtitle')}</p>
           </div>
         </div>
       </section>
@@ -22,8 +27,8 @@ export default function Contact() {
           <div className="contact-grid">
             {/* Contact Form */}
             <div className="contact-form-section">
-              <h2>Send us a message</h2>
-              <p>We&apos;ll get back to you within 24 hours.</p>
+              <h2>{t('contact.sendMessage')}</h2>
+              <p>{t('contact.responseTime')}</p>
               
               <Suspense fallback={<div>Loading contact form...</div>}>
                 <ContactForm />
@@ -32,40 +37,40 @@ export default function Contact() {
 
             {/* Contact Information */}
             <div className="contact-info-section">
-              <h2>Other ways to reach us</h2>
+              <h2>{t('contact.otherWays')}</h2>
               
               <div className="contact-methods">
                 <div className="contact-method">
                   <div className="method-icon">📧</div>
                   <div className="method-content">
-                    <h3>Email</h3>
-                    <p><a href="mailto:inigomeditation@gmail.com">inigomeditation@gmail.com</a></p>
-                    <p>For general inquiries and support</p>
+                    <h3>{t('contact.email')}</h3>
+                    <p><a href="mailto:inigomeditation@gmail.com">{t('contact.emailAddress')}</a></p>
+                    <p>{t('contact.emailDescription')}</p>
                   </div>
                 </div>
 
                 <div className="contact-method">
                   <div className="method-icon">🔒</div>
                   <div className="method-content">
-                    <h3>Privacy</h3>
-                    <p><a href="mailto:inigomeditation@gmail.com">inigomeditation@gmail.com</a></p>
-                    <p>For privacy and data-related questions</p>
+                    <h3>{t('contact.privacy')}</h3>
+                    <p><a href="mailto:inigomeditation@gmail.com">{t('contact.emailAddress')}</a></p>
+                    <p>{t('contact.privacyDescription')}</p>
                   </div>
                 </div>
 
                 <div className="contact-method">
                   <div className="method-icon">🌍</div>
                   <div className="method-content">
-                    <h3>Social</h3>
-                    <p>Follow us for updates and community</p>
-                    <p>Links coming soon...</p>
+                    <h3>{t('contact.social')}</h3>
+                    <p>{t('contact.socialDescription')}</p>
+                    <p>{t('contact.socialComingSoon')}</p>
                   </div>
                 </div>
               </div>
 
               <div className="contact-note">
-                <h3>Response Time</h3>
-                <p>We typically respond within 24 hours during business days. For urgent matters, please include &ldquo;URGENT&rdquo; in your subject line.</p>
+                <h3>{t('contact.responseTimeTitle')}</h3>
+                <p>{t('contact.responseTimeDescription')}</p>
               </div>
             </div>
           </div>
@@ -76,14 +81,14 @@ export default function Contact() {
       <section className="contact-cta">
         <div className="container">
           <div className="cta-content">
-            <h2>Ready to join the quiet revolution?</h2>
-            <p>While you&apos;re here, why not sign up for early access?</p>
+            <h2>{t('contact.cta.title')}</h2>
+            <p>{t('contact.cta.subtitle')}</p>
             <div className="cta-buttons">
-              <Link href="/#early-access" className="btn btn-primary btn-large">
-                Join Early Access
+              <Link href={`/${locale}#early-access`} className="btn btn-primary btn-large">
+                {t('common.joinEarlyAccess')}
               </Link>
-              <Link href="/about" className="btn btn-ghost">
-                Learn More About Us
+              <Link href={`/${locale}/about`} className="btn btn-ghost">
+                {t('common.learnMore')}
               </Link>
             </div>
           </div>

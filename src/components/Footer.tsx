@@ -1,21 +1,29 @@
+'use client';
+
+import { useTranslations, useLocale } from 'next-intl';
+import Link from 'next/link';
+
 export default function Footer() {
+  const t = useTranslations();
+  const locale = useLocale();
+
   return (
     <footer className="footer">
       <div className="container">
         <div className="footer-content">
           <div className="footer-nav">
-            <a href="/about">About</a>
-            <a href="/terms">Terms</a>
-            <a href="/privacy">Privacy</a>
-            <a href="/contact">Contact</a>
+            <Link href={`/${locale}/about`}>{t('common.about')}</Link>
+            <Link href={`/${locale}/terms`}>{t('common.terms')}</Link>
+            <Link href={`/${locale}/privacy`}>{t('common.privacy')}</Link>
+            <Link href={`/${locale}/contact`}>{t('common.contact')}</Link>
           </div>
           
 
         </div>
         
         <div className="footer-bottom">
-          <p>Inigo — From inner to beyond · Quiet is the new power</p>
-          <p>#FromInnerToBeyond · #QuietRevolution · #InigoMoments</p>
+          <p>{t('footer.tagline')}</p>
+          <p>{t('footer.hashtags')}</p>
         </div>
       </div>
     </footer>

@@ -1129,6 +1129,10 @@ p {
     padding: 1rem;
   }
   
+  .badge {
+    margin-top: 3rem;
+  }
+  
   .card {
     padding: 1.5rem;
   }
@@ -1624,6 +1628,18 @@ p {
   line-height: 1.7;
   color: var(--deep-earth);
   margin: 0 0 2rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.status-message {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--inigo-green);
+  margin: 0 0 1.5rem;
+  font-weight: 600;
+  text-align: center;
   max-width: 700px;
   margin-left: auto;
   margin-right: auto;
@@ -2888,5 +2904,318 @@ p {
     font-size: 1.2rem !important;
     padding: 0.8rem 1.5rem !important;
     margin: 1rem auto 0 !important;
+  }
+}
+
+/* Language Switcher */
+.language-switcher {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 1000;
+  display: flex;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  padding: 0.5rem;
+  border-radius: 999px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+[dir="rtl"] .language-switcher {
+  right: auto;
+  left: 1.5rem;
+}
+
+.lang-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  background: transparent;
+  color: var(--deep-earth);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: 999px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.lang-btn:hover {
+  background: rgba(79, 121, 66, 0.1);
+}
+
+.lang-btn.active {
+  background: var(--inigo-green);
+  color: white;
+}
+
+/* Mobile: Icon button */
+.lang-icon-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  background: transparent;
+  color: var(--deep-earth);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: 999px;
+  transition: all 0.2s ease;
+}
+
+.lang-icon-btn:hover {
+  background: rgba(79, 121, 66, 0.1);
+}
+
+.lang-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.lang-current-mobile {
+  font-size: 0.85rem;
+}
+
+/* Popover */
+.lang-popover {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  padding: 0.5rem;
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  animation: popoverFadeIn 0.2s ease-out;
+  z-index: 1001;
+}
+
+/* For LTR (English), align popover to right edge to match button position */
+[dir="ltr"] .lang-popover {
+  right: 0;
+  left: auto;
+}
+
+[dir="rtl"] .lang-popover {
+  right: auto;
+  left: 0;
+}
+
+@keyframes popoverFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.lang-option {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--deep-earth);
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  text-align: center;
+  display: block;
+}
+
+.lang-option:hover {
+  background: rgba(79, 121, 66, 0.1);
+}
+
+.lang-option.active {
+  background: var(--inigo-green);
+  color: white;
+  cursor: default;
+}
+
+.brand-logo-link {
+  position: fixed;
+  top: 1.5rem;
+  left: 1.5rem;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  color: var(--deep-earth);
+  font-weight: 600;
+}
+
+.brand-logo-link:hover {
+  transform: translateY(-1px);
+}
+
+.brand-logo-text {
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.home-shortcut-btn {
+  position: fixed;
+  bottom: 1.75rem;
+  right: 1.75rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 999px;
+  background: var(--deep-earth);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.home-shortcut-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+}
+
+.home-shortcut-icon {
+  line-height: 1;
+}
+
+[dir="rtl"] .brand-logo-link {
+  left: auto;
+  right: 1.5rem;
+}
+
+[dir="rtl"] .home-shortcut-btn {
+  right: auto;
+  left: 1.75rem;
+}
+
+/* RTL Support */
+[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir="rtl"] .container {
+  text-align: right;
+}
+
+[dir="rtl"] section {
+  text-align: right;
+}
+
+/* Keep hero sections centered in RTL */
+[dir="rtl"] .about-hero,
+[dir="rtl"] .privacy-hero,
+[dir="rtl"] .contact-hero,
+[dir="rtl"] .terms-hero,
+[dir="rtl"] .hero {
+  text-align: center;
+}
+
+/* Keep hero content centered in RTL */
+[dir="rtl"] .about-hero-content,
+[dir="rtl"] .privacy-hero-content,
+[dir="rtl"] .contact-hero-content,
+[dir="rtl"] .terms-hero-content,
+[dir="rtl"] .hero-inner {
+  text-align: center;
+}
+
+/* Keep hero headings centered in RTL */
+[dir="rtl"] .about-hero-content h1,
+[dir="rtl"] .privacy-hero-content h1,
+[dir="rtl"] .contact-hero-content h1,
+[dir="rtl"] .terms-hero-content h1,
+[dir="rtl"] .hero h1 {
+  text-align: center;
+}
+
+[dir="rtl"] .footer-nav {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .cta-buttons {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .early-access-form {
+  text-align: right;
+}
+
+[dir="rtl"] .early-access-form .form-row {
+  direction: rtl;
+}
+
+[dir="rtl"] .early-access-form .form-group label {
+  text-align: right;
+}
+
+[dir="rtl"] .early-access-form .form-group input,
+[dir="rtl"] .early-access-form .form-group select,
+[dir="rtl"] .early-access-form .form-group textarea {
+  text-align: right;
+}
+
+[dir="rtl"] .early-access-form .validation-message,
+[dir="rtl"] .early-access-form .form-note {
+  text-align: right;
+}
+
+[dir="rtl"] .form-actions {
+  text-align: right;
+}
+
+@media (max-width: 768px) {
+  .language-switcher {
+    top: 1rem;
+    right: 1rem;
+    padding: 0.4rem;
+  }
+
+  [dir="rtl"] .language-switcher {
+    left: 1rem;
+  }
+
+  .lang-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .brand-logo-link {
+    top: 1rem;
+    left: 1rem;
+    padding: 0.35rem 0.75rem;
+  }
+
+  [dir="rtl"] .brand-logo-link {
+    right: 1rem;
+  }
+
+  .brand-logo-text {
+    font-size: 0.85rem;
+  }
+
+  .home-shortcut-btn {
+    bottom: 1.25rem;
+    right: 1.25rem;
+  }
+
+  [dir="rtl"] .home-shortcut-btn {
+    left: 1.25rem;
   }
 }

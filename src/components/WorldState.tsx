@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useCallback, useRef, useEffect } from 'react';
-import siteContent from '../../content/site.json';
+import { useTranslations } from 'next-intl';
 import { useWorldStateContext } from '../contexts/WorldStateContext';
 
 export default function WorldState() {
+  const t = useTranslations('worldState');
   const { worldState, loading, error, refetch } = useWorldStateContext();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [cooldown, setCooldown] = useState(false);
@@ -73,9 +74,18 @@ export default function WorldState() {
     // Note: isRefreshing will be set to false by useEffect when loading becomes false
   }, [cooldown, isRefreshing, refetch]);
 
-  // Find matching state definition (with fallback)
+  // Helper function to translate with parameter interpolation
+  const translateWithParams = (key: string, params?: Record<string, string | number>) => {
+    if (!params) {
+      return t(key as any);
+    }
+    return t(key as any, params);
+  };
+
+  // Find matching state definition using order_index (with fallback to name matching for backward compatibility)
   const currentStateDef = worldState?.state_definitions?.find(
-    def => def.name === worldState?.state_info?.main_state
+    def => def.order_index === worldState?.state_info?.main_state_number || 
+           def.name === worldState?.state_info?.main_state
   ) ?? null;
 
   // Format minutes to next state
@@ -114,8 +124,8 @@ export default function WorldState() {
     <section id="how-it-works" className="world-state-section">
       <div className="container">
         <div className="section-header">
-          <h2>{siteContent.worldState.miniHeadline}</h2>
-          <p>{siteContent.worldState.copy}</p>
+          <h2>{t('miniHeadline')}</h2>
+          <p>{t('copy')}</p>
         </div>
 
         {/* World State Display - Skeleton Placeholder */}
@@ -148,7 +158,7 @@ export default function WorldState() {
         {error && !worldState && (
           <div className="world-state-display">
             <p style={{ color: '#e74c3c' }}>
-              Unable to load world state. Please try again later.
+              {t('error')}
               {process.env.NODE_ENV === 'development' && (
                 <span style={{ display: 'block', fontSize: '0.9rem', marginTop: '0.5rem', opacity: 0.8 }}>
                   Error: {error.message}
@@ -167,14 +177,14 @@ export default function WorldState() {
                 <span 
                   className={`refresh-loading-text ${showLoading ? 'visible' : 'hidden'}`}
                 >
-                  Loading world state...
+                  {t('loading')}
                 </span>
                 <button
                   className={`refresh-button ${showLoading ? 'refreshing' : ''}`}
                   onClick={handleRefresh}
                   disabled={showLoading}
-                  title="Refresh world state"
-                  aria-label="Refresh world state"
+                  title={t('refresh')}
+                  aria-label={t('refresh')}
                   type="button"
                   tabIndex={0}
                 >
@@ -184,13 +194,38 @@ export default function WorldState() {
               {currentStateDef && (
                 <div className="state-header" style={{ color: currentStateDef.color }}>
                   <span className="state-icon">{getIconEmoji(currentStateDef.icon)}</span>
-                  <h3 className="state-name">{worldState?.state_info?.main_state ?? 'Unknown State'}</h3>
-                  <p className="sub-state-name">{worldState?.state_info?.sub_state ?? ''}</p>
+                  <h3 className="state-name">
+                    {worldState?.state_info?.main_state_key 
+                      ? translateWithParams(worldState.state_info.main_state_key)
+                      : (worldState?.state_info?.main_state ?? 'Unknown State')}
+                  </h3>
+                  <p className="sub-state-name">
+                    {worldState?.state_info?.sub_state_key
+                      ? translateWithParams(worldState.state_info.sub_state_key)
+                      : (worldState?.state_info?.sub_state ?? '')}
+                  </p>
                 </div>
               )}
               
               {currentStateDef && (
-                <p className="state-description">{currentStateDef.description}</p>
+                <p className="state-description">
+                  {worldState?.state_info?.main_state_key && currentStateDef.description_key
+                    ? translateWithParams(currentStateDef.description_key)
+                    : (currentStateDef.description || '')}
+                </p>
+              )}
+
+              {/* Status Message */}
+              {worldState?.status_code && (
+                <div className="status-message">
+                  {translateWithParams(worldState.status_code, {
+                    current: worldState.state_info?.current_minutes ?? 0,
+                    target: worldState.target_minutes_today ?? 0,
+                    overflow: worldState.state_info?.progress_percentage > 100 
+                      ? Math.round(worldState.state_info.progress_percentage - 100)
+                      : 0
+                  })}
+                </div>
               )}
 
               {/* Progress Bar */}
@@ -206,23 +241,27 @@ export default function WorldState() {
                 </div>
                 <div className="progress-meta">
                   <span>
-                    <strong>{(worldState?.state_info?.progress_percentage ?? 0).toFixed(1)}%</strong> complete
+                    <strong>{(worldState?.state_info?.progress_percentage ?? 0).toFixed(1)}%</strong> {t('complete')}
                   </span>
                   <span>
-                    <strong>{(worldState?.state_info?.current_minutes ?? 0).toLocaleString()}</strong> minutes
+                    <strong>{(worldState?.state_info?.current_minutes ?? 0).toLocaleString()}</strong> {t('minutes')}
                   </span>
                   <span>
-                    <strong>{worldState?.state_info?.active_users ?? 0}</strong> active users
+                    <strong>{worldState?.state_info?.active_users ?? 0}</strong> {t('activeUsers')}
                   </span>
                 </div>
               </div>
 
               {/* Next State Info */}
-              {worldState?.state_info?.next_sub_state && (
+              {(worldState?.state_info?.next_sub_state_key || worldState?.state_info?.next_sub_state) && (
                 <div className="next-state-info">
                   <p>
-                    <strong>{formatMinutesToNext(worldState.state_info.minutes_to_next ?? 0)}</strong> until{' '}
-                    <strong>{worldState.state_info.next_sub_state}</strong>
+                    <strong>{formatMinutesToNext(worldState.state_info.minutes_to_next ?? 0)}</strong> {t('until')}{' '}
+                    <strong>
+                      {worldState.state_info.next_sub_state_key
+                        ? translateWithParams(worldState.state_info.next_sub_state_key)
+                        : (worldState.state_info.next_sub_state ?? '')}
+                    </strong>
                   </p>
                 </div>
               )}
@@ -230,7 +269,7 @@ export default function WorldState() {
 
             {/* Features */}
             <div className="world-state-features">
-              {siteContent.worldState.bullets.map((bullet, index) => (
+              {(t.raw('bullets') as string[]).map((bullet, index) => (
                 <div key={index} className="feature-item">
                   <div className="feature-icon">✨</div>
                   <span>{bullet}</span>

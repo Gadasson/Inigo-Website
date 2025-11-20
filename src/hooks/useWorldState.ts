@@ -1,15 +1,27 @@
 import { useState, useEffect, useCallback } from 'react';
 
 interface WorldStateInfo {
+  // Legacy fields (for backward compatibility)
   main_state: string;
   sub_state: string;
+  next_sub_state: string | null;
+  
+  // Numeric identifiers
+  main_state_number: number;
+  sub_state_number: number;
+  
+  // Translation keys (USE THESE!)
+  main_state_key: string;
+  sub_state_key: string;
+  next_sub_state_key: string | null;
+  
+  // Progress data
   current_minutes: number;
   active_users: number;
   progress_percentage: number;
   next_threshold: number;
   user_multiplier: number;
   minutes_to_next: number;
-  next_sub_state: string | null;
   timestamp: string;
 }
 
@@ -17,15 +29,33 @@ interface StateDefinition {
   id: number;
   name: string;
   description: string;
+  state_key: string;
+  description_key: string;
   icon: string;
   color: string;
   threshold: number;
   order_index: number;
 }
 
+interface SubStateDefinition {
+  main_state: number;
+  sub_state: number;
+  name: string;
+  description: string;
+  state_key: string;
+  description_key: string;
+}
+
 interface WorldStateResponse {
+  status_code: string;
+  total_minutes_today: number;
+  target_minutes_today: number;
+  users_today: number;
+  streak_days: number;
+  server_timestamp: string;
   state_info: WorldStateInfo;
   state_definitions: StateDefinition[];
+  substate_definitions: SubStateDefinition[];
 }
 
 // Use local API route as proxy to avoid CORS issues in development

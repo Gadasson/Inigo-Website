@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 
 export default function EmailCapture() {
+  const t = useTranslations('emailCapture');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [cooldown, setCooldown] = useState(0);
@@ -46,10 +48,10 @@ export default function EmailCapture() {
           validationDiv.textContent = '';
           validationDiv.className = 'validation-message';
         } else if (validateEmail(email)) {
-          validationDiv.textContent = '✓ Valid email format';
+          validationDiv.textContent = t('validEmail');
           validationDiv.className = 'validation-message valid';
         } else {
-          validationDiv.textContent = '✗ Please enter a valid email address';
+          validationDiv.textContent = t('invalidEmail');
           validationDiv.className = 'validation-message invalid';
         }
       };
@@ -70,7 +72,7 @@ export default function EmailCapture() {
     const emailRegex = /^[a-zA-Z0-9]([a-zA-Z0-9._+-]*[a-zA-Z0-9])?@[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,}$/;
 
     if (!emailRegex.test(email)) {
-      alert('Please enter a valid email address.');
+      alert(t('invalidEmail'));
       return false;
     }
 
@@ -156,7 +158,7 @@ export default function EmailCapture() {
 
     } catch (error) {
       console.error('Error submitting form:', error);
-      alert('There was an error submitting your application. Please try again.');
+      alert(t('invalidEmail')); // Using a generic error message
     } finally {
       setIsSubmitting(false);
     }
@@ -166,28 +168,28 @@ export default function EmailCapture() {
     <section id="early-access" className="early-access-section">
       <div className="container">
         <div className="section-header">
-          <h2>Join Early Access</h2>
-          <p>Be part of the quiet revolution. Help shape Inigo from the beginning.</p>
-          <p className="world-change-tagline">Not another app, world change</p>
+          <h2>{t('title')}</h2>
+          <p>{t('subtitle')}</p>
+          <p className="world-change-tagline">{t('tagline')}</p>
         </div>
         
         <div className="early-access-form">
           <form onSubmit={handleFormSubmit}>
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="fullName">Full Name *</label>
+                <label htmlFor="fullName">{t('fullName')} *</label>
                 <input
                   type="text"
                   id="fullName"
                   name="fullName"
                   required
-                  placeholder="Your full name"
-                  title="Please enter your full name"
+                  placeholder={t('fullName')}
+                  title={t('fullName')}
                 />
               </div>
               
               <div className="form-group">
-                <label htmlFor="email">Email Address *</label>
+                <label htmlFor="email">{t('email')} *</label>
                 <input
                   type="email"
                   id="email"
@@ -195,7 +197,7 @@ export default function EmailCapture() {
                   required
                   placeholder="your.email@example.com"
                   pattern="[a-zA-Z0-9]([a-zA-Z0-9._+-]*[a-zA-Z0-9])?@[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,}$"
-                  title="Please enter a valid email address (e.g., user@example.com)"
+                  title={t('invalidEmail')}
                 />
                 <div className="validation-message" id="email-validation"></div>
               </div>
@@ -203,21 +205,21 @@ export default function EmailCapture() {
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="device">Primary Device *</label>
+                <label htmlFor="device">{t('device')} *</label>
                 <select id="device" name="device" required>
-                  <option value="">Select your device</option>
-                  <option value="iphone">iPhone</option>
-                  <option value="android">Android</option>
+                  <option value="">{t('selectDevice')}</option>
+                  <option value="iphone">{t('iphone')}</option>
+                  <option value="android">{t('android')}</option>
                 </select>
               </div>
             </div>
 
             <div className="form-group full-width">
-              <label htmlFor="thoughts">Additional thoughts (optional)</label>
+              <label htmlFor="thoughts">{t('thoughts')}</label>
               <textarea
                 id="thoughts"
                 name="thoughts"
-                placeholder="What excites you about joining Inigo? Any questions or feedback?"
+                placeholder={t('thoughtsPlaceholder')}
                 rows={3}
               ></textarea>
             </div>
@@ -227,9 +229,9 @@ export default function EmailCapture() {
               {cooldown > 0 && (
                 <div className="cooldown-message">
                   <div className="cooldown-icon">⏰</div>
-                  <p>Please wait before submitting another application</p>
+                  <p>{t('cooldownMessage')}</p>
                   <div className="cooldown-timer">
-                    <span>Next submission available in:</span>
+                    <span>{t('nextSubmission')}</span>
                     <span className="timer">{Math.floor(cooldown / 60)}:{(cooldown % 60).toString().padStart(2, '0')}</span>
                   </div>
                 </div>
@@ -241,12 +243,12 @@ export default function EmailCapture() {
                 className="btn btn-primary btn-large"
                 disabled={isSubmitting || cooldown > 0}
               >
-                                        {isSubmitting ? 'Joining...' : cooldown > 0 ? 'Submission Cooldown' : 'Join Early Access'}
+                {isSubmitting ? t('submitting') : cooldown > 0 ? t('cooldown') : t('submit')}
               </button>
 
               {/* Default Note */}
               {!isSubmitted && !duplicateEmail && cooldown === 0 && (
-                <p className="form-note">* We&apos;ll get back to you soon!</p>
+                <p className="form-note">* {t('note')}</p>
               )}
             </div>
           </form>
@@ -265,24 +267,22 @@ export default function EmailCapture() {
               <>
                 <div className="modal-header">
                   <div className="modal-icon success">🎉</div>
-                  <h3>Application Submitted!</h3>
+                  <h3>{t('successTitle')}</h3>
                 </div>
                 <div className="modal-body">
-                  <p>Thank you for applying to join early access. We&apos;ll review your application and get back to you soon.</p>
+                  <p>{t('successMessage')}</p>
                   <div className="modal-features">
-                    <div className="feature-item">
-                      <span className="feature-icon">📋</span>
-                      <span>Your application has been received</span>
-                    </div>
-                    <div className="feature-item">
-                      <span className="feature-icon">⏰</span>
-                      <span>We&apos;ll contact you soon</span>
-                    </div>
+                    {(t.raw('successFeatures') as string[]).map((feature, index) => (
+                      <div key={index} className="feature-item">
+                        <span className="feature-icon">{index === 0 ? '📋' : '⏰'}</span>
+                        <span>{feature}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
                 <div className="modal-actions">
                   <button className="btn btn-primary" onClick={() => setIsSubmitted(false)}>
-                    Got It!
+                    {t('gotIt')}
                   </button>
                 </div>
               </>
@@ -293,24 +293,22 @@ export default function EmailCapture() {
               <>
                 <div className="modal-header">
                   <div className="modal-icon duplicate">⚠️</div>
-                  <h3>Already Applied</h3>
+                  <h3>{t('duplicateTitle')}</h3>
                 </div>
                 <div className="modal-body">
-                  <p>We found an existing application with this email address. You can only submit one application per email.</p>
+                  <p>{t('duplicateMessage')}</p>
                   <div className="modal-features">
-                    <div className="feature-item">
-                      <span className="feature-icon">📋</span>
-                      <span>Your original application is on file</span>
-                    </div>
-                    <div className="feature-item">
-                      <span className="feature-icon">🔄</span>
-                      <span>If you need to update your application, please contact us</span>
-                    </div>
+                    {(t.raw('duplicateFeatures') as string[]).map((feature, index) => (
+                      <div key={index} className="feature-item">
+                        <span className="feature-icon">{index === 0 ? '📋' : '🔄'}</span>
+                        <span>{feature}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
                 <div className="modal-actions">
                   <button className="btn btn-primary" onClick={() => setDuplicateEmail(false)}>
-                    Understood
+                    {t('understood')}
                   </button>
                 </div>
               </>

@@ -1,0 +1,452 @@
+{
+  "common": {
+    "about": "About",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "contact": "Contact",
+    "joinEarlyAccess": "Join Early Access",
+    "getInTouch": "Get in Touch",
+    "learnMore": "Learn More About Us"
+  },
+  "hero": {
+    "badge": "Quiet is the new revolution",
+    "headline": "From inner to beyond. From personal to collective. From moments… to world-changing.",
+    "subhead": "Every meditation adds to our collective world state — a live counter of calm built by all of us.",
+    "counterLabel": "collective minutes of calm",
+    "aboutUs": "About Us",
+    "primaryCta": "Join the Movement",
+    "meditationGuide": "Meditation guide? Join us"
+  },
+  "worldState": {
+    "miniHeadline": "Your minutes matter",
+    "copy": "Each session you meditate flows into the world state score. The more we practice, the stronger the shared frequency becomes.",
+    "bullets": [
+      "Real-time world state counter",
+      "Personal stats feeding collective progress",
+      "Social meditation: sharing your true self helps others find their way"
+    ],
+    "cta": "Track my minutes",
+    "loading": "Loading world state...",
+    "refresh": "Refresh world state",
+    "error": "Unable to load world state. Please try again later.",
+    "complete": "complete",
+    "minutes": "minutes",
+    "activeUsers": "active users",
+    "until": "until",
+    "NO_ACTIVITY": "No activity yet",
+    "APPROACHING_TARGET": "We're making progress! {current} / {target} minutes",
+    "WORLD_TARGET_REACHED": "Goal reached! 🎉",
+    "TARGET_OVERFLOW": "Amazing! We exceeded our goal by {overflow}%",
+    "WORLD_STATE_GETTING_STARTED": "Getting Started",
+    "WORLD_STATE_GETTING_STARTED_DESCRIPTION": "Begin your meditation journey with the community",
+    "WORLD_STATE_BUILDING_COMMUNITY": "Building Community",
+    "WORLD_STATE_BUILDING_COMMUNITY_DESCRIPTION": "Growing together, one breath at a time",
+    "WORLD_STATE_GROWING_STRONG": "Growing Strong",
+    "WORLD_STATE_GROWING_STRONG_DESCRIPTION": "Strength comes from shared practice",
+    "WORLD_STATE_WORKING_TOGETHER": "Working Together",
+    "WORLD_STATE_WORKING_TOGETHER_DESCRIPTION": "Unity through collective mindfulness",
+    "WORLD_STATE_UNITED_SUCCESS": "United Success",
+    "WORLD_STATE_UNITED_SUCCESS_DESCRIPTION": "Achieving greatness as one community",
+    "SUBSTATE_1_1_FIRST_STEPS": "First Steps",
+    "SUBSTATE_1_1_FIRST_STEPS_DESCRIPTION": "Taking your first steps together",
+    "SUBSTATE_1_2_BUILDING_UP": "Building Up",
+    "SUBSTATE_1_2_BUILDING_UP_DESCRIPTION": "Building momentum as a community",
+    "SUBSTATE_1_3_STEADY_GROWTH": "Steady Growth",
+    "SUBSTATE_1_3_STEADY_GROWTH_DESCRIPTION": "Consistent progress together",
+    "SUBSTATE_2_1_EARLY_GROWTH": "Early Growth",
+    "SUBSTATE_2_1_EARLY_GROWTH_DESCRIPTION": "The community is expanding",
+    "SUBSTATE_2_2_RISING_UP": "Rising Up",
+    "SUBSTATE_2_2_RISING_UP_DESCRIPTION": "Rising together to new heights",
+    "SUBSTATE_2_3_STRONG_PROGRESS": "Strong Progress",
+    "SUBSTATE_2_3_STRONG_PROGRESS_DESCRIPTION": "Making strong progress together",
+    "SUBSTATE_3_1_GROWING_TOGETHER": "Growing Together",
+    "SUBSTATE_3_1_GROWING_TOGETHER_DESCRIPTION": "Growing stronger as one",
+    "SUBSTATE_3_2_FLOURISHING": "Flourishing",
+    "SUBSTATE_3_2_FLOURISHING_DESCRIPTION": "The community is flourishing",
+    "SUBSTATE_3_3_SHARED_SUCCESS": "Shared Success",
+    "SUBSTATE_3_3_SHARED_SUCCESS_DESCRIPTION": "Success shared by all",
+    "SUBSTATE_4_1_WORKING_TOGETHER": "Working Together",
+    "SUBSTATE_4_1_WORKING_TOGETHER_DESCRIPTION": "Collaboration at its finest",
+    "SUBSTATE_4_2_RISING_HIGHER": "Rising Higher",
+    "SUBSTATE_4_2_RISING_HIGHER_DESCRIPTION": "Reaching new heights together",
+    "SUBSTATE_4_3_PEAK_SUCCESS": "Peak Success",
+    "SUBSTATE_4_3_PEAK_SUCCESS_DESCRIPTION": "At the peak of achievement",
+    "SUBSTATE_5_1_FIRST_SUCCESS": "First Success",
+    "SUBSTATE_5_1_FIRST_SUCCESS_DESCRIPTION": "The first of many successes",
+    "SUBSTATE_5_2_GROWING_MORE": "Growing More",
+    "SUBSTATE_5_2_GROWING_MORE_DESCRIPTION": "Continuing to grow beyond",
+    "SUBSTATE_5_3_FULL_ACHIEVEMENT": "Full Achievement",
+    "SUBSTATE_5_3_FULL_ACHIEVEMENT_DESCRIPTION": "Complete achievement together"
+  },
+  "discoverReflect": {
+    "miniHeadline": "Discover new places. Share reflections.",
+    "copy": "Explore local meditation spots, capture your experience, and reflect in ways that inspire others.",
+    "bullets": [
+      "Map of calm spaces near you",
+      "Photos, notes, reflections after each session",
+      "Gentle prompts for deeper insights"
+    ],
+    "spots": [
+      {
+        "icon": "🌳",
+        "title": "Central Park",
+        "description": "Quiet corner near the lake"
+      },
+      {
+        "icon": "🏔️",
+        "title": "Mountain Trail",
+        "description": "Sunrise meditation spot"
+      },
+      {
+        "icon": "🏛️",
+        "title": "City Garden",
+        "description": "Urban oasis for reflection"
+      }
+    ],
+    "cta": "Explore spots"
+  },
+  "community": {
+    "miniHeadline": "Together, softly",
+    "copy": "No noisy feeds, no endless scrolling. Just presence, shared in a calm and safe space.",
+    "pillars": [
+      {"title": "Safe", "icon": "🛡️"},
+      {"title": "Simple", "icon": "✨"},
+      {"title": "Private", "icon": "🔒"},
+      {"title": "Purposeful", "icon": "🎯"}
+    ],
+    "cta": "Join the Movement"
+  },
+  "earlyAdopters": {
+    "miniHeadline": "Why join now?",
+    "bullets": [
+      "Help shape Inigo with real meditator feedback",
+      "Get early access to new features",
+      "Priority access to global rituals",
+      "Direct channel to the team"
+    ],
+    "cta": "Join Early Access"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "items": [
+      {
+        "q": "Is my data private?",
+        "a": "Yes. Your sessions aggregate into the world state; sharing is optional."
+      },
+      {
+        "q": "Do I need to post?",
+        "a": "No. Meditation first. Sharing optional."
+      },
+      {
+        "q": "What does it cost?",
+        "a": "Early access is free."
+      },
+      {
+        "q": "Which platforms?",
+        "a": "iOS and Android."
+      }
+    ]
+  },
+  "emailCapture": {
+    "title": "Join Early Access",
+    "subtitle": "Be part of the quiet revolution. Help shape Inigo from the beginning.",
+    "tagline": "Not another app, world change",
+    "fullName": "Full Name",
+    "email": "Email Address",
+    "device": "Primary Device",
+    "selectDevice": "Select your device",
+    "iphone": "iPhone",
+    "android": "Android",
+    "thoughts": "Additional thoughts (optional)",
+    "thoughtsPlaceholder": "What excites you about joining Inigo? Any questions or feedback?",
+    "submit": "Join Early Access",
+    "submitting": "Joining...",
+    "cooldown": "Submission Cooldown",
+    "note": "We'll get back to you soon!",
+    "cooldownMessage": "Please wait before submitting another application",
+    "nextSubmission": "Next submission available in:",
+    "successTitle": "Application Submitted!",
+    "successMessage": "Thank you for applying to join early access. We'll review your application and get back to you soon.",
+    "successFeatures": [
+      "Your application has been received",
+      "We'll contact you soon"
+    ],
+    "duplicateTitle": "Already Applied",
+    "duplicateMessage": "We found an existing application with this email address. You can only submit one application per email.",
+    "duplicateFeatures": [
+      "Your original application is on file",
+      "If you need to update your application, please contact us"
+    ],
+    "gotIt": "Got It!",
+    "understood": "Understood",
+    "validEmail": "✓ Valid email format",
+    "invalidEmail": "✗ Please enter a valid email address"
+  },
+  "footer": {
+    "tagline": "Inigo — From inner to beyond · Quiet is the new power",
+    "hashtags": "#FromInnerToBeyond · #QuietRevolution · #InigoMoments"
+  },
+  "about": {
+    "title": "About Us",
+    "heroSubtitle": "The quiet revolution starts here — together.",
+    "whyInigo": {
+      "title": "✨ Why Inigo",
+      "problem": "We've all felt it — the weight, the noise, the restlessness of life.\nMoments when calm feels far away.",
+      "solution": "So we search for a way out, a way back to ourselves.",
+      "core": "Inigo was born from that search.\nBecause we've also touched the other side — the quiet, the presence, the softest love that creates without effort.\nAnd we know how good it is.",
+      "closing": "Life isn't always calm, but together we can return to that place, again and again."
+    },
+    "whyMeditation": {
+      "title": "🌱 Why Meditation",
+      "intro": "Meditation is the most natural way to clear the mind and open the heart.\nIt is not about control or perfection.",
+      "core": "It is about release — gently letting go of the weight we carry — and in that openness, connecting more deeply than ever before.",
+      "benefits": [
+        "Senses sharpen",
+        "Action becomes clear",
+        "Presence fills the moment",
+        "Recharges us",
+        "Softens the nervous system",
+        "Brings joy back into everyday life"
+      ],
+      "closing": "Meditation recharges us, softens the nervous system, and brings joy back into everyday life, even alongside responsibilities."
+    },
+    "whyTogether": {
+      "title": "🤝 Why Together",
+      "problem": "We know how hard it is to sustain meditation when it's only for ourselves.\nThat's why habits break, why practice slips away.",
+      "transformationTitle": "Together, it's different.",
+      "transformationText": "When we meditate as one, we help each other recognize it, feel it, embrace it.\nMeditation stops being a lonely habit — and becomes the most natural, joyful, even ecstatic thing you'll want to return to again and again."
+    },
+    "collectiveWorldState": {
+      "title": "🌍 The Collective World State",
+      "subtitle": "✨ From inner to beyond. From personal to collective. From moments… to world-changing. ✨",
+      "intro": "Every meditation you take is not just yours.\nIt flows into the collective world state — a living score of calm and clarity that grows with every breath, every pause, every reflection.",
+      "vision": "Here, meditation is a shared journey:",
+      "features": [
+        "Discover new places",
+        "Share your reflections",
+        "Belong to a real community",
+        "Lift the frequency of the world, one session at a time"
+      ],
+      "closing": "Inigo is a safe space to step fully into the moment, to open, and to remember what is real.\nMeditation here is not escape — it is return.",
+      "revolutionCall": "A quiet revolution, beginning together."
+    },
+    "cta": {
+      "title": "Ready to join the quiet revolution?",
+      "subtitle": "Be part of something bigger than yourself."
+    }
+  },
+  "contact": {
+    "title": "Get in Touch",
+    "subtitle": "Have questions? Want to collaborate? We'd love to hear from you.",
+    "sendMessage": "Send us a message",
+    "responseTime": "We'll get back to you within 24 hours.",
+    "otherWays": "Other ways to reach us",
+    "email": "Email",
+    "emailAddress": "inigomeditation@gmail.com",
+    "emailDescription": "For general inquiries and support",
+    "privacy": "Privacy",
+    "privacyDescription": "For privacy and data-related questions",
+    "social": "Social",
+    "socialDescription": "Follow us for updates and community",
+    "socialComingSoon": "Links coming soon...",
+    "responseTimeTitle": "Response Time",
+    "responseTimeDescription": "We typically respond within 24 hours during business days. For urgent matters, please include \"URGENT\" in your subject line.",
+    "cta": {
+      "title": "Ready to join the quiet revolution?",
+      "subtitle": "While you're here, why not sign up for early access?"
+    }
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "subtitle": "Your privacy matters to us. Here's how we protect your data.",
+    "lastUpdated": "Last updated:",
+    "lastUpdatedDate": "November 2025",
+    "sections": {
+      "intro": {
+        "title": "Privacy Policy",
+        "text": "Your privacy matters to us. This policy explains how Inigo, developed and operated by Asaf Gadassi, collects, uses, and protects your information."
+      },
+      "dataCollection": {
+        "title": "Data Collection",
+        "text": "We collect only what's necessary to provide a meaningful meditation experience:",
+        "items": [
+          "Email address – for secure account creation and login (via Google or Apple Sign-In)",
+          "Device information – such as model and operating system, to ensure proper performance",
+          "Meditation sessions – duration and time, used to contribute anonymously to our collective world state",
+          "Optional reflections and photos – only if you choose to share them within the community"
+        ],
+        "note": "We do not collect sensitive personal information such as location history beyond what is required to show nearby meditation spots (if permission is granted)."
+      },
+      "dataUsage": {
+        "title": "How We Use Your Data",
+        "text": "Your data helps us:",
+        "items": [
+          "Create and maintain your account securely",
+          "Provide personalized and reliable meditation experiences",
+          "Update collective world-state metrics (anonymously)",
+          "Improve Inigo based on community feedback",
+          "Send essential updates about features or account information"
+        ],
+        "note": "We do not use your data for advertising or sell it to third parties."
+      },
+      "thirdParty": {
+        "title": "Third-Party Services",
+        "text": "Inigo uses trusted services to operate safely and efficiently:",
+        "items": [
+          "Firebase (Authentication, Storage, Analytics) – to handle login, store photos, and measure performance",
+          "Django Backend – to manage user profiles and meditation data securely on our private server"
+        ],
+        "note": "These services follow industry-standard security practices and comply with GDPR and other applicable privacy regulations."
+      },
+      "dataProtection": {
+        "title": "Data Protection",
+        "text": "We take your privacy seriously:",
+        "items": [
+          "All communication is encrypted in transit (HTTPS) and at rest",
+          "Access to data is strictly limited to necessary operations",
+          "Shared experiences are visible only according to your sharing choices",
+          "Meditation statistics are aggregated anonymously"
+        ]
+      },
+      "rights": {
+        "title": "Your Rights",
+        "text": "You have full control over your information:",
+        "items": [
+          "Access your personal data",
+          "Update or correct inaccurate details",
+          "Delete your account and all related data",
+          "Opt out of emails or communications",
+          "Export your data in a portable format upon request"
+        ],
+        "contact": "To exercise any of these rights, please contact us at"
+      },
+      "retention": {
+        "title": "Data Retention",
+        "text": "We keep your information only as long as needed to provide the service or as required by law. If you delete your account, all personal data will be removed within a reasonable timeframe."
+      },
+      "children": {
+        "title": "Children's Privacy",
+        "text": "Inigo is intended for users aged 16 and older. We do not knowingly collect information from children under 16. If you believe a child has used the app, please contact us for prompt deletion of their data."
+      },
+      "changes": {
+        "title": "Changes to This Policy",
+        "text": "This Privacy Policy may be updated as Inigo evolves. When changes occur, we'll update the \"Last Updated\" date and, where appropriate, notify users in-app. Your continued use of Inigo means you accept the revised policy."
+      },
+      "contact": {
+        "title": "Contact Us",
+        "text": "If you have any questions about your privacy or data, please reach out:"
+      }
+    },
+    "cta": {
+      "title": "Ready to join with confidence?",
+      "subtitle": "Your privacy is protected, your data is secure."
+    }
+  },
+  "terms": {
+    "title": "Terms and Conditions",
+    "subtitle": "Please review these terms to understand how to use Inigo respectfully and safely.",
+    "lastUpdated": "Last updated:",
+    "lastUpdatedDate": "November 2025",
+    "intro": "Welcome to Inigo, a social meditation network and mobile application developed and operated by Asaf Gadassi (\"Inigo\", \"we\", \"us\", or \"our\"). These Terms and Conditions (\"Terms\") govern your access to and use of the Inigo mobile app (the \"App\") and the Inigo website available at https://inigo.now (the \"Site\"). By using Inigo, you agree to these Terms. If you do not agree, please do not use the App or Site.",
+    "sections": {
+      "aboutInigo": {
+        "title": "1. About Inigo",
+        "text1": "Inigo is an early-stage personal project created by Asaf Gadassi as a proof of concept for a social meditation network. Its purpose is to help people connect through quiet presence, mindfulness, and shared meditative experiences.",
+        "text2": "Through Inigo, users can:",
+        "items": [
+          "Discover and share meditation spots and experiences",
+          "Track personal meditation time",
+          "Contribute to a collective world meditation counter",
+          "Share reflections, photos, and moments of presence with others"
+        ],
+        "text3": "Inigo is currently running in a small testing volume, and features may evolve or change without notice."
+      },
+      "eligibility": {
+        "title": "2. Eligibility",
+        "text": "To use Inigo, you must:",
+        "items": [
+          "Be at least 16 years old",
+          "Have the legal capacity to agree to these Terms",
+          "Use the App and Site in a respectful, lawful, and good-faith manner"
+        ]
+      },
+      "accounts": {
+        "title": "3. Accounts and Authentication",
+        "text1": "You may create an account or sign in using Google or Apple authentication. By doing so, you agree to:",
+        "items": [
+          "Provide accurate and up-to-date information",
+          "Keep your login credentials secure",
+          "Accept responsibility for all actions taken under your account"
+        ],
+        "text2": "We reserve the right to suspend or terminate accounts that violate these Terms or harm the community."
+      },
+      "userContent": {
+        "title": "4. User Content",
+        "text1": "You may post reflections, photos, and experiences (\"User Content\"). By sharing such content, you grant Asaf Gadassi a non-exclusive, royalty-free, worldwide license to use, display, and distribute that content within Inigo to operate and improve the service.",
+        "text2": "You are responsible for your User Content and agree that it will not:",
+        "items": [
+          "Violate any law or third-party rights",
+          "Contain harmful, explicit, hateful, or misleading material",
+          "Infringe on others' privacy"
+        ],
+        "text3": "We may remove or restrict any content that violates these Terms or community values."
+      },
+      "communityGuidelines": {
+        "title": "5. Community Guidelines",
+        "text1": "Inigo exists to cultivate quiet, kindness, and authentic connection. By participating, you agree to:",
+        "items": [
+          "Share only in a mindful and respectful way",
+          "Avoid harassment, hate speech, or self-promotion",
+          "Honor silence and simplicity — sometimes saying nothing is enough"
+        ],
+        "text2": "Users who act in ways that disrupt this environment may be suspended or removed."
+      },
+      "intellectualProperty": {
+        "title": "6. Intellectual Property",
+        "text": "All materials, designs, code, and content related to Inigo are created and owned by Asaf Gadassi. You may not copy, modify, or redistribute any part of Inigo without written permission."
+      },
+      "privacy": {
+        "title": "7. Privacy",
+        "text": "Your privacy is important. Inigo uses secure third-party tools such as Firebase (for authentication and storage) and Django (for backend operations). No data is sold or shared with external parties. Please review our Privacy Policy for details on how information is collected, stored, and used."
+      },
+      "experimental": {
+        "title": "8. Experimental Nature",
+        "text": "Inigo is an evolving prototype. You acknowledge that:",
+        "items": [
+          "Features may be incomplete or temporarily unavailable",
+          "Data or accounts may be reset during testing",
+          "The experience may change as development continues"
+        ]
+      },
+      "disclaimer": {
+        "title": "9. Disclaimer",
+        "text": "Inigo is not a medical or therapeutic service. It is a community space for personal reflection and shared meditation. Use the App and Site at your own discretion and consult a professional for medical or psychological concerns."
+      },
+      "limitation": {
+        "title": "10. Limitation of Liability",
+        "text": "To the fullest extent permitted by law, Asaf Gadassi shall not be liable for any indirect, incidental, or consequential damages arising from your use or inability to use Inigo."
+      },
+      "termination": {
+        "title": "11. Termination",
+        "text": "You may stop using Inigo at any time. We may suspend or delete accounts that violate these Terms, disrupt others' experiences, or threaten the integrity of the platform."
+      },
+      "changes": {
+        "title": "12. Changes to Terms",
+        "text": "These Terms may be updated as Inigo grows. When changes are made, the updated version will be published at https://inigo.now/terms. Your continued use of Inigo after changes take effect means you accept the revised Terms."
+      },
+      "contact": {
+        "title": "13. Contact",
+        "text": "If you have any questions, feedback, or concerns, please contact:",
+        "items": [
+          "Email: inigomeditation@gmail.com",
+          "Website: https://inigo.now"
+        ]
+      },
+      "governingLaw": {
+        "title": "14. Governing Law",
+        "text": "These Terms shall be governed by and construed in accordance with the laws of Israel, without regard to conflict of law principles."
+      }
+    }
+  }
+}
+
