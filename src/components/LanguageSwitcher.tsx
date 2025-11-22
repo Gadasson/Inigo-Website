@@ -103,7 +103,7 @@ export default function LanguageSwitcher() {
             aria-expanded={isOpen}
             aria-haspopup="true"
           >
-            <span className="lang-icon">🌐</span>
+            <span className="lang-icon">⇄</span>
             <span className="lang-current-mobile">{currentLabel}</span>
           </button>
           

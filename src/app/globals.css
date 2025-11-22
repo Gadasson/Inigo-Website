@@ -2973,6 +2973,8 @@ p {
 .lang-icon {
   font-size: 1.1rem;
   line-height: 1;
+  color: var(--inigo-green);
+  font-weight: 600;
 }
 
 .lang-current-mobile {
