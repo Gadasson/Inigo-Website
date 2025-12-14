@@ -3112,6 +3112,67 @@ p {
   text-align: right;
 }
 
+[dir="rtl"] .refresh-button-container {
+  right: auto;
+  left: 1.5rem;
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .refresh-loading-text {
+  text-align: left;
+}
+
+[dir="rtl"] .card,
+[dir="rtl"] .progress-wrap,
+[dir="rtl"] .status-message,
+[dir="rtl"] .state-description,
+[dir="rtl"] .next-state-info p,
+[dir="rtl"] .contact-info,
+[dir="rtl"] .contact-note,
+[dir="rtl"] .contact-form-section,
+[dir="rtl"] .contact-info-section,
+[dir="rtl"] .contact-form,
+[dir="rtl"] .privacy-section,
+[dir="rtl"] .terms-section {
+  text-align: right;
+}
+
+[dir="rtl"] .progress-meta {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+[dir="rtl"] .world-state-features .feature-item,
+[dir="rtl"] .modal-features .feature-item,
+[dir="rtl"] .manifesto-features .feature-item,
+[dir="rtl"] .collective-features .feature-item,
+[dir="rtl"] .benefits-list .benefit-item,
+[dir="rtl"] .meditation-benefits .benefit-item,
+[dir="rtl"] .contact-method,
+[dir="rtl"] .early-access-features .feature-item {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+[dir="rtl"] .contact-form label,
+[dir="rtl"] .contact-form input,
+[dir="rtl"] .contact-form select,
+[dir="rtl"] .contact-form textarea {
+  text-align: right;
+  direction: rtl;
+}
+
+[dir="rtl"] .privacy-section ul,
+[dir="rtl"] .terms-section ul {
+  margin-left: 0;
+  margin-right: 1.5rem;
+}
+
+[dir="rtl"] .privacy-section li,
+[dir="rtl"] .terms-section li {
+  text-align: right;
+}
+
 [dir="rtl"] .container {
   text-align: right;
 }
