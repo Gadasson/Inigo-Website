@@ -6,6 +6,7 @@ import { useWorldStateContext } from '../contexts/WorldStateContext';
 
 export default function WorldState() {
   const t = useTranslations('worldState');
+  const tExplainer = useTranslations('worldStateExplainer');
   const { worldState, loading, error, refetch } = useWorldStateContext();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [cooldown, setCooldown] = useState(false);
@@ -121,11 +122,12 @@ export default function WorldState() {
   };
 
   return (
-    <section id="how-it-works" className="world-state-section">
+    <section id="world-state" className="world-state-section">
       <div className="container">
         <div className="section-header">
-          <h2>{t('miniHeadline')}</h2>
-          <p>{t('copy')}</p>
+          <h2>{tExplainer('title')}</h2>
+          <p>{tExplainer('description')}</p>
+          <p className="world-state-microcopy">{tExplainer('microcopy')}</p>
         </div>
 
         {/* World State Display - Skeleton Placeholder */}

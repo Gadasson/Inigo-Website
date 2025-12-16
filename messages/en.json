@@ -9,8 +9,8 @@
     "learnMore": "Learn More About Us"
   },
   "hero": {
-    "badge": "Quiet is the new revolution",
-    "headline": "From inner to beyond. From personal to collective. From moments… to world-changing.",
+    "badge": "Begin your journey",
+    "headline": "Find your way back to quiet.",
     "subhead": "Every meditation adds to our collective world state — a live counter of calm built by all of us.",
     "counterLabel": "collective minutes of calm",
     "aboutUs": "About Us",
@@ -78,6 +78,11 @@
     "SUBSTATE_5_3_FULL_ACHIEVEMENT": "Full Achievement",
     "SUBSTATE_5_3_FULL_ACHIEVEMENT_DESCRIPTION": "Complete achievement together"
   },
+  "worldStateExplainer": {
+    "title": "A shared counter that grows",
+    "description": "Every time you meditate, your minutes are added to a shared counter. It's a quiet signal—a reminder that we're choosing presence, together.",
+    "microcopy": "Small minutes, quietly building."
+  },
   "discoverReflect": {
     "miniHeadline": "Discover new places. Share reflections.",
     "copy": "Explore local meditation spots, capture your experience, and reflect in ways that inspire others.",
@@ -109,10 +114,22 @@
     "miniHeadline": "Together, softly",
     "copy": "No noisy feeds, no endless scrolling. Just presence, shared in a calm and safe space.",
     "pillars": [
-      {"title": "Safe", "icon": "🛡️"},
-      {"title": "Simple", "icon": "✨"},
-      {"title": "Private", "icon": "🔒"},
-      {"title": "Purposeful", "icon": "🎯"}
+      {
+        "title": "Safe",
+        "icon": "🛡️"
+      },
+      {
+        "title": "Simple",
+        "icon": "✨"
+      },
+      {
+        "title": "Private",
+        "icon": "🔒"
+      },
+      {
+        "title": "Purposeful",
+        "icon": "🎯"
+      }
     ],
     "cta": "Join the Movement"
   },
@@ -449,4 +466,3 @@
     }
   }
 }
-

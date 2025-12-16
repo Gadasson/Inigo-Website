@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const API_ENDPOINT = 'https://api.inigo.now/api/world-state/';
+const API_ENDPOINT = 'https://api2.inigo.now/api/world-state/';
 
 // Fallback data when API is unavailable
 const FALLBACK_DATA = {
