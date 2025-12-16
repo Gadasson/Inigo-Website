@@ -20,12 +20,13 @@ export default function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Exclude share paths and association files from locale redirects
-  // These paths are handled by Vercel rewrites or served as static files
+  // These paths are handled by rewrites/proxies or served as static files
   const excludedPaths = [
     '/e/',
     '/s/',
     '/event/',
     '/spot/',
+    '/api/share/',
     '/apple-app-site-association',
     '/.well-known/',
     '/static/share/'
