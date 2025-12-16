@@ -1,0 +1,19 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appIDs": [
+          "5D7CFYURW8.now.inigo.app"
+        ],
+        "paths": [
+          "/e/*",
+          "/s/*",
+          "/event/*",
+          "/spot/*"
+        ]
+      }
+    ]
+  }
+}
+

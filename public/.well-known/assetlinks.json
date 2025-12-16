@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "now.inigo.app",
+      "sha256_cert_fingerprints": [
+        "1E:4D:41:E5:DD:05:15:07:9D:60:F3:58:75:39:A0:DC:6E:B2:46:B7:A9:2A:22:36:08:70:4B:4E:E4:E0:F5:61"
+      ]
+    }
+  }
+]
+
