@@ -1,22 +1,4 @@
 {
-  "rewrites": [
-    {
-      "source": "/e/:id",
-      "destination": "https://api2.inigo.now/api/share/e/:id"
-    },
-    {
-      "source": "/s/:id",
-      "destination": "https://api2.inigo.now/api/share/s/:id"
-    },
-    {
-      "source": "/event/:id",
-      "destination": "https://api2.inigo.now/api/share/event/:id"
-    },
-    {
-      "source": "/spot/:id",
-      "destination": "https://api2.inigo.now/api/share/spot/:id"
-    }
-  ],
   "headers": [
     {
       "source": "/apple-app-site-association",

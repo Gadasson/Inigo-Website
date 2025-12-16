@@ -23,14 +23,14 @@ export async function generateMetadata({
   
   return {
     metadataBase: new URL('https://inigo.now'),
-    title: 'Inigo — From inner to beyond',
-    description: 'From fake to real. From numb to now. From inner to beyond.',
+    title: 'Inigo — Find your way back to quiet.',
+    description: 'Find your way back to quiet.',
     icons: { 
       icon: '/images/heart_logo.svg',
       apple: '/images/heart_logo.svg'
     },
     openGraph: {
-      title: 'Inigo — From inner to beyond',
+      title: 'Inigo — Find your way back to quiet.',
       description: 'Quiet is the new revolution. Join the frequency.',
       type: 'website',
       url: 'https://inigo.now',
@@ -47,7 +47,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: 'summary_large_image',
-      title: 'Inigo — From inner to beyond',
+      title: 'Inigo — Find your way back to quiet.',
       description: 'Quiet is the new revolution. Join the frequency.',
       images: ['/images/heart_logo.svg'],
       creator: '@inigo',
