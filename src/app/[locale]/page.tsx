@@ -10,8 +10,8 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <WorldState />
       <DiscoverReflect />
+      <WorldState />
       <Community />
       <EarlyAdopters />
       <FAQ />
