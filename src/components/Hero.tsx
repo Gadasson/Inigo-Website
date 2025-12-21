@@ -21,6 +21,7 @@ export default function Hero() {
         <span className="badge">{t('hero.badge')}</span>
         
         <h1>{t('hero.headline')}</h1>
+        <p className="hero-heartline">{t('hero.heartline')}</p>
         
         <p>
           {subheadLines.map((line, index) => (
