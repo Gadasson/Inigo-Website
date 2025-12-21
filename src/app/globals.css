@@ -1666,6 +1666,14 @@ p {
   text-align: center;
 }
 
+.cta-note {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--earth-brown);
+  font-style: italic;
+  opacity: 0.8;
+}
+
 /* Discover & Reflect Section */
 .discover-reflect-section {
   padding: 8rem 2rem;
@@ -1691,6 +1699,20 @@ p {
 .discover-features .feature-icon {
   font-size: 2.5rem;
   color: var(--inigo-green);
+}
+
+.discover-features .feature-item h3 {
+  color: var(--inigo-green);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.discover-features .feature-item p {
+  color: var(--earth-brown);
+  font-size: 0.95rem;
+  margin: 0;
+  line-height: 1.6;
 }
 
 .discover-features span {

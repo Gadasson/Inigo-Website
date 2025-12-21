@@ -5,6 +5,11 @@ import { useTranslations } from 'next-intl';
 export default function DiscoverReflect() {
   const t = useTranslations('discoverReflect');
   
+  const cards = t.raw('cards') as {
+    title: string;
+    description: string;
+  }[];
+  
   const spots = t.raw('spots') as {
     icon: string;
     title: string;
@@ -20,10 +25,11 @@ export default function DiscoverReflect() {
         </div>
         
         <div className="discover-features">
-          {(t.raw('bullets') as string[]).map((bullet, index) => (
+          {cards.map((card, index) => (
             <div key={index} className="feature-item">
               <div className="feature-icon">🌿</div>
-              <span>{bullet}</span>
+              <h3>{card.title}</h3>
+              <p>{card.description}</p>
             </div>
           ))}
         </div>
@@ -42,6 +48,9 @@ export default function DiscoverReflect() {
           <a href="#early-access" className="btn btn-secondary">
             {t('cta')}
           </a>
+          {t('ctaNote') && (
+            <p className="cta-note">{t('ctaNote')}</p>
+          )}
         </div>
       </div>
     </section>

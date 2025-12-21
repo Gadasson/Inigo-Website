@@ -16,14 +16,40 @@
     "cta": "Track my minutes"
   },
   "discoverReflect": {
-    "miniHeadline": "Discover new places. Share reflections.",
-    "copy": "Explore local meditation spots, capture your experience, and reflect in ways that inspire others.",
-    "bullets": [
-      "Map of calm spaces near you",
-      "Photos, notes, reflections after each session",
-      "Gentle prompts for deeper insights"
+    "miniHeadline": "Create your place of calm.",
+    "copy": "A place doesn't need to be far or special. It can be your home, a corner of the garden, a view of the sky, or a spot where your heart naturally opens.",
+    "cards": [
+      {
+        "title": "Your place, your way",
+        "description": "A room, a balcony, a bench, or a familiar view."
+      },
+      {
+        "title": "Return, don't escape",
+        "description": "Come back to the same place again and again — let it hold you."
+      },
+      {
+        "title": "Gentle reflections",
+        "description": "Words, images, or silence — whatever feels safe to share."
+      }
     ],
-    "cta": "Explore spots"
+    "spots": [
+      {
+        "icon": "🏠",
+        "title": "Home",
+        "description": "A quiet corner where your body can soften."
+      },
+      {
+        "icon": "☁️",
+        "title": "Near the sky",
+        "description": "A place to watch clouds, birds, or light changing."
+      },
+      {
+        "icon": "🛤️",
+        "title": "The familiar path",
+        "description": "A spot you pass every day — now seen with presence."
+      }
+    ],
+    "cta": "Set your place of calm"
   },
   "community": {
     "miniHeadline": "Together, softly",

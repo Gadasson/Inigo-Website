@@ -84,31 +84,41 @@
     "microcopy": "Small minutes, quietly building."
   },
   "discoverReflect": {
-    "miniHeadline": "Discover new places. Share reflections.",
-    "copy": "Explore local meditation spots, capture your experience, and reflect in ways that inspire others.",
-    "bullets": [
-      "Map of calm spaces near you",
-      "Photos, notes, reflections after each session",
-      "Gentle prompts for deeper insights"
+    "miniHeadline": "Create your place of calm.",
+    "copy": "A place doesn't need to be far or special. It can be your home, a corner of the garden, a view of the sky, or a spot where your heart naturally opens.",
+    "cards": [
+      {
+        "title": "Your place, your way",
+        "description": "A room, a balcony, a bench, or a familiar view."
+      },
+      {
+        "title": "Return, don't escape",
+        "description": "Come back to the same place again and again — let it hold you."
+      },
+      {
+        "title": "Gentle reflections",
+        "description": "Words, images, or silence — whatever feels safe to share."
+      }
     ],
     "spots": [
       {
-        "icon": "🌳",
-        "title": "Central Park",
-        "description": "Quiet corner near the lake"
+        "icon": "🏠",
+        "title": "Home",
+        "description": "A quiet corner where your body can soften."
       },
       {
-        "icon": "🏔️",
-        "title": "Mountain Trail",
-        "description": "Sunrise meditation spot"
+        "icon": "☁️",
+        "title": "Near the sky",
+        "description": "A place to watch clouds, birds, or light changing."
       },
       {
-        "icon": "🏛️",
-        "title": "City Garden",
-        "description": "Urban oasis for reflection"
+        "icon": "🛤️",
+        "title": "The familiar path",
+        "description": "A spot you pass every day — now seen with presence."
       }
     ],
-    "cta": "Explore spots"
+    "cta": "Set your place of calm",
+    "ctaNote": "You can change it anytime. There is no \"right\" place."
   },
   "community": {
     "miniHeadline": "Together, softly",
@@ -239,7 +249,7 @@
       "intro": "Every meditation you take is not just yours.\nIt flows into the collective world state — a living score of calm and clarity that grows with every breath, every pause, every reflection.",
       "vision": "Here, meditation is a shared journey:",
       "features": [
-        "Discover new places",
+        "Choose your place of calm",
         "Share your reflections",
         "Belong to a real community",
         "Lift the frequency of the world, one session at a time"
@@ -371,7 +381,7 @@
         "text1": "Inigo is an early-stage personal project created by Asaf Gadassi as a proof of concept for a social meditation network. Its purpose is to help people connect through quiet presence, mindfulness, and shared meditative experiences.",
         "text2": "Through Inigo, users can:",
         "items": [
-          "Discover and share meditation spots and experiences",
+          "Choose and return to places that hold you",
           "Track personal meditation time",
           "Contribute to a collective world meditation counter",
           "Share reflections, photos, and moments of presence with others"
