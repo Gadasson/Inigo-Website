@@ -23,11 +23,11 @@ export default function Hero() {
         <h1>{t('hero.headline')}</h1>
         <p className="hero-heartline">{t('hero.heartline')}</p>
         
-        <p>
+        <p className="hero-subhead">
           {subheadLines.map((line, index) => (
             <Fragment key={index}>
               {line}
-              {index < subheadLines.length - 1 && <br />}
+              {index < subheadLines.length - 1 && <br className="hero-line-break" />}
             </Fragment>
           ))}
         </p>
