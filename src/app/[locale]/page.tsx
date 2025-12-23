@@ -1,5 +1,6 @@
 import Hero from '../../components/Hero';
-import Wonder from '../../components/Wonder';
+import WhatThisIs from '../../components/WhatThisIs';
+import HowItWorks from '../../components/HowItWorks';
 import DiscoverReflect from '../../components/DiscoverReflect';
 import PresenceInAction from '../../components/PresenceInAction';
 import WorldState from '../../components/WorldState';
@@ -12,7 +13,8 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <Wonder />
+      <WhatThisIs />
+      <HowItWorks />
       <DiscoverReflect />
       <PresenceInAction />
       <WorldState />

@@ -12,15 +12,15 @@
     "badge": "Come back here.",
     "headline": "Know Your Heart.",
     "heartline": "And let it rest on the ground.",
-    "subhead": "Every moment you choose to be here\nadds to our shared world state —\na quiet measure of presence,\nbuilt together,\nminute by minute.",
-    "counterLabel": "collective minutes of calm",
+    "subhead": "",
+    "counterLabel": "collective minutes of presence",
     "aboutUs": "About Us",
-    "primaryCta": "Join the Movement",
+    "primaryCta": "Get Early Access",
     "meditationGuide": "Meditation guide? Join us"
   },
   "worldState": {
     "miniHeadline": "Your minutes matter",
-    "copy": "Every time someone chooses presence, it flows into the world state. The more we practice, the stronger the shared frequency becomes.",
+    "copy": "Every time someone chooses presence, it flows into the world state. The more we practice, the stronger the shared presence becomes.",
     "bullets": [
       "Real-time world state counter",
       "Personal stats feeding collective progress",
@@ -39,7 +39,7 @@
     "WORLD_TARGET_REACHED": "Goal reached! 🎉",
     "TARGET_OVERFLOW": "Amazing! We exceeded our goal by {overflow}%",
     "WORLD_STATE_GETTING_STARTED": "Getting Started",
-    "WORLD_STATE_GETTING_STARTED_DESCRIPTION": "Begin your meditation journey with the community",
+    "WORLD_STATE_GETTING_STARTED_DESCRIPTION": "Begin with one moment of presence.",
     "WORLD_STATE_BUILDING_COMMUNITY": "Building Community",
     "WORLD_STATE_BUILDING_COMMUNITY_DESCRIPTION": "Growing together, one breath at a time",
     "WORLD_STATE_GROWING_STRONG": "Growing Strong",
@@ -92,13 +92,17 @@
     "title": "What Inigo is",
     "body": "Inigo is a place to put down time.\n\nNot to escape life,\nbut to meet it fully —\nas it is.\n\nYou choose a moment.\nYou stay with it.\nYou let time soften.\n\nWhat you're doing doesn't matter.\n\nSitting quietly.\nWalking without destination.\nReading.\nWorking with attention.\nMoving your body.\nTouching the earth.\nCaring for another.\n\nIf you are here —\nit counts."
   },
-  "wonder": {
-    "title": "What the heart needs",
-    "text": "Sometimes the heart doesn't need answers.\n\nIt needs a place to land.\n\nA moment where time loosens,\nand something real can be felt again."
+  "whatThisIs": {
+    "title": "What this is",
+    "body": "Inigo is a simple app\nfor being here —\nand letting that time count.\n\nYour minutes don't disappear.\n\nThey join a shared counter,\nwhere quiet moments from many lives\ncollect into something steady.\n\nNot to compare.\nNot to perform.\n\nJust to know\nyou're not the only one choosing to slow down."
+  },
+  "howItWorks": {
+    "title": "How it works",
+    "text": "Choose a moment in your day.\n\nSit, walk, read, cook,\nwork with your hands.\n\nLet it be real.\n\nInigo holds that time gently.\n\nYou can reflect on it,\nshare a few words or an image —\nor keep it to yourself.\n\nAnd as moments gather,\nsomething settles.\n\nNot excitement.\nNot noise.\n\nA quiet sense of being held,\ntogether."
   },
   "presenceInAction": {
     "title": "Presence in action",
-    "text": "Presence doesn't belong to one action.\n\nSitting with silence is one way.\n\nBut so is walking.\nReading a book.\nWorking in the garden.\nEating.\nCooking.\n\nAny moment where you are truly here —\ncan hold the heart on the ground.",
+    "text": "Presence doesn't belong to one action.\n\nSilence is one way.\nSo is walking.\nReading a book.\nWorking in the garden.\nEating.\nBeing with family.\nBeing with another heart.\n\nAny moment where you are truly here\ncan hold the heart on the ground.",
     "images": [
       {
         "src": "/images/silence.jpg",
@@ -129,6 +133,7 @@
   "discoverReflect": {
     "miniHeadline": "Create your place of presence.",
     "copy": "A place doesn't need to be far or special. It can be your home, a corner of the garden, a view of the sky, or a spot where your heart naturally opens.",
+    "clarifier": "Places in Inigo are gentle anchors — familiar spots you return to, alone or together.",
     "cards": [
       {
         "title": "Your place, your way",
@@ -184,17 +189,17 @@
         "icon": "🎯"
       }
     ],
-    "cta": "Join the Movement"
+    "cta": "Get Early Access"
   },
   "earlyAdopters": {
-    "miniHeadline": "Why join now?",
+    "miniHeadline": "Why now",
     "bullets": [
-      "Help shape a calm, human space online",
+      "Help shape a calmer, more human space online.",
       "Early access to new presence modes (quiet, walking, movement)",
       "Direct channel to the team",
-      "Be part of a quieter direction for technology"
+      "Be part of building something different"
     ],
-    "cta": "Join Early Access"
+    "cta": "Get Early Access"
   },
   "faq": {
     "title": "Frequently Asked Questions",
@@ -205,7 +210,7 @@
       },
       {
         "q": "Do I need to post?",
-        "a": "No. Meditation first. Sharing optional."
+        "a": "No. Presence first. Sharing optional."
       },
       {
         "q": "What does it cost?",

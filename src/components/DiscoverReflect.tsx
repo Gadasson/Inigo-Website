@@ -22,6 +22,7 @@ export default function DiscoverReflect() {
         <div className="section-header">
           <h2>{t('miniHeadline')}</h2>
           <p>{t('copy')}</p>
+          {t('clarifier') && <p className="section-clarifier">{t('clarifier')}</p>}
         </div>
         
         <div className="discover-features">

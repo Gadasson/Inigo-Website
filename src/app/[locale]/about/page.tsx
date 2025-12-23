@@ -50,7 +50,7 @@ export default function About() {
         <div className="about-opening-content">
           {openingLines.map((line, i) => (
             <p key={i} className="about-opening-line">
-              {line}
+                    {line}
             </p>
           ))}
         </div>
@@ -75,15 +75,15 @@ export default function About() {
                   <p key={i} className="about-paragraph">
                     {block.text.split('\n').map((line, j) => (
                       <span key={j}>
-                        {line}
+                    {line}
                         {j < block.text.split('\n').length - 1 && <br />}
-                      </span>
-                    ))}
-                  </p>
+                  </span>
                 ))}
-              </div>
-            </div>
-          </section>
+              </p>
+                ))}
+          </div>
+        </div>
+      </section>
         );
       })}
 
@@ -91,9 +91,9 @@ export default function About() {
       <section className="about-cta">
         <div className="about-container">
           <div className="about-cta-content">
-            <Link href={`/${locale}#early-access`} className="btn btn-primary btn-large">
+              <Link href={`/${locale}#early-access`} className="btn btn-primary btn-large">
               {t('about.cta')}
-            </Link>
+              </Link>
           </div>
         </div>
       </section>

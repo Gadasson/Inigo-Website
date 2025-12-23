@@ -1,6 +1,5 @@
 'use client';
 
-import { Fragment } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { useWorldStateContext } from '../contexts/WorldStateContext';
 import Link from 'next/link';
@@ -9,7 +8,6 @@ export default function Hero() {
   const t = useTranslations();
   const locale = useLocale();
   const { worldState, loading } = useWorldStateContext();
-  const subheadLines = t('hero.subhead').split('\n');
   
   // Get current minutes from API or use fallback
   // Fallback to 0 if no data available (prevents errors)
@@ -22,15 +20,6 @@ export default function Hero() {
         
         <h1>{t('hero.headline')}</h1>
         <p className="hero-heartline">{t('hero.heartline')}</p>
-        
-        <p className="hero-subhead">
-          {subheadLines.map((line, index) => (
-            <Fragment key={index}>
-              {line}
-              {index < subheadLines.length - 1 && <br className="hero-line-break" />}
-            </Fragment>
-          ))}
-        </p>
         
         {/* World State Counter */}
         <div className="world-state-counter">

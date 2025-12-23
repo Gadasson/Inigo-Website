@@ -1242,6 +1242,14 @@ html[dir="rtl"] .section-header * {
   margin: 0 auto;
 }
 
+.section-clarifier {
+  margin-top: 1.5rem;
+  font-size: 1.1rem;
+  color: var(--earth-brown);
+  font-style: italic;
+  line-height: 1.7;
+}
+
 /* Storytelling flow - enhance section spacing and rhythm */
 .wonder-section,
 .discover-reflect-section,
@@ -1758,24 +1766,71 @@ html[dir="rtl"] .section-header * {
   opacity: 0.8;
 }
 
-/* Wonder Section */
-.wonder-section {
+/* What This Is Section - Clarity Bridge */
+.what-this-is-section {
   padding: 8rem 2rem;
-  background: linear-gradient(180deg, white 0%, rgba(79, 121, 66, 0.02) 100%);
+  background: white;
   position: relative;
 }
 
-.wonder-section .section-header {
+.what-this-is-section .section-header {
   margin-bottom: 3rem;
 }
 
-.wonder-content {
+.what-this-is-content {
   max-width: 620px;
   margin: 0 auto;
   line-height: 2;
   font-size: clamp(1.15rem, 2.2vw, 1.4rem);
   color: var(--deep-earth);
   font-weight: 300;
+  text-align: center;
+}
+
+.what-this-is-content p {
+  margin: 0 0 1.5rem;
+}
+
+.what-this-is-clarifier {
+  margin-top: 2rem;
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
+  color: var(--earth-brown);
+  font-style: italic;
+}
+
+.what-this-is-spacer {
+  height: 1.5rem;
+  margin: 0;
+}
+
+/* How It Works Section */
+.how-it-works-section {
+  padding: 8rem 2rem;
+  background: linear-gradient(180deg, white 0%, rgba(79, 121, 66, 0.02) 100%);
+  position: relative;
+}
+
+.how-it-works-section .section-header {
+  margin-bottom: 3rem;
+}
+
+.how-it-works-content {
+  max-width: 620px;
+  margin: 0 auto;
+  line-height: 2;
+  font-size: clamp(1.15rem, 2.2vw, 1.4rem);
+  color: var(--deep-earth);
+  font-weight: 300;
+  text-align: center;
+}
+
+.how-it-works-content p {
+  margin: 0 0 1.5rem;
+}
+
+.how-it-works-spacer {
+  height: 1.5rem;
+  margin: 0;
 }
 
 .wonder-content p {
@@ -1787,8 +1842,10 @@ html[dir="rtl"] .section-header * {
   margin: 0;
 }
 
-html[dir="rtl"] .wonder-content,
-html[dir="rtl"] .wonder-content * {
+html[dir="rtl"] .what-this-is-content,
+html[dir="rtl"] .what-this-is-content *,
+html[dir="rtl"] .how-it-works-content,
+html[dir="rtl"] .how-it-works-content * {
   text-align: center !important;
 }
 
