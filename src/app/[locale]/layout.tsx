@@ -31,7 +31,7 @@ export async function generateMetadata({
     },
     openGraph: {
       title: 'Inigo — Know Your Heart.',
-      description: 'Quiet is the new revolution. Join the frequency.',
+      description: 'A place to slow down — together.',
       type: 'website',
       url: 'https://inigo.now',
       siteName: 'Inigo',
@@ -48,7 +48,7 @@ export async function generateMetadata({
     twitter: {
       card: 'summary_large_image',
       title: 'Inigo — Know Your Heart.',
-      description: 'Quiet is the new revolution. Join the frequency.',
+      description: 'A place to slow down — together.',
       images: ['/images/heart_logo.svg'],
       creator: '@inigo',
       site: '@inigo'
