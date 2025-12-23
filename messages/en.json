@@ -355,21 +355,21 @@
       },
       "dataCollection": {
         "title": "Data Collection",
-        "text": "We collect only what's necessary to provide a meaningful meditation experience:",
+        "text": "We collect only what's necessary to provide a meaningful presence experience:",
         "items": [
           "Email address – for secure account creation and login (via Google or Apple Sign-In)",
           "Device information – such as model and operating system, to ensure proper performance",
-          "Meditation sessions – duration and time, used to contribute anonymously to our collective world state",
+          "Presence sessions – duration and time, used to contribute anonymously to our collective world state",
           "Optional reflections and photos – only if you choose to share them within the community"
         ],
-        "note": "We do not collect sensitive personal information such as location history beyond what is required to show nearby meditation spots (if permission is granted)."
+        "note": "We do not collect sensitive personal information such as location history beyond what is required to show nearby presence spots (if permission is granted)."
       },
       "dataUsage": {
         "title": "How We Use Your Data",
         "text": "Your data helps us:",
         "items": [
           "Create and maintain your account securely",
-          "Provide personalized and reliable meditation experiences",
+          "Provide personalized and reliable presence experiences",
           "Update collective world-state metrics (anonymously)",
           "Improve Inigo based on community feedback",
           "Send essential updates about features or account information"
@@ -381,7 +381,7 @@
         "text": "Inigo uses trusted services to operate safely and efficiently:",
         "items": [
           "Firebase (Authentication, Storage, Analytics) – to handle login, store photos, and measure performance",
-          "Django Backend – to manage user profiles and meditation data securely on our private server"
+          "Django Backend – to manage user profiles and presence data securely on our private server"
         ],
         "note": "These services follow industry-standard security practices and comply with GDPR and other applicable privacy regulations."
       },
@@ -392,7 +392,7 @@
           "All communication is encrypted in transit (HTTPS) and at rest",
           "Access to data is strictly limited to necessary operations",
           "Shared experiences are visible only according to your sharing choices",
-          "Meditation statistics are aggregated anonymously"
+          "Presence statistics are aggregated anonymously"
         ]
       },
       "rights": {
@@ -434,16 +434,16 @@
     "subtitle": "Please review these terms to understand how to use Inigo respectfully and safely.",
     "lastUpdated": "Last updated:",
     "lastUpdatedDate": "November 2025",
-    "intro": "Welcome to Inigo, a social meditation network and mobile application developed and operated by Asaf Gadassi (\"Inigo\", \"we\", \"us\", or \"our\"). These Terms and Conditions (\"Terms\") govern your access to and use of the Inigo mobile app (the \"App\") and the Inigo website available at https://inigo.now (the \"Site\"). By using Inigo, you agree to these Terms. If you do not agree, please do not use the App or Site.",
+    "intro": "Welcome to Inigo, a social presence network and mobile application developed and operated by Asaf Gadassi (\"Inigo\", \"we\", \"us\", or \"our\"). These Terms and Conditions (\"Terms\") govern your access to and use of the Inigo mobile app (the \"App\") and the Inigo website available at https://inigo.now (the \"Site\"). By using Inigo, you agree to these Terms. If you do not agree, please do not use the App or Site.",
     "sections": {
       "aboutInigo": {
         "title": "1. About Inigo",
-        "text1": "Inigo is an early-stage personal project created by Asaf Gadassi as a proof of concept for a social meditation network. Its purpose is to help people connect through quiet presence, mindfulness, and shared meditative experiences.",
+        "text1": "Inigo is an early-stage personal project created by Asaf Gadassi as a proof of concept for a social presence network. Its purpose is to help people connect through quiet presence, mindfulness, and shared experiences of being present.",
         "text2": "Through Inigo, users can:",
         "items": [
           "Choose and return to places that hold you",
-          "Track personal meditation time",
-          "Contribute to a collective world meditation counter",
+          "Track personal presence time",
+          "Contribute to a collective world presence counter",
           "Share reflections, photos, and moments of presence with others"
         ],
         "text3": "Inigo is currently running in a small testing volume, and features may evolve or change without notice."
@@ -507,7 +507,7 @@
       },
       "disclaimer": {
         "title": "9. Disclaimer",
-        "text": "Inigo is not a medical or therapeutic service. It is a community space for personal reflection and shared meditation. Use the App and Site at your own discretion and consult a professional for medical or psychological concerns."
+        "text": "Inigo is not a medical, therapeutic, or diagnostic service. It is a community space for personal reflection and shared presence. Use the App and Site at your own discretion and consult a professional for medical or psychological concerns."
       },
       "limitation": {
         "title": "10. Limitation of Liability",
