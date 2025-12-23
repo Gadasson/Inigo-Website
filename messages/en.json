@@ -219,8 +219,8 @@
   },
   "emailCapture": {
     "title": "Join Early Access",
-    "subtitle": "Be part of the quiet revolution. Help shape Inigo from the beginning.",
-    "tagline": "Not another app, world change",
+    "subtitle": "You’re welcome to grow with us.",
+    "tagline": "Not another app. A different way to be here.",
     "fullName": "Full Name",
     "email": "Email Address",
     "device": "Primary Device",
@@ -254,7 +254,7 @@
   },
   "footer": {
     "tagline": "Inigo — Know Your Heart. · Quiet is the new power",
-    "hashtags": "#FromInnerToBeyond · #QuietRevolution · #InigoMoments"
+    "hashtags": "#FromInnerToBeyond · #Together · #InigoMoments"
   },
   "about": {
     "opening": "Hi.\n\nWe are Inigo.\n\nWe didn't come with answers.\n\nWe came to stay for a moment.",
@@ -339,7 +339,7 @@
     "responseTimeTitle": "Response Time",
     "responseTimeDescription": "We typically respond within 24 hours during business days. For urgent matters, please include \"URGENT\" in your subject line.",
     "cta": {
-      "title": "Ready to join the quiet revolution?",
+      "title": "Ready to slow down?",
       "subtitle": "While you're here, why not sign up for early access?"
     }
   },
