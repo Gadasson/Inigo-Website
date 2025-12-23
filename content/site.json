@@ -2,13 +2,13 @@
   "hero": {
     "headline": "Know Your Heart.",
     "heartline": "And let it rest on the ground.",
-    "subhead": "Every meditation adds to our collective world state —\na quiet measure of calm,\nbuilt together,\nminute by minute.",
+    "subhead": "Every moment you choose to be here\nadds to our shared world state —\na quiet measure of presence,\nbuilt together,\nminute by minute.",
     "primaryCta": "Join the Movement",
     "secondaryCta": "See how it works"
   },
   "worldState": {
     "miniHeadline": "Your minutes matter",
-    "copy": "Each session you meditate flows into the world state score. The more we practice, the stronger the shared frequency becomes.",
+    "copy": "Every time someone chooses presence, it flows into the world state. The more we practice, the stronger the shared frequency becomes.",
     "bullets": [
       "Real-time world state counter",
       "Personal stats feeding collective progress",
@@ -17,7 +17,7 @@
     "cta": "Track my minutes"
   },
   "discoverReflect": {
-    "miniHeadline": "Create your place of calm.",
+    "miniHeadline": "Create your place of presence.",
     "copy": "A place doesn't need to be far or special. It can be your home, a corner of the garden, a view of the sky, or a spot where your heart naturally opens.",
     "cards": [
       {
@@ -50,7 +50,7 @@
         "description": "A spot you pass every day — now seen with presence."
       }
     ],
-    "cta": "Set your place of calm"
+    "cta": "Set your place of presence"
   },
   "community": {
     "miniHeadline": "Together, softly",
@@ -66,10 +66,10 @@
   "earlyAdopters": {
     "miniHeadline": "Why join now?",
     "bullets": [
-      "Help shape Inigo with real meditator feedback",
-      "Get early access to new features",
-      "Priority access to global rituals",
-      "Direct channel to the team"
+      "Help shape a calm, human space online",
+      "Early access to new presence modes (quiet, walking, movement)",
+      "Direct channel to the team",
+      "Be part of a quieter direction for technology"
     ],
     "cta": "Join Early Access"
   },

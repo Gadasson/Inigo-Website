@@ -7,189 +7,96 @@ export default function About() {
   const t = useTranslations();
   const locale = useLocale();
 
+  const openingLines = t('about.opening').split('\n').filter(line => line.trim());
+  const bodyContent = t.raw('about.body') as Array<{ type: 'paragraph' | 'title'; text: string }>;
+
+  // Group content into sections for visual variety - each title starts a new section
+  const sections: Array<{ blocks: typeof bodyContent; bgClass: string; hasTitle: boolean }> = [];
+  let currentSection: typeof bodyContent = [];
+  let sectionIndex = 0;
+  let hasTitleInCurrent = false;
+
+  bodyContent.forEach((block, i) => {
+    if (block.type === 'title') {
+      // If we have content, save it first
+      if (currentSection.length > 0) {
+        sections.push({ 
+          blocks: currentSection, 
+          bgClass: sectionIndex % 2 === 0 ? 'about-section-light' : 'about-section-white',
+          hasTitle: hasTitleInCurrent
+        });
+        sectionIndex++;
+      }
+      // Start new section with title
+      currentSection = [block];
+      hasTitleInCurrent = true;
+    } else {
+      currentSection.push(block);
+    }
+  });
+  // Add the last section
+  if (currentSection.length > 0) {
+    sections.push({ 
+      blocks: currentSection, 
+      bgClass: sectionIndex % 2 === 0 ? 'about-section-light' : 'about-section-white',
+      hasTitle: hasTitleInCurrent
+    });
+  }
+
   return (
-    <>
-      {/* Hero Section */}
-      <section className="about-hero">
-        <div className="container">
-          <div className="about-hero-content">
-            <h1>{t('about.title')}</h1>
-            <p className="hero-subtitle">{t('about.heroSubtitle')}</p>
-          </div>
+    <div className="about-page">
+      {/* Opening Section */}
+      <section className="about-opening">
+        <div className="about-opening-content">
+          {openingLines.map((line, i) => (
+            <p key={i} className="about-opening-line">
+              {line}
+            </p>
+          ))}
         </div>
       </section>
 
-      {/* Why Inigo Section */}
-      <section className="why-inigo-section">
-        <div className="container">
-          <div className="section-content">
-            <div className="section-header">
-              <h2>{t('about.whyInigo.title')}</h2>
-            </div>
-            <div className="story-content">
-              <p className="story-problem">
-                {t('about.whyInigo.problem').split('\n').map((line, i) => (
-                  <span key={i}>
-                    {line}
-                    {i < t('about.whyInigo.problem').split('\n').length - 1 && <br />}
-                  </span>
-                ))}
-              </p>
-              <p className="story-solution">
-                {t('about.whyInigo.solution')}
-              </p>
-              <p className="story-core">
-                {t('about.whyInigo.core').split('\n').map((line, i) => (
-                  <span key={i}>
-                    {line}
-                    {i < t('about.whyInigo.core').split('\n').length - 1 && <br />}
-                  </span>
-                ))}
-              </p>
-              <p className="story-closing">
-                {t('about.whyInigo.closing')}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Why Meditation Section */}
-      <section className="why-meditation-section">
-        <div className="container">
-          <div className="section-content">
-            <div className="section-header">
-              <h2>{t('about.whyMeditation.title')}</h2>
-            </div>
-            <div className="meditation-content">
-              <p className="meditation-intro">
-                {t('about.whyMeditation.intro').split('\n').map((line, i) => (
-                  <span key={i}>
-                    {line}
-                    {i < t('about.whyMeditation.intro').split('\n').length - 1 && <br />}
-                  </span>
-                ))}
-              </p>
-              <p className="meditation-core">
-                {t('about.whyMeditation.core')}
-              </p>
-              <div className="meditation-benefits">
-                {(t.raw('about.whyMeditation.benefits') as string[]).map((benefit, index) => (
-                  <div key={index} className="benefit-item">
-                    <span className="benefit-icon">
-                      {index === 0 ? '🧠' : index === 1 ? '🎯' : index === 2 ? '✨' : index === 3 ? '🔋' : index === 4 ? '🌿' : '😊'}
-                    </span>
-                    <span>{benefit}</span>
-                  </div>
+      {/* Body Content - Split into visual sections */}
+      {sections.map((section, sectionIdx) => {
+        // Find the title in this section
+        const titleBlock = section.blocks.find(b => b.type === 'title');
+        const paragraphs = section.blocks.filter(b => b.type === 'paragraph');
+        
+        return (
+          <section key={sectionIdx} className={`about-body-section ${section.bgClass}`}>
+            <div className="about-container">
+              <div className="about-body-content">
+                {titleBlock && (
+                  <h3 className="about-section-title">
+                    {titleBlock.text}
+                  </h3>
+                )}
+                {paragraphs.map((block, i) => (
+                  <p key={i} className="about-paragraph">
+                    {block.text.split('\n').map((line, j) => (
+                      <span key={j}>
+                        {line}
+                        {j < block.text.split('\n').length - 1 && <br />}
+                      </span>
+                    ))}
+                  </p>
                 ))}
               </div>
-              <p className="meditation-closing">
-                {t('about.whyMeditation.closing')}
-              </p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Why Together Section */}
-      <section className="why-together-section">
-        <div className="container">
-          <div className="section-content">
-            <div className="section-header">
-              <h2>{t('about.whyTogether.title')}</h2>
-            </div>
-            <div className="together-content">
-              <p className="together-problem">
-                {t('about.whyTogether.problem').split('\n').map((line, i) => (
-                  <span key={i}>
-                    {line}
-                    {i < t('about.whyTogether.problem').split('\n').length - 1 && <br />}
-                  </span>
-                ))}
-              </p>
-              <div className="together-transformation">
-                <h3>{t('about.whyTogether.transformationTitle')}</h3>
-                <p>
-                  {t('about.whyTogether.transformationText').split('\n').map((line, i) => (
-                    <span key={i}>
-                      {line}
-                      {i < t('about.whyTogether.transformationText').split('\n').length - 1 && <br />}
-                    </span>
-                  ))}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Collective World State Section */}
-      <section className="collective-world-state-section">
-        <div className="container">
-          <div className="section-content">
-            <div className="section-header">
-              <h2>{t('about.collectiveWorldState.title')}</h2>
-              <p className="section-subtitle">
-                {t('about.collectiveWorldState.subtitle')}
-              </p>
-            </div>
-            <div className="collective-content">
-              <p className="collective-intro">
-                {t('about.collectiveWorldState.intro').split('\n').map((line, i) => (
-                  <span key={i}>
-                    {line}
-                    {i < t('about.collectiveWorldState.intro').split('\n').length - 1 && <br />}
-                  </span>
-                ))}
-              </p>
-              <p className="collective-vision">
-                {t('about.collectiveWorldState.vision')}
-              </p>
-              <div className="collective-features">
-                {(t.raw('about.collectiveWorldState.features') as string[]).map((feature, index) => (
-                  <div key={index} className="feature-item">
-                    <span className="feature-icon">
-                      {index === 0 ? '🌍' : index === 1 ? '💫' : index === 2 ? '❤️' : '🌱'}
-                    </span>
-                    <span>{feature}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="collective-closing">
-                <p>
-                  {t('about.collectiveWorldState.closing').split('\n').map((line, i) => (
-                    <span key={i}>
-                      {line}
-                      {i < t('about.collectiveWorldState.closing').split('\n').length - 1 && <br />}
-                    </span>
-                  ))}
-                </p>
-                <p className="revolution-call">
-                  {t('about.collectiveWorldState.revolutionCall')}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+          </section>
+        );
+      })}
 
       {/* CTA Section */}
       <section className="about-cta">
-        <div className="container">
-          <div className="cta-content">
-            <h2>{t('about.cta.title')}</h2>
-            <p>{t('about.cta.subtitle')}</p>
-            <div className="cta-buttons">
-              <Link href={`/${locale}#early-access`} className="btn btn-primary btn-large">
-                {t('common.joinEarlyAccess')}
-              </Link>
-              <Link href={`/${locale}/contact`} className="btn btn-ghost">
-                {t('common.getInTouch')}
-              </Link>
-            </div>
+        <div className="about-container">
+          <div className="about-cta-content">
+            <Link href={`/${locale}#early-access`} className="btn btn-primary btn-large">
+              {t('about.cta')}
+            </Link>
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }

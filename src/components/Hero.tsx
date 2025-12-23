@@ -64,13 +64,6 @@ export default function Hero() {
           >
             {t('hero.primaryCta')}
           </a>
-          <Link 
-            className="btn btn-ghost" 
-            href={`/${locale}/contact?subject=Guided%20meditations%20for%20Inigo&message=Hi%20Inigo%20Team%2C%0A%0AI%E2%80%99m%20a%20meditation%20guide%20and%20I%E2%80%99d%20love%20to%20share%20guided%20meditations%20to%20support%20the%20quiet%20revolution.%0A%0AHere%E2%80%99s%20a%20bit%20about%20me%20and%20what%20I%20can%20offer%3A%0A-%20Style%2FTradition%3A%20%0A-%20Experience%3A%20%0A-%20Sample%20links%3A%20%0A-%20How%20I%E2%80%99d%20like%20to%20contribute%3A%20%0A%0AThank%20you!%0A`}
-            data-event="hero_cta_clicked"
-          >
-            {t('hero.meditationGuide')}
-          </Link>
         </div>
       </div>
     </section>

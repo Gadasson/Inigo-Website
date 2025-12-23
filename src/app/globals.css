@@ -1216,13 +1216,22 @@ p {
 .section-header {
   text-align: center;
   margin-bottom: 4rem;
+  position: relative;
+}
+
+/* Ensure section headers stay centered in RTL */
+html[dir="rtl"] .section-header,
+html[dir="rtl"] .section-header * {
+  text-align: center !important;
 }
 
 .section-header h2 {
-  font-size: clamp(2rem, 4vw, 3rem);
+  font-size: clamp(1.8rem, 3.5vw, 2.5rem);
   color: var(--inigo-green);
   margin-bottom: 1.5rem;
-  font-weight: 700;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
 }
 
 .section-header p {
@@ -1231,6 +1240,46 @@ p {
   line-height: 1.6;
   max-width: 800px;
   margin: 0 auto;
+}
+
+/* Storytelling flow - enhance section spacing and rhythm */
+.wonder-section,
+.discover-reflect-section,
+.presence-in-action-section {
+  scroll-margin-top: 2rem;
+  position: relative;
+}
+
+/* Create narrative flow with subtle transitions between sections */
+.wonder-section {
+  padding-top: 10rem; /* Extra space after hero */
+}
+
+.discover-reflect-section {
+  background: white;
+  position: relative;
+}
+
+.discover-reflect-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(79, 121, 66, 0.1), transparent);
+}
+
+/* Enhance text readability and flow */
+.wonder-content p,
+.presence-in-action-text p {
+  transition: opacity 0.3s ease;
+}
+
+/* Create breathing room between major sections */
+.world-state-section {
+  padding-top: 10rem;
+  background: linear-gradient(180deg, white 0%, var(--soft-sand) 100%);
 }
 
 /* Refresh Button - Inside Card */
@@ -1573,7 +1622,7 @@ p {
 /* World State Section */
 .world-state-section {
   padding: 8rem 2rem;
-  background: linear-gradient(135deg, var(--soft-sand), rgba(79, 121, 66, 0.03));
+  background: white;
 }
 
 .world-state-features {
@@ -1707,6 +1756,232 @@ p {
   color: var(--earth-brown);
   font-style: italic;
   opacity: 0.8;
+}
+
+/* Wonder Section */
+.wonder-section {
+  padding: 8rem 2rem;
+  background: linear-gradient(180deg, white 0%, rgba(79, 121, 66, 0.02) 100%);
+  position: relative;
+}
+
+.wonder-section .section-header {
+  margin-bottom: 3rem;
+}
+
+.wonder-content {
+  max-width: 620px;
+  margin: 0 auto;
+  line-height: 2;
+  font-size: clamp(1.15rem, 2.2vw, 1.4rem);
+  color: var(--deep-earth);
+  font-weight: 300;
+}
+
+.wonder-content p {
+  margin: 0 0 1.5rem;
+}
+
+.wonder-spacer {
+  height: 1.5rem;
+  margin: 0;
+}
+
+html[dir="rtl"] .wonder-content,
+html[dir="rtl"] .wonder-content * {
+  text-align: center !important;
+}
+
+/* Foundation Section (kept for About page) */
+.foundation-section {
+  padding: 8rem 2rem;
+  background: var(--soft-sand);
+}
+
+.foundation-content {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.foundation-title {
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  color: var(--inigo-green);
+  margin-bottom: 3rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+.foundation-body {
+  line-height: 1.9;
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  color: var(--deep-earth);
+}
+
+.foundation-body p {
+  margin: 0 0 1.2rem;
+}
+
+.foundation-spacer {
+  height: 1.5rem;
+  margin: 0;
+}
+
+html[dir="rtl"] .foundation-body,
+html[dir="rtl"] .foundation-body *,
+html[dir="rtl"] .foundation-title {
+  text-align: center !important;
+}
+
+/* What Is Inigo Section (kept for About page) */
+.what-is-inigo-section {
+  padding: 8rem 2rem;
+  background: white;
+}
+
+.what-is-inigo-content {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.what-is-inigo-title {
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  color: var(--inigo-green);
+  margin-bottom: 3rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+.what-is-inigo-body {
+  line-height: 1.9;
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  color: var(--deep-earth);
+}
+
+.what-is-inigo-body p {
+  margin: 0 0 1.2rem;
+}
+
+.what-is-inigo-spacer {
+  height: 1.5rem;
+  margin: 0;
+}
+
+html[dir="rtl"] .what-is-inigo-body,
+html[dir="rtl"] .what-is-inigo-body *,
+html[dir="rtl"] .what-is-inigo-title {
+  text-align: center !important;
+}
+
+/* Presence in Action Section */
+.presence-in-action-section {
+  padding: 8rem 2rem;
+  background: linear-gradient(180deg, var(--soft-sand) 0%, rgba(79, 121, 66, 0.05) 100%);
+  position: relative;
+}
+
+.presence-in-action-section .section-header {
+  margin-bottom: 3rem;
+}
+
+.presence-in-action-content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.presence-in-action-text {
+  max-width: 680px;
+  margin: 0 auto 4rem;
+  line-height: 2;
+  font-size: clamp(1.15rem, 2.2vw, 1.4rem);
+  color: var(--deep-earth);
+  font-weight: 300;
+}
+
+.presence-in-action-text p {
+  margin: 0 0 1.2rem;
+}
+
+.presence-spacer {
+  height: 1.5rem;
+  margin: 0;
+}
+
+.presence-images-container {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(79, 121, 66, 0.3) transparent;
+}
+
+.presence-images-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.presence-images-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.presence-images-container::-webkit-scrollbar-thumb {
+  background-color: rgba(79, 121, 66, 0.3);
+  border-radius: 3px;
+}
+
+.presence-images-scroll {
+  display: flex;
+  gap: 1.5rem;
+  padding-bottom: 1rem;
+  min-width: min-content;
+}
+
+.presence-image-wrapper {
+  flex-shrink: 0;
+  width: 300px;
+  height: 300px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.presence-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 20px;
+}
+
+html[dir="rtl"] .presence-in-action-text,
+html[dir="rtl"] .presence-in-action-text * {
+  text-align: center !important;
+}
+
+@media (min-width: 768px) {
+  .presence-images-scroll {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    padding-bottom: 0;
+  }
+  
+  .presence-image-wrapper {
+    width: 100%;
+    height: 0;
+    padding-bottom: 100%;
+    position: relative;
+  }
+  
+  .presence-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .presence-images-container {
+    overflow: visible;
+  }
 }
 
 /* Discover & Reflect Section */
@@ -2123,114 +2398,137 @@ p {
 }
 
 /* About Page Specific */
-.about-manifesto {
-  padding: 6rem 2rem;
+.about-page {
   background: white;
 }
 
-.manifesto-header h2 {
-  font-size: clamp(1.5rem, 4vw, 2.5rem);
-  color: var(--inigo-green);
-  text-align: center;
-  margin-bottom: 3rem;
-  line-height: 1.3;
-  font-weight: 700;
-}
-
-.manifesto-body {
-  max-width: 800px;
+.about-container {
+  max-width: 760px;
   margin: 0 auto;
+  padding: 0 1.5rem;
 }
 
-.manifesto-body p {
-  font-size: 1.2rem;
-  color: var(--deep-earth);
-  line-height: 1.7;
-  margin-bottom: 1.5rem;
+/* Force LTR direction for About opening container so centering works in RTL */
+.about-opening .about-container {
+  direction: ltr;
   text-align: center;
 }
 
-.manifesto-features {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  margin: 3rem 0;
+@media (max-width: 640px) {
+  .about-container {
+    padding: 0 1.25rem;
+  }
 }
 
-.manifesto-features .feature-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1.5rem;
-  background: linear-gradient(135deg, rgba(79, 121, 66, 0.05), rgba(192, 133, 82, 0.03));
-  border-radius: 16px;
-  border: 1px solid rgba(79, 121, 66, 0.1);
-}
-
-.manifesto-features .feature-icon {
-  font-size: 2rem;
-}
-
-.manifesto-features span {
-  font-size: 1.1rem;
-  color: var(--deep-earth);
-  font-weight: 500;
-}
-
-.manifesto-closing {
-  font-size: 1.3rem !important;
-  font-weight: 600 !important;
-  color: var(--inigo-green) !important;
-  margin-top: 2rem !important;
-}
-
-.about-mission {
-  padding: 6rem 2rem;
+/* Opening Section - warm, inviting introduction */
+.about-opening {
+  padding: 10rem 2rem 6rem;
   background: linear-gradient(135deg, var(--soft-sand), rgba(79, 121, 66, 0.03));
+  text-align: center;
 }
 
-.mission-content {
+.about-opening-content {
   text-align: center;
-  max-width: 800px;
+  max-width: 700px;
   margin: 0 auto;
 }
 
-.mission-content h2 {
-  font-size: clamp(2rem, 4vw, 3rem);
-  color: var(--inigo-green);
-  margin-bottom: 2rem;
-  font-weight: 700;
-}
-
-.mission-content p {
-  font-size: 1.2rem;
-  color: var(--earth-brown);
-  line-height: 1.7;
-  margin-bottom: 3rem;
-}
-
-.mission-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
-}
-
-.stat-item {
-  text-align: center;
-  padding: 2rem;
-}
-
-.stat-number {
-  font-size: 3rem;
-  font-weight: 800;
-  color: var(--inigo-green);
-  margin-bottom: 1rem;
-}
-
-.stat-label {
-  font-size: 1.1rem;
+.about-opening-line {
+  font-size: clamp(1.4rem, 3vw, 1.8rem);
   color: var(--deep-earth);
+  line-height: 2.2;
+  margin-bottom: 1.5rem;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+}
+
+.about-opening-line:last-child {
+  margin-bottom: 0;
+}
+
+/* Body Sections - Visual variety with alternating backgrounds */
+.about-body-section {
+  padding: 5rem 0;
+  position: relative;
+}
+
+.about-section-light {
+  background: linear-gradient(135deg, var(--soft-sand), rgba(79, 121, 66, 0.02));
+}
+
+.about-section-white {
+  background: white;
+}
+
+.about-body-content {
+  /* Natural text flow */
+}
+
+.about-paragraph {
+  font-size: 1.15rem;
+  color: var(--deep-earth);
+  line-height: 1.8;
+  margin-bottom: 2.5rem;
+  font-weight: 400;
+  max-width: 100%;
+}
+
+.about-section-title {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  color: var(--inigo-green);
+  margin-top: 0;
+  margin-bottom: 3rem;
   font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  position: relative;
+  padding-top: 2rem;
+  text-align: center;
+  display: block;
+  width: 100%;
+}
+
+.about-section-title::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(79, 121, 66, 0.3), transparent);
+}
+
+@media (min-width: 641px) {
+  .about-body-section {
+    padding: 6rem 0;
+  }
+  
+  .about-paragraph {
+    margin-bottom: 2.5rem;
+    font-size: 1.2rem;
+  }
+  
+  .about-section-title {
+    margin-bottom: 3rem;
+    padding-top: 2rem;
+  }
+  
+  .about-section-title:not(:first-child)::before {
+    width: 80px;
+  }
+}
+
+/* CTA Section */
+.about-cta {
+  padding: 4rem 0 6rem;
+  background: white;
+  text-align: center;
+}
+
+.about-cta-content {
+  display: flex;
+  justify-content: center;
 }
 
 /* Privacy Page Specific */
@@ -3164,9 +3462,12 @@ p {
 }
 
 /* RTL Support */
-[dir="rtl"] {
+html[dir="rtl"] {
   direction: rtl;
-  text-align: right;
+}
+
+html[dir="rtl"] body {
+  text-align: start; /* start = right in RTL, left in LTR - logical alignment */
 }
 
 [dir="rtl"] .refresh-button-container {
@@ -3230,31 +3531,40 @@ p {
   text-align: right;
 }
 
-[dir="rtl"] .container {
+html[dir="rtl"] .container {
   text-align: right;
 }
 
-[dir="rtl"] section {
+/* About opening section - match about-hero pattern exactly */
+
+html[dir="rtl"] section:not(.about-opening):not(.about-body-section):not(.presence-in-action-section):not(.discover-reflect-section) {
   text-align: right;
 }
 
-/* Keep hero sections centered in RTL */
-[dir="rtl"] .about-hero,
-[dir="rtl"] .privacy-hero,
-[dir="rtl"] .contact-hero,
-[dir="rtl"] .terms-hero,
-[dir="rtl"] .hero {
-  text-align: center;
+/* Keep hero sections centered in RTL - use html[dir="rtl"] for higher specificity */
+html[dir="rtl"] .about-hero,
+html[dir="rtl"] .privacy-hero,
+html[dir="rtl"] .contact-hero,
+html[dir="rtl"] .terms-hero,
+html[dir="rtl"] .hero,
+html[dir="rtl"] .about-opening,
+html[dir="rtl"] section.about-opening {
+  text-align: center !important;
 }
 
 /* Keep hero content centered in RTL */
-[dir="rtl"] .about-hero-content,
-[dir="rtl"] .privacy-hero-content,
-[dir="rtl"] .contact-hero-content,
-[dir="rtl"] .terms-hero-content,
-[dir="rtl"] .hero-inner {
-  text-align: center;
+html[dir="rtl"] .about-hero-content,
+html[dir="rtl"] .privacy-hero-content,
+html[dir="rtl"] .contact-hero-content,
+html[dir="rtl"] .terms-hero-content,
+html[dir="rtl"] .hero-inner,
+html[dir="rtl"] .about-opening-content,
+html[dir="rtl"] .about-opening-content * {
+  text-align: center !important;
 }
+
+/* About opening section - force center for all elements with highest specificity */
+/* Note: Final overrides are at the end of the file */
 
 /* Keep hero headings centered in RTL */
 [dir="rtl"] .about-hero-content h1,
@@ -3262,6 +3572,34 @@ p {
 [dir="rtl"] .contact-hero-content h1,
 [dir="rtl"] .terms-hero-content h1,
 [dir="rtl"] .hero h1 {
+  text-align: center;
+}
+
+/* RTL Support for New About Page - opening content stays centered like hero sections */
+
+/* About body sections - center like main page sections */
+html[dir="rtl"] .about-body-section {
+  text-align: center !important;
+}
+
+html[dir="rtl"] .about-body-content {
+  text-align: center !important;
+}
+
+html[dir="rtl"] .about-paragraph {
+  text-align: center !important;
+}
+
+html[dir="rtl"] .about-section-title {
+  text-align: center !important;
+}
+
+html[dir="rtl"] .about-section-title::before {
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+}
+
+[dir="rtl"] .about-cta {
   text-align: center;
 }
 
@@ -3338,4 +3676,17 @@ p {
   [dir="rtl"] .home-shortcut-btn {
     left: 1.25rem;
   }
+}
+
+/* FINAL OVERRIDES - About opening section - must be at the end to override everything */
+html[dir="rtl"] section.about-opening,
+html[dir="rtl"] section.about-opening *,
+html[dir="rtl"] .about-opening,
+html[dir="rtl"] .about-opening *,
+html[dir="rtl"] .about-opening-content,
+html[dir="rtl"] .about-opening-content *,
+html[dir="rtl"] .about-opening-content p,
+html[dir="rtl"] .about-opening-line,
+html[dir="rtl"] p.about-opening-line {
+  text-align: center !important;
 }

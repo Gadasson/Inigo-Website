@@ -9,10 +9,10 @@
     "learnMore": "Learn More About Us"
   },
   "hero": {
-    "badge": "Begin your journey",
+    "badge": "Come back here.",
     "headline": "Know Your Heart.",
     "heartline": "And let it rest on the ground.",
-    "subhead": "Every meditation adds to our collective world state —\na quiet measure of calm,\nbuilt together,\nminute by minute.",
+    "subhead": "Every moment you choose to be here\nadds to our shared world state —\na quiet measure of presence,\nbuilt together,\nminute by minute.",
     "counterLabel": "collective minutes of calm",
     "aboutUs": "About Us",
     "primaryCta": "Join the Movement",
@@ -20,11 +20,11 @@
   },
   "worldState": {
     "miniHeadline": "Your minutes matter",
-    "copy": "Each session you meditate flows into the world state score. The more we practice, the stronger the shared frequency becomes.",
+    "copy": "Every time someone chooses presence, it flows into the world state. The more we practice, the stronger the shared frequency becomes.",
     "bullets": [
       "Real-time world state counter",
       "Personal stats feeding collective progress",
-      "Social meditation: sharing your true self helps others find their way"
+      "Sharing presence: sharing your true self helps others find their way"
     ],
     "cta": "Track my minutes",
     "loading": "Loading world state...",
@@ -81,11 +81,53 @@
   },
   "worldStateExplainer": {
     "title": "A shared counter that grows",
-    "description": "Every time you meditate, your minutes are added to a shared counter. It's a quiet signal—a reminder that we're choosing presence, together.",
+    "description": "Every time someone chooses presence, their minutes are added to a shared counter. It's a quiet signal—a reminder that we're choosing presence, together.",
     "microcopy": "Small minutes, quietly building."
   },
+  "foundation": {
+    "title": "Why Inigo exists",
+    "body": "The world today rarely lets the heart rest on the ground.\n\nWe are either pulled upward —\ninto noise, speed, and constant emotion —\n\nor pushed downward —\ninto exhaustion and numbness.\n\nBoth keep us moving.\nBoth keep us disconnected.\n\nInigo creates a different place.\n\nNot above.\nNot below.\n\nBut on the ground —\nwhere presence carries love\nwithout fear."
+  },
+  "whatIsInigo": {
+    "title": "What Inigo is",
+    "body": "Inigo is a place to put down time.\n\nNot to escape life,\nbut to meet it fully —\nas it is.\n\nYou choose a moment.\nYou stay with it.\nYou let time soften.\n\nWhat you're doing doesn't matter.\n\nSitting quietly.\nWalking without destination.\nReading.\nWorking with attention.\nMoving your body.\nTouching the earth.\nCaring for another.\n\nIf you are here —\nit counts."
+  },
+  "wonder": {
+    "title": "What the heart needs",
+    "text": "Sometimes the heart doesn't need answers.\n\nIt needs a place to land.\n\nA moment where time loosens,\nand something real can be felt again."
+  },
+  "presenceInAction": {
+    "title": "Presence in action",
+    "text": "Presence doesn't belong to one action.\n\nSitting with silence is one way.\n\nBut so is walking.\nReading a book.\nWorking in the garden.\nEating.\nCooking.\n\nAny moment where you are truly here —\ncan hold the heart on the ground.",
+    "images": [
+      {
+        "src": "/images/silence.jpg",
+        "alt": "person sitting quietly by a window"
+      },
+      {
+        "src": "/images/reading.jpg",
+        "alt": "person reading a book by a window"
+      },
+      {
+        "src": "/images/walk.jpg",
+        "alt": "person walking slowly outdoors"
+      },
+      {
+        "src": "/images/gardening.jpg",
+        "alt": "hands touching soil while gardening"
+      },
+      {
+        "src": "/images/eat.jpg",
+        "alt": "person eating a simple meal slowly"
+      },
+      {
+        "src": "/images/cook.jpg",
+        "alt": "person cooking with presence and attention"
+      }
+    ]
+  },
   "discoverReflect": {
-    "miniHeadline": "Create your place of calm.",
+    "miniHeadline": "Create your place of presence.",
     "copy": "A place doesn't need to be far or special. It can be your home, a corner of the garden, a view of the sky, or a spot where your heart naturally opens.",
     "cards": [
       {
@@ -118,7 +160,7 @@
         "description": "A spot you pass every day — now seen with presence."
       }
     ],
-    "cta": "Set your place of calm",
+    "cta": "Set your place of presence",
     "ctaNote": "You can change it anytime. There is no \"right\" place."
   },
   "community": {
@@ -147,10 +189,10 @@
   "earlyAdopters": {
     "miniHeadline": "Why join now?",
     "bullets": [
-      "Help shape Inigo with real meditator feedback",
-      "Get early access to new features",
-      "Priority access to global rituals",
-      "Direct channel to the team"
+      "Help shape a calm, human space online",
+      "Early access to new presence modes (quiet, walking, movement)",
+      "Direct channel to the team",
+      "Be part of a quieter direction for technology"
     ],
     "cta": "Join Early Access"
   },
@@ -215,53 +257,70 @@
     "hashtags": "#FromInnerToBeyond · #QuietRevolution · #InigoMoments"
   },
   "about": {
-    "title": "About Us",
-    "heroSubtitle": "The quiet revolution starts here — together.",
-    "whyInigo": {
-      "title": "✨ Why Inigo",
-      "problem": "We've all felt it — the weight, the noise, the restlessness of life.\nMoments when calm feels far away.",
-      "solution": "So we search for a way out, a way back to ourselves.",
-      "core": "Inigo was born from that search.\nBecause we've also touched the other side — the quiet, the presence, the softest love that creates without effort.\nAnd we know how good it is.",
-      "closing": "Life isn't always calm, but together we can return to that place, again and again."
-    },
-    "whyMeditation": {
-      "title": "🌱 Why Meditation",
-      "intro": "Meditation is the most natural way to clear the mind and open the heart.\nIt is not about control or perfection.",
-      "core": "It is about release — gently letting go of the weight we carry — and in that openness, connecting more deeply than ever before.",
-      "benefits": [
-        "Senses sharpen",
-        "Action becomes clear",
-        "Presence fills the moment",
-        "Recharges us",
-        "Softens the nervous system",
-        "Brings joy back into everyday life"
-      ],
-      "closing": "Meditation recharges us, softens the nervous system, and brings joy back into everyday life, even alongside responsibilities."
-    },
-    "whyTogether": {
-      "title": "🤝 Why Together",
-      "problem": "We know how hard it is to sustain meditation when it's only for ourselves.\nThat's why habits break, why practice slips away.",
-      "transformationTitle": "Together, it's different.",
-      "transformationText": "When we meditate as one, we help each other recognize it, feel it, embrace it.\nMeditation stops being a lonely habit — and becomes the most natural, joyful, even ecstatic thing you'll want to return to again and again."
-    },
-    "collectiveWorldState": {
-      "title": "🌍 The Collective World State",
-      "subtitle": "✨ Know Your Heart. ✨",
-      "intro": "Every meditation you take is not just yours.\nIt flows into the collective world state — a living score of calm and clarity that grows with every breath, every pause, every reflection.",
-      "vision": "Here, meditation is a shared journey:",
-      "features": [
-        "Choose your place of calm",
-        "Share your reflections",
-        "Belong to a real community",
-        "Lift the frequency of the world, one session at a time"
-      ],
-      "closing": "Inigo is a safe space to step fully into the moment, to open, and to remember what is real.\nMeditation here is not escape — it is return.",
-      "revolutionCall": "A quiet revolution, beginning together."
-    },
-    "cta": {
-      "title": "Ready to join the quiet revolution?",
-      "subtitle": "Be part of something bigger than yourself."
-    }
+    "opening": "Hi.\n\nWe are Inigo.\n\nWe didn't come with answers.\n\nWe came to stay for a moment.",
+    "body": [
+      {
+        "type": "paragraph",
+        "text": "We didn't start with an idea.\n\nWe started with a feeling.\n\nA sense that something in the way we live\n\nwas slowly pulling us away from ourselves.\n\nNot dramatically.\n\nNot all at once.\n\nJust enough to notice\n\nthat it was getting harder to stay.\n\nHarder to stay with a moment.\n\nHarder to stay with another person.\n\nHarder to stay with what we were actually feeling\n\nwithout immediately needing to fix it, explain it, or move on.\n\nSo we began paying attention."
+      },
+      {
+        "type": "title",
+        "text": "What we noticed"
+      },
+      {
+        "type": "paragraph",
+        "text": "Life kept lifting us off the ground.\n\nInto noise.\n\nInto speed.\n\nInto constant reaction.\n\nAnd when that became too much,\n\nit pushed us the other way —\n\ninto tiredness,\n\ninto shutting down,\n\ninto doing only what was necessary to get through the day.\n\nWe were either floating,\n\nor buried.\n\nWhat we almost never felt\n\nwas this simple thing:\n\nbeing on the ground,\n\nwith the heart still open."
+      },
+      {
+        "type": "title",
+        "text": "Why that mattered to us"
+      },
+      {
+        "type": "paragraph",
+        "text": "Because when the heart isn't on the ground,\n\nit gets tricked.\n\nIt starts to believe\n\nthat control is safety,\n\nthat speed is aliveness,\n\nthat numbness is rest.\n\nAnd we could feel, in our own lives,\n\nhow easy it is to lose touch with something real\n\nwithout even realizing it's happening.\n\nNot because we're weak.\n\nBut because the world doesn't leave much room\n\nfor staying."
+      },
+      {
+        "type": "title",
+        "text": "What we wanted instead"
+      },
+      {
+        "type": "paragraph",
+        "text": "We didn't want another practice.\n\nWe didn't want something to optimize us,\n\nimprove us,\n\nor turn presence into a performance.\n\nWe wanted a place\n\nwhere time could slow down\nwithout collapsing.\n\nA place where you could sit in silence —\nor walk,\nor read,\nor eat,\nor work with your hands,\nor do your job,\nor be with another heart —\n\nand feel that it all counts.\n\nThat moving forward\nand staying balanced\ndon't have to be opposites."
+      },
+      {
+        "type": "title",
+        "text": "That's why we built Inigo"
+      },
+      {
+        "type": "paragraph",
+        "text": "Inigo is a place to put down time.\n\nNot to escape life,\n\nbut to meet it —\n\nas it is.\n\nSome moments are quiet.\n\nSome are moving.\n\nSome are ordinary.\n\nWhat matters is not what you're doing,\n\nbut whether you're really there.\n\nIf you are —\n\nthat time matters."
+      },
+      {
+        "type": "title",
+        "text": "Why we made it together"
+      },
+      {
+        "type": "paragraph",
+        "text": "Because staying is easier\n\nwhen you're not the only one staying.\n\nNot through pressure.\n\nNot through comparison.\n\nJust through the quiet knowledge\n\nthat others are also choosing\n\nnot to rush away.\n\nInigo isn't a feed to perform in.\n\nIt's a shared space that says:\n\n\"You're allowed to slow down here.\""
+      },
+      {
+        "type": "title",
+        "text": "The deeper truth"
+      },
+      {
+        "type": "paragraph",
+        "text": "We've come to believe something simple and firm:\n\nA heart grounded in love\n\ncannot be controlled.\n\nThat belief shapes every decision we make —\n\nwhat we build,\n\nwhat we leave out,\n\nand how we grow."
+      },
+      {
+        "type": "title",
+        "text": "An invitation"
+      },
+      {
+        "type": "paragraph",
+        "text": "If any of this feels familiar,\n\nyou're welcome here.\n\nNot to become someone else.\n\nJust to stay a little longer\n\nwith what's already true."
+      }
+    ],
+    "cta": "Join Early Access"
   },
   "contact": {
     "title": "Get in Touch",

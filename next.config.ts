@@ -4,6 +4,30 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin('./src/i18n/config.ts');
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'freerangestock.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.pinimg.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'us.images.westend61.de',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.presentationgo.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'mysolluna.com',
+      },
+    ],
+  },
   async rewrites() {
     return [
       // Canonical share routes - proxy directly to backend (with trailing slash to match backend)
