@@ -4,96 +4,99 @@ import Link from 'next/link';
 import { useTranslations, useLocale } from 'next-intl';
 
 export default function About() {
-  const t = useTranslations();
+  const t = useTranslations('about');
   const locale = useLocale();
 
-  const openingLines = t('about.opening').split('\n').filter(line => line.trim());
-  const bodyContent = t.raw('about.body') as Array<{ type: 'paragraph' | 'title'; text: string }>;
-
-  // Group content into sections for visual variety - each title starts a new section
-  const sections: Array<{ blocks: typeof bodyContent; bgClass: string; hasTitle: boolean }> = [];
-  let currentSection: typeof bodyContent = [];
-  let sectionIndex = 0;
-  let hasTitleInCurrent = false;
-
-  bodyContent.forEach((block, i) => {
-    if (block.type === 'title') {
-      // If we have content, save it first
-      if (currentSection.length > 0) {
-        sections.push({ 
-          blocks: currentSection, 
-          bgClass: sectionIndex % 2 === 0 ? 'about-section-light' : 'about-section-white',
-          hasTitle: hasTitleInCurrent
-        });
-        sectionIndex++;
-      }
-      // Start new section with title
-      currentSection = [block];
-      hasTitleInCurrent = true;
-    } else {
-      currentSection.push(block);
-    }
-  });
-  // Add the last section
-  if (currentSection.length > 0) {
-    sections.push({ 
-      blocks: currentSection, 
-      bgClass: sectionIndex % 2 === 0 ? 'about-section-light' : 'about-section-white',
-      hasTitle: hasTitleInCurrent
-    });
-  }
+  const heroLines = t.raw('hero.lines') as string[];
+  const sections = [
+    { key: 'whyBorn', bgClass: 'about-bg-soft-green' },
+    { key: 'notChasing', bgClass: 'about-bg-white' },
+    { key: 'meditationLife', bgClass: 'about-bg-soft-teal' },
+    { key: 'whySocial', bgClass: 'about-bg-white' },
+    { key: 'places', bgClass: 'about-bg-soft-amber' },
+    { key: 'language', bgClass: 'about-bg-white' },
+    { key: 'whereNow', bgClass: 'about-bg-soft-green' },
+    { key: 'closing', bgClass: 'about-bg-white' }
+  ];
 
   return (
     <div className="about-page">
-      {/* Opening Section */}
-      <section className="about-opening">
-        <div className="about-opening-content">
-          {openingLines.map((line, i) => (
-            <p key={i} className="about-opening-line">
-                    {line}
-            </p>
-          ))}
-        </div>
-      </section>
-
-      {/* Body Content - Split into visual sections */}
-      {sections.map((section, sectionIdx) => {
-        // Find the title in this section
-        const titleBlock = section.blocks.find(b => b.type === 'title');
-        const paragraphs = section.blocks.filter(b => b.type === 'paragraph');
-        
-        return (
-          <section key={sectionIdx} className={`about-body-section ${section.bgClass}`}>
-            <div className="about-container">
-              <div className="about-body-content">
-                {titleBlock && (
-                  <h3 className="about-section-title">
-                    {titleBlock.text}
-                  </h3>
-                )}
-                {paragraphs.map((block, i) => (
-                  <p key={i} className="about-paragraph">
-                    {block.text.split('\n').map((line, j) => (
-                      <span key={j}>
-                    {line}
-                        {j < block.text.split('\n').length - 1 && <br />}
-                  </span>
-                ))}
-              </p>
-                ))}
+      {/* Hero Section */}
+      <section className="about-hero">
+        <div className="about-container">
+          <div className="about-hero-content">
+            <h1 className="about-hero-title">{t('hero.title')}</h1>
+            <div className="about-hero-lines">
+              {heroLines.map((line, i) => (
+                <p key={i} className="about-hero-line">
+                  {line || '\u00A0'}
+                </p>
+              ))}
+            </div>
+            <div className="about-hero-ctas">
+              <Link href={`/${locale}#early-access`} className="btn btn-primary">
+                {t('cta')}
+              </Link>
+              <Link href={`/${locale}`} className="btn btn-ghost">
+                {t('hero.secondaryCta')}
+              </Link>
+            </div>
           </div>
         </div>
       </section>
+
+      {/* Sections */}
+      {sections.map((section, idx) => {
+        const sectionData = t.raw(`sections.${section.key}`) as {
+          title: string;
+          body: string[];
+          aiSharing?: { title: string; body: string[] };
+        };
+
+        return (
+          <section key={section.key} className={`about-section ${section.bgClass}`}>
+            <div className="about-container">
+              <div className="about-section-content">
+                <h2 className="about-section-title">{sectionData.title}</h2>
+                <div className="about-section-body">
+                  {sectionData.body.map((line, i) => (
+                    <p key={i} className="about-section-line">
+                      {line || '\u00A0'}
+                    </p>
+                  ))}
+                </div>
+                
+                {/* AI Sharing sub-section for language section */}
+                {sectionData.aiSharing && (
+                  <div className="about-ai-sharing">
+                    {sectionData.aiSharing.body.map((line, i) => (
+                      <p key={i} className="about-section-line">
+                        {line || '\u00A0'}
+                      </p>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
         );
       })}
 
-      {/* CTA Section */}
-      <section className="about-cta">
+      {/* Closing CTA */}
+      <section className="about-closing-cta">
         <div className="about-container">
-          <div className="about-cta-content">
-              <Link href={`/${locale}#early-access`} className="btn btn-primary btn-large">
-              {t('about.cta')}
-              </Link>
+          <div className="about-closing-content">
+            <h2 className="about-closing-title">{t('sections.closing.title')}</h2>
+            <div className="about-closing-body">
+              {(t.raw('sections.closing.body') as string[]).map((line, i) => (
+                <p key={i} className="about-closing-line">
+                  {line || '\u00A0'}
+                </p>
+              ))}
+            </div>
+            <Link href={`/${locale}#early-access`} className="btn btn-primary btn-large">
+              {t('cta')}
+            </Link>
           </div>
         </div>
       </section>

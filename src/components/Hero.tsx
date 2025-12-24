@@ -1,25 +1,26 @@
 'use client';
 
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { useWorldStateContext } from '../contexts/WorldStateContext';
-import Link from 'next/link';
 
 export default function Hero() {
-  const t = useTranslations();
-  const locale = useLocale();
+  const t = useTranslations('hero');
   const { worldState, loading } = useWorldStateContext();
-  
-  // Get current minutes from API or use fallback
-  // Fallback to 0 if no data available (prevents errors)
+  const subtitleLines = t('subtitle').split('\n');
   const currentMinutes = worldState?.state_info?.current_minutes ?? 0;
 
   return (
     <section className="hero">
       <div className="hero-inner">
-        <span className="badge">{t('hero.badge')}</span>
-        
-        <h1>{t('hero.headline')}</h1>
-        <p className="hero-heartline">{t('hero.heartline')}</p>
+        <h1>{t('title')}</h1>
+        <p className="hero-subtitle">
+          {subtitleLines.map((line, index) => (
+            <span key={index}>
+              {line}
+              {index < subtitleLines.length - 1 && <br />}
+            </span>
+          ))}
+        </p>
         
         {/* World State Counter */}
         <div className="world-state-counter">
@@ -34,24 +35,17 @@ export default function Hero() {
                 </span>
               )}
             </div>
-            <span className="counter-label">{t('hero.counterLabel')}</span>
+            <span className="counter-label">{t('counterLabel')}</span>
           </div>
         </div>
         
         <div className="cta-buttons">
-          <Link 
-            className="btn btn-ghost" 
-            href={`/${locale}/about`}
-            data-event="hero_about_clicked"
-          >
-            {t('hero.aboutUs')}
-          </Link>
           <a 
             className="btn btn-primary" 
             href="#early-access"
             data-event="hero_cta_clicked"
           >
-            {t('hero.primaryCta')}
+            {t('primaryCta')}
           </a>
         </div>
       </div>

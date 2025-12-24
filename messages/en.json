@@ -9,16 +9,15 @@
     "learnMore": "Learn More About Us"
   },
   "hero": {
-    "badge": "Come back here.",
-    "headline": "Know Your Heart.",
-    "heartline": "And let it rest on the ground.",
-    "subhead": "",
-    "counterLabel": "collective minutes of presence",
-    "aboutUs": "About Us",
-    "primaryCta": "Get Early Access",
-    "meditationGuide": "Meditation guide? Join us"
+    "title": "Inigo - The social meditation app.",
+    "subtitle": "Simply be.\nAct from balance.",
+    "counterLabel": "Collective minutes of presence — live",
+    "primaryCta": "Get Early Access"
   },
   "worldState": {
+    "title": "The world state",
+    "subtitle": "A live measure of what's happening in Inigo right now.",
+    "counterLabel": "Collective minutes of presence — live",
     "miniHeadline": "Your minutes matter",
     "copy": "Every time someone chooses presence, it flows into the world state. The more we practice, the stronger the shared presence becomes.",
     "bullets": [
@@ -92,13 +91,33 @@
     "title": "What Inigo is",
     "body": "Inigo is a place to put down time.\n\nNot to escape life,\nbut to meet it fully —\nas it is.\n\nYou choose a moment.\nYou stay with it.\nYou let time soften.\n\nWhat you're doing doesn't matter.\n\nSitting quietly.\nWalking without destination.\nReading.\nWorking with attention.\nMoving your body.\nTouching the earth.\nCaring for another.\n\nIf you are here —\nit counts."
   },
-  "whatThisIs": {
-    "title": "What this is",
-    "body": "Inigo is a simple app\nfor being here —\nand letting that time count.\n\nYour minutes don't disappear.\n\nThey join a shared counter,\nwhere quiet moments from many lives\ncollect into something steady.\n\nNot to compare.\nNot to perform.\n\nJust to know\nyou're not the only one choosing to slow down."
+  "actionsGallery": {
+    "title": "What you do in Inigo",
+    "actions": "Sit.\nWalk.\nPlay.\nEat.\nWork with your hands.",
+    "closing": "And truly be there."
   },
-  "howItWorks": {
-    "title": "How it works",
-    "text": "Choose a moment in your day.\n\nSit, walk, read, cook,\nwork with your hands.\n\nLet it be real.\n\nInigo holds that time gently.\n\nYou can reflect on it,\nshare a few words or an image —\nor keep it to yourself.\n\nAnd as moments gather,\nsomething settles.\n\nNot excitement.\nNot noise.\n\nA quiet sense of being held,\ntogether."
+  "meditationModes": {
+    "title": "Meditation, like real life",
+    "items": [
+      "Silent meditation",
+      "Guided meditation",
+      "Presence in action"
+    ],
+    "optional": "Alone — or together."
+  },
+  "timeThatCounts": {
+    "title": "Time that counts",
+    "examples": [
+      "20 minutes walking",
+      "40 minutes playing",
+      "10 minutes sitting"
+    ],
+    "closing": "Not results. Time."
+  },
+  "quietEvents": {
+    "title": "Quiet events",
+    "body": "A time is set.\nEveryone starts together.\nEach in their own place.",
+    "closing": "No video. No talking."
   },
   "presenceInAction": {
     "title": "Presence in action",
@@ -129,6 +148,25 @@
         "alt": "person cooking with presence and attention"
       }
     ]
+  },
+  "places": {
+    "title": "Places around the world",
+    "body": "Places collect presence and experiences from different people.",
+    "closing": "Not from posts. From time."
+  },
+  "differentSocialLanguage": {
+    "title": "A different social language",
+    "items": [
+      "Bless",
+      "Reflect",
+      "Streaks"
+    ],
+    "closing": "Social — without noise."
+  },
+  "safeSharing": {
+    "title": "Sharing without exposure",
+    "body": "Not comfortable sharing something personal?\nAI helps you share through a symbolic image or a gently phrased reflection.\nYour privacy stays protected while your presence is felt.",
+    "closing": "Technology that protects the heart."
   },
   "discoverReflect": {
     "miniHeadline": "Create your place of presence.",
@@ -223,8 +261,8 @@
     ]
   },
   "emailCapture": {
-    "title": "Join Early Access",
-    "subtitle": "You’re welcome to grow with us.",
+    "title": "You're welcome inside.",
+    "subtitle": "Inigo is still at an early stage.",
     "tagline": "Not another app. A different way to be here.",
     "fullName": "Full Name",
     "email": "Email Address",
@@ -262,70 +300,136 @@
     "hashtags": "#FromInnerToBeyond · #Together · #InigoMoments"
   },
   "about": {
-    "opening": "Hi.\n\nWe are Inigo.\n\nWe didn't come with answers.\n\nWe came to stay for a moment.",
-    "body": [
-      {
-        "type": "paragraph",
-        "text": "We didn't start with an idea.\n\nWe started with a feeling.\n\nA sense that something in the way we live\n\nwas slowly pulling us away from ourselves.\n\nNot dramatically.\n\nNot all at once.\n\nJust enough to notice\n\nthat it was getting harder to stay.\n\nHarder to stay with a moment.\n\nHarder to stay with another person.\n\nHarder to stay with what we were actually feeling\n\nwithout immediately needing to fix it, explain it, or move on.\n\nSo we began paying attention."
+    "hero": {
+      "title": "We are Inigo.",
+      "lines": [
+        "Not a brand.",
+        "Not a method.",
+        "Not a big promise.",
+        "",
+        "A place where you can pause —",
+        "and act from balance."
+      ],
+      "secondaryCta": "Back to Home"
+    },
+    "sections": {
+      "whyBorn": {
+        "title": "Why it was born",
+        "body": [
+          "Inigo started from real tiredness.",
+          "Tired of noise.",
+          "Tired of comparison.",
+          "Tired of always needing to get somewhere.",
+          "",
+          "We wanted something different.",
+          "Something you can stay inside."
+        ]
       },
-      {
-        "type": "title",
-        "text": "What we noticed"
+      "notChasing": {
+        "title": "Not chasing edges",
+        "body": [
+          "We're not chasing excitement.",
+          "Not peaks.",
+          "Not \"the next level.\"",
+          "",
+          "We're building a simple ability to live:",
+          "sit. walk. eat. play. work with your hands.",
+          "and truly be there."
+        ]
       },
-      {
-        "type": "paragraph",
-        "text": "Life kept lifting us off the ground.\n\nInto noise.\n\nInto speed.\n\nInto constant reaction.\n\nAnd when that became too much,\n\nit pushed us the other way —\n\ninto tiredness,\n\ninto shutting down,\n\ninto doing only what was necessary to get through the day.\n\nWe were either floating,\n\nor buried.\n\nWhat we almost never felt\n\nwas this simple thing:\n\nbeing on the ground,\n\nwith the heart still open."
+      "meditationLife": {
+        "title": "Meditation, connected to life",
+        "body": [
+          "Meditation is part of our base.",
+          "Silent sessions.",
+          "Guided sessions.",
+          "",
+          "But it doesn't stay on a cushion.",
+          "",
+          "In Inigo, meditation becomes a way",
+          "to be present inside real life."
+        ]
       },
-      {
-        "type": "title",
-        "text": "Why that mattered to us"
+      "whySocial": {
+        "title": "Why it's social",
+        "body": [
+          "Presence is easy to lose alone.",
+          "",
+          "But when other people also stay —",
+          "something settles.",
+          "",
+          "In Inigo, we share time.",
+          "Not results.",
+          "Not wisdom.",
+          "",
+          "We share the way —",
+          "not the end of the way."
+        ]
       },
-      {
-        "type": "paragraph",
-        "text": "Because when the heart isn't on the ground,\n\nit gets tricked.\n\nIt starts to believe\n\nthat control is safety,\n\nthat speed is aliveness,\n\nthat numbness is rest.\n\nAnd we could feel, in our own lives,\n\nhow easy it is to lose touch with something real\n\nwithout even realizing it's happening.\n\nNot because we're weak.\n\nBut because the world doesn't leave much room\n\nfor staying."
+      "places": {
+        "title": "Places matter",
+        "body": [
+          "Home.",
+          "A garden.",
+          "A beach.",
+          "A basketball court.",
+          "A quiet corner.",
+          "",
+          "In Inigo, places collect presence",
+          "from different people, at different times.",
+          "",
+          "Not from posts.",
+          "From time."
+        ]
       },
-      {
-        "type": "title",
-        "text": "What we wanted instead"
+      "language": {
+        "title": "A softer social language",
+        "body": [
+          "We don't \"like.\"",
+          "We bless.",
+          "",
+          "We don't comment.",
+          "We reflect.",
+          "",
+          "We keep streaks",
+          "to support continuity —",
+          "not pressure."
+        ],
+        "aiSharing": {
+          "title": "",
+          "body": [
+            "Not always comfortable sharing something personal?",
+            "Inigo can help you share through a symbolic image",
+            "or a gently phrased reflection.",
+            "",
+            "Technology that protects the heart —",
+            "not one that steals attention."
+          ]
+        }
       },
-      {
-        "type": "paragraph",
-        "text": "We didn't want another practice.\n\nWe didn't want something to optimize us,\n\nimprove us,\n\nor turn presence into a performance.\n\nWe wanted a place\n\nwhere time could slow down\nwithout collapsing.\n\nA place where you could sit in silence —\nor walk,\nor read,\nor eat,\nor work with your hands,\nor do your job,\nor be with another heart —\n\nand feel that it all counts.\n\nThat moving forward\nand staying balanced\ndon't have to be opposites."
+      "whereNow": {
+        "title": "Where we are now",
+        "body": [
+          "Inigo is still early.",
+          "",
+          "We're building.",
+          "Testing.",
+          "Listening.",
+          "",
+          "Not trying to be everything for everyone —",
+          "just precise for the people it speaks to."
+        ]
       },
-      {
-        "type": "title",
-        "text": "That's why we built Inigo"
-      },
-      {
-        "type": "paragraph",
-        "text": "Inigo is a place to put down time.\n\nNot to escape life,\n\nbut to meet it —\n\nas it is.\n\nSome moments are quiet.\n\nSome are moving.\n\nSome are ordinary.\n\nWhat matters is not what you're doing,\n\nbut whether you're really there.\n\nIf you are —\n\nthat time matters."
-      },
-      {
-        "type": "title",
-        "text": "Why we made it together"
-      },
-      {
-        "type": "paragraph",
-        "text": "Because staying is easier\n\nwhen you're not the only one staying.\n\nNot through pressure.\n\nNot through comparison.\n\nJust through the quiet knowledge\n\nthat others are also choosing\n\nnot to rush away.\n\nInigo isn't a feed to perform in.\n\nIt's a shared space that says:\n\n\"You're allowed to slow down here.\""
-      },
-      {
-        "type": "title",
-        "text": "The deeper truth"
-      },
-      {
-        "type": "paragraph",
-        "text": "We've come to believe something simple and firm:\n\nA heart grounded in love\n\ncannot be controlled.\n\nThat belief shapes every decision we make —\n\nwhat we build,\n\nwhat we leave out,\n\nand how we grow."
-      },
-      {
-        "type": "title",
-        "text": "An invitation"
-      },
-      {
-        "type": "paragraph",
-        "text": "If any of this feels familiar,\n\nyou're welcome here.\n\nNot to become someone else.\n\nJust to stay a little longer\n\nwith what's already true."
+      "closing": {
+        "title": "If this feels familiar",
+        "body": [
+          "Not in your head —",
+          "in your body —",
+          "you're welcome inside."
+        ]
       }
-    ],
-    "cta": "Join Early Access"
+    },
+    "cta": "Get Early Access"
   },
   "contact": {
     "title": "Get in Touch",
@@ -360,21 +464,21 @@
       },
       "dataCollection": {
         "title": "Data Collection",
-        "text": "We collect only what's necessary to provide a meaningful presence experience:",
+        "text": "We collect only what's necessary to provide a meaningful meditation experience:",
         "items": [
           "Email address – for secure account creation and login (via Google or Apple Sign-In)",
           "Device information – such as model and operating system, to ensure proper performance",
-          "Presence sessions – duration and time, used to contribute anonymously to our collective world state",
+          "Meditation sessions – duration and time, used to contribute anonymously to our collective world state",
           "Optional reflections and photos – only if you choose to share them within the community"
         ],
-        "note": "We do not collect sensitive personal information such as location history beyond what is required to show nearby presence spots (if permission is granted)."
+        "note": "We do not collect sensitive personal information such as location history beyond what is required to show nearby meditation spots (if permission is granted)."
       },
       "dataUsage": {
         "title": "How We Use Your Data",
         "text": "Your data helps us:",
         "items": [
           "Create and maintain your account securely",
-          "Provide personalized and reliable presence experiences",
+          "Provide personalized and reliable meditation experiences",
           "Update collective world-state metrics (anonymously)",
           "Improve Inigo based on community feedback",
           "Send essential updates about features or account information"
@@ -386,7 +490,7 @@
         "text": "Inigo uses trusted services to operate safely and efficiently:",
         "items": [
           "Firebase (Authentication, Storage, Analytics) – to handle login, store photos, and measure performance",
-          "Django Backend – to manage user profiles and presence data securely on our private server"
+          "Django Backend – to manage user profiles and meditation data securely on our private server"
         ],
         "note": "These services follow industry-standard security practices and comply with GDPR and other applicable privacy regulations."
       },
@@ -397,7 +501,7 @@
           "All communication is encrypted in transit (HTTPS) and at rest",
           "Access to data is strictly limited to necessary operations",
           "Shared experiences are visible only according to your sharing choices",
-          "Presence statistics are aggregated anonymously"
+          "Meditation statistics are aggregated anonymously"
         ]
       },
       "rights": {
@@ -439,17 +543,17 @@
     "subtitle": "Please review these terms to understand how to use Inigo respectfully and safely.",
     "lastUpdated": "Last updated:",
     "lastUpdatedDate": "November 2025",
-    "intro": "Welcome to Inigo, a social presence network and mobile application developed and operated by Asaf Gadassi (\"Inigo\", \"we\", \"us\", or \"our\"). These Terms and Conditions (\"Terms\") govern your access to and use of the Inigo mobile app (the \"App\") and the Inigo website available at https://inigo.now (the \"Site\"). By using Inigo, you agree to these Terms. If you do not agree, please do not use the App or Site.",
+    "intro": "Welcome to Inigo, a social meditation network and mobile application developed and operated by Asaf Gadassi (\"Inigo\", \"we\", \"us\", or \"our\"). These Terms and Conditions (\"Terms\") govern your access to and use of the Inigo mobile app (the \"App\") and the Inigo website available at https://inigo.now (the \"Site\"). By using Inigo, you agree to these Terms. If you do not agree, please do not use the App or Site.",
     "sections": {
       "aboutInigo": {
         "title": "1. About Inigo",
-        "text1": "Inigo is an early-stage personal project created by Asaf Gadassi as a proof of concept for a social presence network. Its purpose is to help people connect through quiet presence, mindfulness, and shared experiences of being present.",
+        "text1": "Inigo is an early-stage personal project created by Asaf Gadassi as a proof of concept for a social meditation network. Its purpose is to help people connect through quiet meditation, mindfulness, and shared meditation experiences.",
         "text2": "Through Inigo, users can:",
         "items": [
           "Choose and return to places that hold you",
-          "Track personal presence time",
-          "Contribute to a collective world presence counter",
-          "Share reflections, photos, and moments of presence with others"
+          "Track personal meditation time",
+          "Contribute to a collective world meditation counter",
+          "Share reflections, photos, and meditation moments with others"
         ],
         "text3": "Inigo is currently running in a small testing volume, and features may evolve or change without notice."
       },
@@ -512,7 +616,7 @@
       },
       "disclaimer": {
         "title": "9. Disclaimer",
-        "text": "Inigo is not a medical, therapeutic, or diagnostic service. It is a community space for personal reflection and shared presence. Use the App and Site at your own discretion and consult a professional for medical or psychological concerns."
+        "text": "Inigo is not a medical, therapeutic, or diagnostic service. It is a community space for personal reflection and shared meditation. Use the App and Site at your own discretion and consult a professional for medical or psychological concerns."
       },
       "limitation": {
         "title": "10. Limitation of Liability",

@@ -125,9 +125,8 @@ export default function WorldState() {
     <section id="world-state" className="world-state-section">
       <div className="container">
         <div className="section-header">
-          <h2>{tExplainer('title')}</h2>
-          <p>{tExplainer('description')}</p>
-          <p className="world-state-microcopy">{tExplainer('microcopy')}</p>
+          <h2>{t('title')}</h2>
+          <p>{t('subtitle')}</p>
         </div>
 
         {/* World State Display - Skeleton Placeholder */}
