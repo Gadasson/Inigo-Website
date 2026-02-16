@@ -3400,6 +3400,13 @@ html[dir="rtl"] .presence-in-action-text * {
   margin: 0 auto;
 }
 
+.terms-hero .hero-subtitle,
+.privacy-hero .hero-subtitle,
+.contact-hero .hero-subtitle {
+  text-shadow: none !important;
+  color: var(--earth-brown);
+}
+
 .terms-last-updated {
   margin-top: 1.5rem;
   font-size: 1rem;
