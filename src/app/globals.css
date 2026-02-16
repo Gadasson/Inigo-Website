@@ -5331,6 +5331,30 @@ html[dir="rtl"] .btn-google-play {
   .community-new,
   .final-cta {
     padding: 6rem 1.5rem;
+    text-align: center;
+  }
+  
+  .final-cta-content {
+    text-align: center;
+  }
+  
+  .final-cta-headline {
+    text-align: center;
+  }
+  
+  .final-cta-follow {
+    text-align: center;
+  }
+  
+  /* RTL mobile: Ensure center alignment */
+  html[dir="rtl"] .final-cta {
+    text-align: center !important;
+  }
+  
+  html[dir="rtl"] .final-cta-content,
+  html[dir="rtl"] .final-cta-headline,
+  html[dir="rtl"] .final-cta-follow {
+    text-align: center !important;
   }
   
   .how-it-works-grid {
@@ -5340,6 +5364,7 @@ html[dir="rtl"] .btn-google-play {
   .hero-new-cta,
   .final-cta-buttons {
     flex-direction: column;
+    justify-content: center;
   }
   
   .btn-app-store,
