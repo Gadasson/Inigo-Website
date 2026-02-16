@@ -4606,6 +4606,11 @@ html[dir="rtl"] p.about-opening-line {
   align-items: flex-start;
 }
 
+/* Ensure text container aligns properly in RTL */
+html[dir="rtl"] .hero-new-text {
+  align-items: flex-end;
+}
+
 .hero-new-headline {
   font-size: clamp(3rem, 6vw, 5.5rem);
   font-weight: 800;
@@ -4657,8 +4662,8 @@ html[dir="rtl"] p.about-opening-line {
 .btn-google-play {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 1rem 1.5rem;
+  gap: 0.875rem;
+  padding: 0.875rem 1.25rem;
   background: var(--inigo-green);
   color: white;
   border-radius: 12px;
@@ -4667,12 +4672,14 @@ html[dir="rtl"] p.about-opening-line {
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(79, 121, 66, 0.2);
   margin-left: 0;
+  line-height: 1.2;
 }
 
 .btn-app-store .btn-icon,
 .btn-google-play .btn-icon {
   flex-shrink: 0;
-  width: 1.5rem;
+  width: 1.75rem;
+  height: 1.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4692,18 +4699,23 @@ html[dir="rtl"] p.about-opening-line {
 .btn-text {
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.125rem;
+  line-height: 1.3;
 }
 
 .btn-label {
   font-size: 1rem;
   font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
 }
 
 .btn-sublabel {
-  font-size: 0.85rem;
-  opacity: 0.9;
+  font-size: 0.8125rem;
+  opacity: 0.95;
   font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
 }
 
 .hero-new-microcopy {
@@ -4753,22 +4765,21 @@ html[dir="rtl"] .hero-new-about-link:hover .hero-new-about-arrow {
   align-items: center;
 }
 
-/* RTL Support for Hero New */
+/* RTL Support for Hero New - Keep same structure as LTR, just align text right */
 html[dir="rtl"] .hero-new-content {
   grid-template-columns: 1fr 1fr;
-  direction: rtl;
-}
-
-html[dir="rtl"] .hero-new-text {
-  align-items: flex-end;
-  text-align: right;
+  /* Keep same column order as LTR: Text (left), Visual (right) */
 }
 
 html[dir="rtl"] .hero-new-headline,
 html[dir="rtl"] .hero-new-subheadline,
-html[dir="rtl"] .hero-new-supporting,
+html[dir="rtl"] .hero-new-supporting {
+  align-items: flex-end;
+}
+
 html[dir="rtl"] .hero-new-supporting p {
   text-align: right;
+  width: 100%;
 }
 
 html[dir="rtl"] .hero-new-microcopy {
@@ -4778,12 +4789,26 @@ html[dir="rtl"] .hero-new-microcopy {
 
 html[dir="rtl"] .hero-new-about-link {
   text-align: right;
-  flex-direction: row-reverse;
+  flex-direction: row;
 }
 
+/* RTL: Reverse arrow direction - point left instead of right */
+html[dir="rtl"] .hero-new-about-arrow {
+  transform: scaleX(-1);
+}
+
+/* RTL: Match LTR structure exactly - buttons align left like LTR */
 html[dir="rtl"] .hero-new-cta {
-  justify-content: flex-end;
-  flex-direction: row-reverse;
+  justify-content: flex-start;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+}
+
+/* RTL: Keep button content LTR (App Store/Google Play are English) */
+html[dir="rtl"] .btn-app-store,
+html[dir="rtl"] .btn-google-play {
+  direction: ltr;
 }
 
 .app-mockup {
@@ -5210,8 +5235,33 @@ html[dir="rtl"] .hero-new-cta {
     gap: 3rem;
   }
   
+  /* Mobile: Visual first (standard practice for app landing pages) */
   .hero-new-visual {
     order: -1;
+    grid-column: 1;
+  }
+  
+  .hero-new-text {
+    order: 1;
+    grid-column: 1;
+  }
+  
+  /* RTL mobile: Force single column and visual above text */
+  html[dir="rtl"] .hero-new-content {
+    grid-template-columns: 1fr !important;
+    grid-template-areas: none !important;
+  }
+  
+  html[dir="rtl"] .hero-new-visual {
+    order: -1 !important;
+    grid-column: 1 !important;
+    grid-area: auto !important;
+  }
+  
+  html[dir="rtl"] .hero-new-text {
+    order: 1 !important;
+    grid-column: 1 !important;
+    grid-area: auto !important;
   }
   
   .app-mockup {
@@ -5249,6 +5299,29 @@ html[dir="rtl"] .hero-new-cta {
   }
   
   .hero-new-cta {
+    justify-content: center;
+  }
+  
+  /* RTL mobile: Center align all text like LTR */
+  html[dir="rtl"] .hero-new-text {
+    align-items: center !important;
+    text-align: center !important;
+  }
+  
+  html[dir="rtl"] .hero-new-headline,
+  html[dir="rtl"] .hero-new-subheadline,
+  html[dir="rtl"] .hero-new-supporting,
+  html[dir="rtl"] .hero-new-supporting p,
+  html[dir="rtl"] .hero-new-microcopy {
+    text-align: center !important;
+  }
+  
+  html[dir="rtl"] .hero-new-about-link {
+    justify-content: center;
+    text-align: center;
+  }
+  
+  html[dir="rtl"] .hero-new-cta {
     justify-content: center;
   }
   
