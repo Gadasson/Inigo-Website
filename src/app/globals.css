@@ -4609,6 +4609,7 @@ html[dir="rtl"] p.about-opening-line {
 /* Ensure text container aligns properly in RTL */
 html[dir="rtl"] .hero-new-text {
   align-items: flex-end;
+  padding-right: 2rem;
 }
 
 .hero-new-headline {
@@ -4771,8 +4772,15 @@ html[dir="rtl"] .hero-new-content {
   /* Keep same column order as LTR: Text (left), Visual (right) */
 }
 
-html[dir="rtl"] .hero-new-headline,
-html[dir="rtl"] .hero-new-subheadline,
+/* RTL Desktop: All text elements right-aligned (container has padding) */
+html[dir="rtl"] .hero-new-headline {
+  text-align: right;
+}
+
+html[dir="rtl"] .hero-new-subheadline {
+  text-align: right;
+}
+
 html[dir="rtl"] .hero-new-supporting {
   align-items: flex-end;
 }
@@ -4788,7 +4796,9 @@ html[dir="rtl"] .hero-new-microcopy {
 }
 
 html[dir="rtl"] .hero-new-about-link {
-  text-align: right;
+  align-self: flex-end;
+  margin-left: auto;
+  margin-right: 0;
   flex-direction: row;
 }
 
@@ -5302,18 +5312,40 @@ html[dir="rtl"] .btn-google-play {
     justify-content: center;
   }
   
-  /* RTL mobile: Center align all text like LTR */
+  /* RTL mobile: Center align all text like LTR, remove padding */
   html[dir="rtl"] .hero-new-text {
     align-items: center !important;
     text-align: center !important;
+    padding-right: 0 !important;
   }
   
-  html[dir="rtl"] .hero-new-headline,
-  html[dir="rtl"] .hero-new-subheadline,
-  html[dir="rtl"] .hero-new-supporting,
+  /* Mobile RTL: Remove all padding, center everything */
+  html[dir="rtl"] .hero-new-headline {
+    text-align: center !important;
+    padding-right: 0 !important;
+  }
+  
+  html[dir="rtl"] .hero-new-subheadline {
+    text-align: center !important;
+    padding-right: 0 !important;
+  }
+  
+  html[dir="rtl"] .hero-new-supporting {
+    padding-right: 0 !important;
+  }
+  
   html[dir="rtl"] .hero-new-supporting p,
   html[dir="rtl"] .hero-new-microcopy {
     text-align: center !important;
+    padding-right: 0 !important;
+  }
+  
+  html[dir="rtl"] .hero-new-about-link {
+    padding-right: 0 !important;
+  }
+  
+  html[dir="rtl"] .hero-new-cta {
+    padding-right: 0 !important;
   }
   
   html[dir="rtl"] .hero-new-about-link {

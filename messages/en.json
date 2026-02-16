@@ -609,11 +609,11 @@
     "subtitle": "Please review these terms to understand how to use Inigo respectfully and safely.",
     "lastUpdated": "Last updated:",
     "lastUpdatedDate": "November 2025",
-    "intro": "Welcome to Inigo, a social meditation network and mobile application developed and operated by Asaf Gadassi (\"Inigo\", \"we\", \"us\", or \"our\"). These Terms and Conditions (\"Terms\") govern your access to and use of the Inigo mobile app (the \"App\") and the Inigo website available at https://inigo.now (the \"Site\"). By using Inigo, you agree to these Terms. If you do not agree, please do not use the App or Site.",
+    "intro": "Welcome to Inigo, a social meditation network and mobile application operated by Inigo (\"we\", \"us\", or \"our\"). These Terms and Conditions (\"Terms\") govern your access to and use of the Inigo mobile app (the \"App\") and the Inigo website available at https://inigo.now (the \"Site\", together the \"Service\"). By using Inigo, you agree to these Terms. If you do not agree, please do not use the App or Site.",
     "sections": {
       "aboutInigo": {
         "title": "1. About Inigo",
-        "text1": "Inigo is an early-stage personal project created by Asaf Gadassi as a proof of concept for a social meditation network. Its purpose is to help people connect through quiet meditation, mindfulness, and shared meditation experiences.",
+        "text1": "Inigo is a social meditation network designed to help people connect through quiet meditation, mindfulness, and shared meditation experiences.",
         "text2": "Through Inigo, users can:",
         "items": [
           "Choose and return to places that hold you",
@@ -621,7 +621,7 @@
           "Contribute to a collective world meditation counter",
           "Share reflections, photos, and meditation moments with others"
         ],
-        "text3": "Inigo is currently running in a small testing volume, and features may evolve or change without notice."
+        "text3": "Inigo features may evolve or change without notice."
       },
       "eligibility": {
         "title": "2. Eligibility",
@@ -644,14 +644,16 @@
       },
       "userContent": {
         "title": "4. User Content",
-        "text1": "You may post reflections, photos, and experiences (\"User Content\"). By sharing such content, you grant Asaf Gadassi a non-exclusive, royalty-free, worldwide license to use, display, and distribute that content within Inigo to operate and improve the service.",
-        "text2": "You are responsible for your User Content and agree that it will not:",
+        "text1": "You may post reflections, photos, and experiences (\"User Content\"). By sharing such content, you grant Inigo a non-exclusive, royalty-free, worldwide license to use, display, and distribute that content within Inigo to operate and improve the service.",
+        "text2": "You represent and warrant that you have all necessary rights to post your User Content and that it will not:",
         "items": [
           "Violate any law or third-party rights",
           "Contain harmful, explicit, hateful, or misleading material",
-          "Infringe on others' privacy"
+          "Infringe on others' privacy",
+          "Include copyrighted material without authorization",
+          "Violate any person's privacy or publicity rights"
         ],
-        "text3": "We may remove or restrict any content that violates these Terms or community values."
+        "text3": "We may remove or restrict any content at our discretion, but we have no obligation to monitor User Content. You are solely responsible for your User Content."
       },
       "communityGuidelines": {
         "title": "5. Community Guidelines",
@@ -665,11 +667,11 @@
       },
       "intellectualProperty": {
         "title": "6. Intellectual Property",
-        "text": "All materials, designs, code, and content related to Inigo are created and owned by Asaf Gadassi. You may not copy, modify, or redistribute any part of Inigo without written permission."
+        "text": "All materials, designs, code, and content related to Inigo are owned by Inigo or its licensors. You may not copy, modify, or redistribute any part of Inigo without written permission."
       },
       "privacy": {
         "title": "7. Privacy",
-        "text": "Your privacy is important. Inigo uses secure third-party tools such as Firebase (for authentication and storage) and Django (for backend operations). No data is sold or shared with external parties. Please review our Privacy Policy for details on how information is collected, stored, and used."
+        "text": "Your privacy is important. Inigo uses secure third-party tools such as Firebase (for authentication and storage) and Django (for backend operations). We do not sell personal data. We may share data with service providers solely to operate the Service. Please review our Privacy Policy for details on how information is collected, stored, and used."
       },
       "experimental": {
         "title": "8. Experimental Nature",
@@ -680,33 +682,75 @@
           "The experience may change as development continues"
         ]
       },
+      "assumptionOfRisk": {
+        "title": "9. Assumption of Risk",
+        "text": "Meditation, breathwork, and related practices may cause emotional discomfort or physical sensations (such as lightheadedness). You voluntarily assume all risks associated with using Inigo and are responsible for your own wellbeing. If you experience discomfort, stop immediately and seek professional help if needed."
+      },
       "disclaimer": {
-        "title": "9. Disclaimer",
-        "text": "Inigo is not a medical, therapeutic, or diagnostic service. It is a community space for personal reflection and shared meditation. Use the App and Site at your own discretion and consult a professional for medical or psychological concerns."
+        "title": "10. Disclaimer",
+        "text": "Inigo is not a medical, therapeutic, diagnostic, or emergency service. It is not a substitute for professional medical, psychological, or therapeutic advice. No clinician-patient or professional relationship is created through your use of Inigo. If you are experiencing a mental health crisis or emergency, please contact your local emergency services immediately."
       },
       "limitation": {
-        "title": "10. Limitation of Liability",
-        "text": "To the fullest extent permitted by law, Asaf Gadassi shall not be liable for any indirect, incidental, or consequential damages arising from your use or inability to use Inigo."
+        "title": "11. Limitation of Liability",
+        "text": "To the maximum extent permitted by law, Inigo shall not be liable for any indirect, incidental, consequential, or special damages, including but not limited to loss of data, service interruptions, user-generated content, or third-party service failures. To the maximum extent permitted by law, Inigo's total liability will not exceed the greater of (a) amounts paid by you to Inigo in the last 12 months, or (b) 100 NIS."
+      },
+      "indemnification": {
+        "title": "12. Indemnification",
+        "text": "You agree to defend, indemnify, and hold harmless Inigo, its operators, and affiliates from and against any claims, damages, losses, liabilities, and expenses (including reasonable attorneys' fees) arising out of or relating to:",
+        "items": [
+          "Your User Content",
+          "Your violation of these Terms",
+          "Your misuse of the Service",
+          "Any claims brought by third parties related to your use of Inigo"
+        ]
+      },
+      "prohibitedUses": {
+        "title": "13. Prohibited Uses",
+        "text": "You agree not to use Inigo to:",
+        "items": [
+          "Violate any applicable law or regulation",
+          "Harass, threaten, or harm others",
+          "Post hate speech, discriminatory content, or sexual content",
+          "Exploit or harm minors",
+          "Impersonate any person or entity",
+          "Scrape, reverse engineer, or attempt to extract data through automated means",
+          "Use bots, scripts, or automated access without authorization",
+          "Distribute malware, viruses, or harmful code",
+          "Attempt to bypass security measures or gain unauthorized access"
+        ]
+      },
+      "thirdPartyServices": {
+        "title": "14. Third-Party Services",
+        "text": "Inigo relies on third-party service providers (such as Firebase, Apple, Google, and others) to operate the Service. Inigo is not responsible for outages, policy changes, or actions of these third-party providers. Your use of certain features may be subject to additional terms from these providers."
+      },
+      "forceMajeure": {
+        "title": "15. Force Majeure",
+        "text": "Inigo shall not be responsible for any failure or delay in performance due to circumstances beyond its reasonable control, including but not limited to natural disasters, war, terrorism, labor disputes, internet or telecommunications failures, or government actions."
       },
       "termination": {
-        "title": "11. Termination",
+        "title": "16. Termination",
         "text": "You may stop using Inigo at any time. We may suspend or delete accounts that violate these Terms, disrupt others' experiences, or threaten the integrity of the platform."
       },
       "changes": {
-        "title": "12. Changes to Terms",
+        "title": "17. Changes to Terms",
         "text": "These Terms may be updated as Inigo grows. When changes are made, the updated version will be published at https://inigo.now/terms. Your continued use of Inigo after changes take effect means you accept the revised Terms."
       },
+      "disputeResolution": {
+        "title": "18. Dispute Resolution",
+        "text1": "If you have a concern about these Terms or the Service, please contact us first at inigomeditation@gmail.com to try to resolve it informally.",
+        "text2": "These Terms shall be governed by and construed in accordance with the laws of Israel, without regard to conflict of law principles. Any disputes arising out of or relating to these Terms or the Service shall be subject to the exclusive jurisdiction of the competent courts in Tel Aviv, Israel."
+      },
       "contact": {
-        "title": "13. Contact",
+        "title": "19. Contact",
         "text": "If you have any questions, feedback, or concerns, please contact:",
         "items": [
-          "Email: inigomeditation@gmail.com",
+          "Email: inigomeditation@gmail.com (operated by Asaf Gadassi)",
           "Website: https://inigo.now"
         ]
       },
       "governingLaw": {
-        "title": "14. Governing Law",
-        "text": "These Terms shall be governed by and construed in accordance with the laws of Israel, without regard to conflict of law principles."
+        "title": "20. Governing Law and Jurisdiction",
+        "text": "These Terms shall be governed by and construed in accordance with the laws of Israel, without regard to conflict of law principles. Any disputes shall be subject to the exclusive jurisdiction of the competent courts in Tel Aviv, Israel."
       }
     }
   }

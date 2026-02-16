@@ -96,9 +96,9 @@ export default function Terms() {
             <div className="terms-section">
               <h2>{t('terms.sections.privacy.title')}</h2>
               <p>
-                {t('terms.sections.privacy.text').split('Privacy Policy')[0]}
-                <Link href={`/${locale}/privacy`}>Privacy Policy</Link>
-                {t('terms.sections.privacy.text').split('Privacy Policy')[1]}
+                {t('terms.sections.privacy.text').split(t('privacy.title'))[0]}
+                <Link href={`/${locale}/privacy`}>{t('privacy.title')}</Link>
+                {t('terms.sections.privacy.text').split(t('privacy.title'))[1]}
               </p>
             </div>
 
@@ -113,6 +113,11 @@ export default function Terms() {
             </div>
 
             <div className="terms-section">
+              <h2>{t('terms.sections.assumptionOfRisk.title')}</h2>
+              <p>{t('terms.sections.assumptionOfRisk.text')}</p>
+            </div>
+
+            <div className="terms-section">
               <h2>{t('terms.sections.disclaimer.title')}</h2>
               <p>{t('terms.sections.disclaimer.text')}</p>
             </div>
@@ -120,6 +125,36 @@ export default function Terms() {
             <div className="terms-section">
               <h2>{t('terms.sections.limitation.title')}</h2>
               <p>{t('terms.sections.limitation.text')}</p>
+            </div>
+
+            <div className="terms-section">
+              <h2>{t('terms.sections.indemnification.title')}</h2>
+              <p>{t('terms.sections.indemnification.text')}</p>
+              <ul>
+                {(t.raw('terms.sections.indemnification.items') as string[]).map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="terms-section">
+              <h2>{t('terms.sections.prohibitedUses.title')}</h2>
+              <p>{t('terms.sections.prohibitedUses.text')}</p>
+              <ul>
+                {(t.raw('terms.sections.prohibitedUses.items') as string[]).map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="terms-section">
+              <h2>{t('terms.sections.thirdPartyServices.title')}</h2>
+              <p>{t('terms.sections.thirdPartyServices.text')}</p>
+            </div>
+
+            <div className="terms-section">
+              <h2>{t('terms.sections.forceMajeure.title')}</h2>
+              <p>{t('terms.sections.forceMajeure.text')}</p>
             </div>
 
             <div className="terms-section">
@@ -134,6 +169,12 @@ export default function Terms() {
                 <Link href="https://inigo.now/terms">https://inigo.now/terms</Link>
                 {t('terms.sections.changes.text').split('https://inigo.now/terms')[1]}
               </p>
+            </div>
+
+            <div className="terms-section">
+              <h2>{t('terms.sections.disputeResolution.title')}</h2>
+              <p>{t('terms.sections.disputeResolution.text1')}</p>
+              <p>{t('terms.sections.disputeResolution.text2')}</p>
             </div>
 
             <div className="terms-section">
