@@ -124,10 +124,7 @@ export default function Privacy() {
             <h2>{t('privacy.cta.title')}</h2>
             <p>{t('privacy.cta.subtitle')}</p>
             <div className="cta-buttons">
-              <Link href={`/${locale}#early-access`} className="btn btn-primary btn-large">
-                {t('common.joinEarlyAccess')}
-              </Link>
-              <Link href={`/${locale}/about`} className="btn btn-ghost">
+              <Link href={`/${locale}/about`} className="btn btn-primary">
                 {t('common.learnMore')}
               </Link>
             </div>

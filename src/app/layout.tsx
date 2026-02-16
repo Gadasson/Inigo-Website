@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Inigo — Know Your Heart.",
-  description: "Know Your Heart.",
+  title: "Inigo — Meditation, but social.",
+  description: "Be part of something bigger. A playful social meditation network where presence becomes visible and collective.",
   icons: { 
     icon: "/images/heart_logo.svg",
     apple: "/images/heart_logo.svg"

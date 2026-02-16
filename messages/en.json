@@ -14,6 +14,50 @@
     "counterLabel": "Collective minutes of presence — live",
     "primaryCta": "Get Early Access"
   },
+  "heroNew": {
+    "headline": "Meditation, but social.",
+    "subheadline": "Be part of something bigger.",
+    "supporting1": "Start a session.",
+    "supporting2": "See the world state.",
+    "supporting3": "Share your presence.",
+    "microcopy": "Your quiet minutes don't disappear."
+  },
+  "howItWorksNew": {
+    "card1Title": "Start",
+    "card1Description": "Quick or guided sessions. Anywhere.",
+    "card2Title": "Become Visible",
+    "card2Description": "Your session adds to the live global World State.",
+    "card3Title": "Create",
+    "card3Description": "Drop a dot. Share a reflection. Post a full experience.",
+    "card4Title": "Connect",
+    "card4Description": "Follow people. Bless moments. Reflect together."
+  },
+  "worldStateNew": {
+    "headline": "One world. One counter.",
+    "subheadline": "Every session moves it forward.",
+    "liveNow": "Live now",
+    "explanation": "As the community meditates, the world state evolves — visually and collectively."
+  },
+  "createYourPresence": {
+    "headline": "Create your presence.",
+    "feature1": "Drop a quiet dot — \"I was here.\"",
+    "feature2": "Share a short reflection",
+    "feature3": "Post a full experience with images",
+    "feature4": "Let AI turn your feeling into a symbolic image",
+    "feature5": "Anchor your moment to a real-world spot"
+  },
+  "communityNew": {
+    "headline": "Meditation together.",
+    "feature1": "Follow people.",
+    "feature2": "See their sessions.",
+    "feature3": "Bless moments.",
+    "feature4": "Grow streaks.",
+    "tagline": "Community presence shifts the world state."
+  },
+  "finalCTA": {
+    "headline": "Ready to be part of something bigger?",
+    "followUs": "Follow us for launch updates."
+  },
   "worldState": {
     "title": "The world state",
     "subtitle": "A live measure of what's happening in Inigo right now.",
@@ -296,19 +340,19 @@
     "invalidEmail": "✗ Please enter a valid email address"
   },
   "footer": {
-    "tagline": "Inigo — Know Your Heart. · Quiet is the new power",
-    "hashtags": "#FromInnerToBeyond · #Together · #InigoMoments"
+    "tagline": "Inigo — Meditation, but social.",
+    "hashtags": "#MeditationButSocial · #Together · #InigoMoments"
   },
   "about": {
     "hero": {
       "title": "We are Inigo.",
       "lines": [
-        "Not a brand.",
-        "Not a method.",
-        "Not a big promise.",
+        "A playful social meditation network",
+        "where presence becomes visible",
+        "and collective.",
         "",
-        "A place where you can pause —",
-        "and act from balance."
+        "Meditation, but social.",
+        "Be part of something bigger."
       ],
       "secondaryCta": "Back to Home"
     },
@@ -316,74 +360,90 @@
       "whyBorn": {
         "title": "Why it was born",
         "body": [
-          "Inigo started from real tiredness.",
-          "Tired of noise.",
-          "Tired of comparison.",
-          "Tired of always needing to get somewhere.",
+          "The world today rarely lets the heart rest on the ground.",
           "",
-          "We wanted something different.",
-          "Something you can stay inside."
+          "We are either pulled upward —",
+          "into noise, speed, and constant emotion —",
+          "",
+          "or pushed downward —",
+          "into exhaustion and numbness.",
+          "",
+          "Both keep us moving.",
+          "Both keep us disconnected.",
+          "",
+          "Presence — meditation —",
+          "is where the heart can rest.",
+          "Where we meet life fully,",
+          "as it is.",
+          "",
+          "We wanted meditation to be social.",
+          "Not isolated.",
+          "Not competitive.",
+          "",
+          "A place where your quiet minutes",
+          "don't disappear.",
+          "",
+          "Where presence becomes visible",
+          "and adds to something bigger."
         ]
       },
       "notChasing": {
-        "title": "Not chasing edges",
+        "title": "What we're building",
         "body": [
-          "We're not chasing excitement.",
-          "Not peaks.",
-          "Not \"the next level.\"",
+          "Quick or guided sessions.",
+          "Anywhere.",
           "",
-          "We're building a simple ability to live:",
-          "sit. walk. eat. play. work with your hands.",
-          "and truly be there."
+          "Start a session.",
+          "See the world state.",
+          "Share your presence.",
+          "",
+          "Simple. Clear. Product-first."
         ]
       },
       "meditationLife": {
-        "title": "Meditation, connected to life",
+        "title": "Meditation, but social",
         "body": [
-          "Meditation is part of our base.",
-          "Silent sessions.",
-          "Guided sessions.",
+          "Meditation sessions are at the core.",
+          "Silent. Guided. Your choice.",
           "",
-          "But it doesn't stay on a cushion.",
+          "But it doesn't stop there.",
           "",
-          "In Inigo, meditation becomes a way",
-          "to be present inside real life."
+          "Every session moves the world state forward.",
+          "Your presence becomes visible.",
+          "Together, we build something bigger."
         ]
       },
       "whySocial": {
         "title": "Why it's social",
         "body": [
-          "Presence is easy to lose alone.",
+          "Presence is easier to maintain together.",
           "",
-          "But when other people also stay —",
-          "something settles.",
+          "When others also practice —",
+          "something shifts.",
           "",
           "In Inigo, we share time.",
-          "Not results.",
-          "Not wisdom.",
+          "We share presence.",
+          "We share the journey.",
           "",
-          "We share the way —",
-          "not the end of the way."
+          "Not results. Not perfection.",
+          "Just the practice itself."
         ]
       },
       "places": {
-        "title": "Places matter",
+        "title": "Create your presence",
         "body": [
-          "Home.",
-          "A garden.",
-          "A beach.",
-          "A basketball court.",
-          "A quiet corner.",
+          "Drop a quiet dot.",
+          "Share a reflection.",
+          "Post a full experience.",
           "",
-          "In Inigo, places collect presence",
-          "from different people, at different times.",
+          "Anchor your moment to a real-world spot.",
           "",
-          "Not from posts.",
-          "From time."
+          "Your presence matters.",
+          "Every session counts."
         ]
       },
       "language": {
-        "title": "A softer social language",
+        "title": "A different social language",
         "body": [
           "We don't \"like.\"",
           "We bless.",
@@ -399,11 +459,11 @@
           "title": "",
           "body": [
             "Not always comfortable sharing something personal?",
-            "Inigo can help you share through a symbolic image",
+            "AI helps you share through a symbolic image",
             "or a gently phrased reflection.",
             "",
-            "Technology that protects the heart —",
-            "not one that steals attention."
+            "Technology that protects —",
+            "not one that exploits."
           ]
         }
       },
@@ -417,15 +477,18 @@
           "Listening.",
           "",
           "Not trying to be everything for everyone —",
-          "just precise for the people it speaks to."
+          "just right for the people it speaks to."
         ]
       },
       "closing": {
-        "title": "If this feels familiar",
+        "title": "Ready to be part of something bigger?",
         "body": [
-          "Not in your head —",
-          "in your body —",
-          "you're welcome inside."
+          "Your quiet minutes don't disappear.",
+          "",
+          "They become visible.",
+          "They add to the world state.",
+          "",
+          "Meditation, but social."
         ]
       }
     },

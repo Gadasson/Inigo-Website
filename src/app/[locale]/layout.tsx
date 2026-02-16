@@ -23,15 +23,15 @@ export async function generateMetadata({
   
   return {
     metadataBase: new URL('https://inigo.now'),
-    title: 'Inigo — Know Your Heart.',
-    description: 'Know Your Heart.',
+    title: 'Inigo — Meditation, but social.',
+    description: 'Be part of something bigger. A playful social meditation network where presence becomes visible and collective.',
     icons: { 
       icon: '/images/heart_logo.svg',
       apple: '/images/heart_logo.svg'
     },
     openGraph: {
-      title: 'Inigo — Know Your Heart.',
-      description: 'A place to slow down — together.',
+      title: 'Inigo — Meditation, but social.',
+      description: 'Be part of something bigger. A playful social meditation network where presence becomes visible and collective.',
       type: 'website',
       url: 'https://inigo.now',
       siteName: 'Inigo',
@@ -47,8 +47,8 @@ export async function generateMetadata({
     },
     twitter: {
       card: 'summary_large_image',
-      title: 'Inigo — Know Your Heart.',
-      description: 'A place to slow down — together.',
+      title: 'Inigo — Meditation, but social.',
+      description: 'Be part of something bigger. A playful social meditation network where presence becomes visible and collective.',
       images: ['/images/heart_logo.svg'],
       creator: '@inigo',
       site: '@inigo'

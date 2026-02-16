@@ -34,9 +34,6 @@ export default function About() {
               ))}
             </div>
             <div className="about-hero-ctas">
-              <Link href={`/${locale}#early-access`} className="btn btn-primary">
-                {t('cta')}
-              </Link>
               <Link href={`/${locale}`} className="btn btn-ghost">
                 {t('hero.secondaryCta')}
               </Link>
@@ -94,9 +91,6 @@ export default function About() {
                 </p>
               ))}
             </div>
-            <Link href={`/${locale}#early-access`} className="btn btn-primary btn-large">
-              {t('cta')}
-            </Link>
           </div>
         </div>
       </section>
