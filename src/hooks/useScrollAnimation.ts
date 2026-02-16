@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, RefObject } from 'react';
 
-export function useScrollAnimation(): RefObject<HTMLElement> {
-  const ref = useRef<HTMLElement>(null);
+export function useScrollAnimation(): RefObject<HTMLElement | null> {
+  const ref = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     const element = ref.current;
