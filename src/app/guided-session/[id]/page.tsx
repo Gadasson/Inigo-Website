@@ -52,14 +52,25 @@ function metaTitle(preview: GuidedSessionPreviewResult): string {
   return 'Inigo — Guided session';
 }
 
+/** Crawlers and meta attributes handle single-line text more reliably than raw `\r\n`. */
+function toMetaDescriptionLine(text: string, maxLen: number): string {
+  return text
+    .replace(/\r\n/g, '\n')
+    .replace(/\n+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, maxLen);
+}
+
 function metaDescription(site: string, preview: GuidedSessionPreviewResult): string {
   if (preview.kind === 'ok') {
-    const line =
-      preview.shortDescription?.slice(0, 200) ||
-      (preview.durationLabel
-        ? `About ${preview.durationLabel} of guided presence in Inigo.`
-        : 'Open this guided session in Inigo.');
-    return line;
+    if (preview.shortDescription?.trim()) {
+      return toMetaDescriptionLine(preview.shortDescription, 200);
+    }
+    if (preview.durationLabel) {
+      return `About ${preview.durationLabel} of guided presence in Inigo.`;
+    }
+    return 'Open this guided session in Inigo.';
   }
   if (preview.kind === 'not_found') {
     return 'This link may be incomplete, or the session is no longer here. You can still find calm in the Inigo app.';
@@ -131,11 +142,13 @@ export default async function GuidedSessionSharePage({
 }) {
   const { id } = await params;
   const site = getPublicSiteUrl();
-  const openUrl = new URL(`/guided-session/${id}`, `${site}/`).toString();
 
   const preview = isValidGuidedSessionShareId(id)
     ? await fetchGuidedSessionPreview(id)
     : { kind: 'not_found' as const };
+
+  /** Same URL as canonical / og:url so universal links stay on the public domain (not VERCEL_URL). */
+  const openUrl = resolveGuidedSessionShareCanonicalUrl(site, id, preview);
 
   const coverSrc =
     preview.kind === 'ok'

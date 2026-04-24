@@ -1,12 +1,31 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from 'next';
+import { getPublicSiteUrl } from '@/lib/publicSiteUrl';
+import './globals.css';
+
+const defaultTitle = 'Inigo — Meditation, but social.';
+const defaultDescription =
+  'Be part of something bigger. A playful social meditation network where presence becomes visible and collective.';
 
 export const metadata: Metadata = {
-  title: "Inigo — Meditation, but social.",
-  description: "Be part of something bigger. A playful social meditation network where presence becomes visible and collective.",
-  icons: { 
-    icon: "/images/heart_logo.svg",
-    apple: "/images/heart_logo.svg"
+  metadataBase: new URL(getPublicSiteUrl()),
+  title: defaultTitle,
+  description: defaultDescription,
+  icons: {
+    icon: '/images/heart_logo.svg',
+    apple: '/images/heart_logo.svg',
+  },
+  openGraph: {
+    title: defaultTitle,
+    description: defaultDescription,
+    type: 'website',
+    siteName: 'Inigo',
+    // Intentionally no default images here: `guided-session` and other leaves set their own
+    // `og:image`; duplicate images confuse crawlers (e.g. WhatsApp uses the first tag).
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: defaultTitle,
+    description: defaultDescription,
   },
 };
 
@@ -20,13 +39,6 @@ export default function RootLayout({
   return (
     <html suppressHydrationWarning>
       <head>
-        <meta property="og:image" content="/images/heart_logo.svg" />
-        <meta property="og:image:width" content="512" />
-        <meta property="og:image:height" content="512" />
-        <meta property="og:image:alt" content="Inigo - Heart Logo" />
-        <meta name="twitter:image" content="/images/heart_logo.svg" />
-        <link rel="icon" type="image/svg+xml" href="/images/heart_logo.svg" />
-        <link rel="apple-touch-icon" href="/images/heart_logo.svg" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
