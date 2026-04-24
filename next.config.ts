@@ -4,8 +4,6 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin('./src/i18n/config.ts');
 
 const nextConfig: NextConfig = {
-  /** Keep native `sharp` out of the server bundle so Vercel can load libvips (OG resize works). */
-  serverExternalPackages: ['sharp'],
   /** Binary OG proxy: avoid RSC-oriented `Vary` values that confuse some link-preview crawlers. */
   async headers() {
     return [

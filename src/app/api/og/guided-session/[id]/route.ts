@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
-import sharp from 'sharp';
+import React from 'react';
+import { ImageResponse } from 'next/og';
 
 import {
   absolutizeSessionCoverUrl,
@@ -16,6 +17,8 @@ const CACHE_HEADER = 'public, max-age=3600, s-maxage=3600, stale-while-revalidat
 const OG_WIDTH = 1200;
 const OG_HEIGHT = 630;
 
+const MAX_RAW_BYTES = 512 * 1024;
+
 function imageResponse(body: Uint8Array, contentType: string): Response {
   const headers = new Headers({
     'Content-Type': contentType,
@@ -24,6 +27,34 @@ function imageResponse(body: Uint8Array, contentType: string): Response {
     'X-Content-Type-Options': 'nosniff',
   });
   return new Response(Buffer.from(body), { status: 200, headers });
+}
+
+/** Last resort: no native deps; always 200 + image/png @ 1200×630 (scrapers accept PNG for og:image). */
+function syntheticBrandedOgPng(): Response {
+  return new ImageResponse(
+    React.createElement(
+      'div',
+      {
+        style: {
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'linear-gradient(145deg, #1a3d28 0%, #3d6b47 55%, #5a8f6a 100%)',
+          color: '#f5faf6',
+          fontSize: 52,
+          fontWeight: 600,
+          letterSpacing: '-0.02em',
+          fontFamily:
+            'ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+        },
+      },
+      'inigo',
+    ),
+    { width: OG_WIDTH, height: OG_HEIGHT },
+  );
 }
 
 function isSupportedImageContentType(ct: string): boolean {
@@ -48,24 +79,48 @@ async function readBundledFallback(): Promise<{ body: Buffer; contentType: strin
 }
 
 async function fetchUrlBytes(url: string): Promise<{ body: ArrayBuffer; contentType: string } | null> {
-  const res = await fetch(url, {
-    method: 'GET',
-    headers: { Accept: 'image/*,*/*' },
-    redirect: 'follow',
-    next: { revalidate: 300 },
-  });
-  if (!res.ok) return null;
-  const rawCt = res.headers.get('content-type')?.split(';')[0]?.trim() ?? '';
-  const contentType = isSupportedImageContentType(rawCt) ? rawCt : 'image/png';
-  const body = await res.arrayBuffer();
-  if (body.byteLength === 0) return null;
-  return { body, contentType };
+  try {
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: { Accept: 'image/*,*/*' },
+      redirect: 'follow',
+      next: { revalidate: 300 },
+    });
+    if (!res.ok) return null;
+    const rawCt = res.headers.get('content-type')?.split(';')[0]?.trim() ?? '';
+    const contentType = isSupportedImageContentType(rawCt) ? rawCt : 'image/png';
+    const body = await res.arrayBuffer();
+    if (body.byteLength === 0) return null;
+    return { body, contentType };
+  } catch {
+    return null;
+  }
 }
 
-/** Re-encode for link previews: small JPEG at 1200×630 (WhatsApp rejects multi‑MB originals). */
-async function toLinkPreviewJpeg(imageBytes: ArrayBuffer): Promise<Uint8Array | null> {
+/** `sharp` is CommonJS `export =`; runtime may expose `default` or the callable itself. */
+type SharpFactory = (
+  input?: string | Buffer | Uint8Array,
+  options?: import('sharp').SharpOptions,
+) => import('sharp').Sharp;
+
+/**
+ * Resize/re-encode using sharp only via dynamic import so a broken native binary
+ * never crashes route module load (avoids HTTP 500 on Vercel).
+ */
+async function toLinkPreviewJpeg(imageBytes: ArrayBuffer | Buffer): Promise<Uint8Array | null> {
+  let sharpFactory: SharpFactory | null = null;
   try {
-    const buf = await sharp(Buffer.from(imageBytes), {
+    const mod = (await import('sharp')) as { default?: SharpFactory };
+    sharpFactory = mod.default ?? (mod as unknown as SharpFactory);
+  } catch {
+    return null;
+  }
+  if (!sharpFactory) {
+    return null;
+  }
+  const input = Buffer.isBuffer(imageBytes) ? imageBytes : Buffer.from(imageBytes);
+  try {
+    const buf = await sharpFactory(input, {
       failOn: 'none',
       limitInputPixels: false,
     })
@@ -79,22 +134,50 @@ async function toLinkPreviewJpeg(imageBytes: ArrayBuffer): Promise<Uint8Array | 
   }
 }
 
+/** Always HTTP 200 with an image body — never 404/500 for link-preview crawlers. */
 async function fallbackResponse(): Promise<Response> {
-  const local = await readBundledFallback();
-  if (local) {
-    const body = new Uint8Array(local.body);
-    return imageResponse(body, local.contentType);
-  }
-  const site = getPublicSiteUrl();
-  const remote = await fetchUrlBytes(`${site}/static/share/session.jpg`);
-  if (remote) {
-    const jpeg = await toLinkPreviewJpeg(remote.body);
-    if (jpeg) {
-      return imageResponse(jpeg, 'image/jpeg');
+  try {
+    const local = await readBundledFallback();
+    if (local) {
+      const jpeg = await toLinkPreviewJpeg(local.body);
+      if (jpeg) {
+        return imageResponse(jpeg, 'image/jpeg');
+      }
+      if (local.body.byteLength <= MAX_RAW_BYTES) {
+        return imageResponse(new Uint8Array(local.body), local.contentType);
+      }
     }
-    return imageResponse(new Uint8Array(remote.body), remote.contentType);
+  } catch {
+    /* continue */
   }
-  return new Response('Not found', { status: 404 });
+
+  try {
+    const site = getPublicSiteUrl();
+    const remote = await fetchUrlBytes(`${site}/static/share/session.jpg`);
+    if (remote) {
+      const jpeg = await toLinkPreviewJpeg(remote.body);
+      if (jpeg) {
+        return imageResponse(jpeg, 'image/jpeg');
+      }
+      if (remote.body.byteLength <= MAX_RAW_BYTES) {
+        return imageResponse(new Uint8Array(remote.body), remote.contentType);
+      }
+    }
+  } catch {
+    /* continue */
+  }
+
+  try {
+    return syntheticBrandedOgPng();
+  } catch {
+    const png = new Uint8Array(
+      Buffer.from(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+        'base64',
+      ),
+    );
+    return imageResponse(png, 'image/png');
+  }
 }
 
 /**
@@ -105,39 +188,41 @@ export async function GET(
   _request: Request,
   context: { params: Promise<{ id: string }> },
 ): Promise<Response> {
-  const { id } = await context.params;
+  try {
+    const { id } = await context.params;
 
-  if (!isValidGuidedSessionShareId(id)) {
-    return fallbackResponse();
+    if (!isValidGuidedSessionShareId(id)) {
+      return await fallbackResponse();
+    }
+
+    const preview = await fetchGuidedSessionPreview(id);
+    if (preview.kind !== 'ok') {
+      return await fallbackResponse();
+    }
+
+    const site = getPublicSiteUrl();
+    const upstream =
+      preview.coverImageUrlResolved ?? absolutizeSessionCoverUrl(site, preview.coverImageUrl);
+    if (!upstream) {
+      return await fallbackResponse();
+    }
+
+    const proxied = await fetchUrlBytes(upstream);
+    if (!proxied) {
+      return await fallbackResponse();
+    }
+
+    const jpeg = await toLinkPreviewJpeg(proxied.body);
+    if (jpeg) {
+      return imageResponse(jpeg, 'image/jpeg');
+    }
+
+    if (proxied.body.byteLength > MAX_RAW_BYTES) {
+      return await fallbackResponse();
+    }
+
+    return imageResponse(new Uint8Array(proxied.body), proxied.contentType);
+  } catch {
+    return await fallbackResponse();
   }
-
-  const preview = await fetchGuidedSessionPreview(id);
-  if (preview.kind !== 'ok') {
-    return fallbackResponse();
-  }
-
-  const site = getPublicSiteUrl();
-  const upstream =
-    preview.coverImageUrlResolved ?? absolutizeSessionCoverUrl(site, preview.coverImageUrl);
-  if (!upstream) {
-    return fallbackResponse();
-  }
-
-  const proxied = await fetchUrlBytes(upstream);
-  if (!proxied) {
-    return fallbackResponse();
-  }
-
-  const jpeg = await toLinkPreviewJpeg(proxied.body);
-  if (jpeg) {
-    return imageResponse(jpeg, 'image/jpeg');
-  }
-
-  /** Never return multi‑MB originals to link-preview crawlers (WhatsApp drops them). */
-  const maxRawBytes = 512 * 1024;
-  if (proxied.body.byteLength > maxRawBytes) {
-    return fallbackResponse();
-  }
-
-  return imageResponse(new Uint8Array(proxied.body), proxied.contentType);
 }
