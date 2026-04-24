@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
+import sharp from 'sharp';
 
 import {
   absolutizeSessionCoverUrl,
@@ -61,14 +62,16 @@ async function fetchUrlBytes(url: string): Promise<{ body: ArrayBuffer; contentT
   return { body, contentType };
 }
 
-/** Re-encode for link previews: smaller JPEG, exact OG dimensions, broad crawler compatibility. */
+/** Re-encode for link previews: small JPEG at 1200×630 (WhatsApp rejects multi‑MB originals). */
 async function toLinkPreviewJpeg(imageBytes: ArrayBuffer): Promise<Uint8Array | null> {
   try {
-    const sharp = (await import('sharp')).default;
-    const buf = await sharp(Buffer.from(imageBytes), { failOn: 'none' })
+    const buf = await sharp(Buffer.from(imageBytes), {
+      failOn: 'none',
+      limitInputPixels: false,
+    })
       .rotate()
       .resize(OG_WIDTH, OG_HEIGHT, { fit: 'cover', position: 'centre' })
-      .jpeg({ quality: 84, mozjpeg: true })
+      .jpeg({ quality: 80, mozjpeg: true, chromaSubsampling: '4:2:0' })
       .toBuffer();
     return new Uint8Array(buf);
   } catch {
@@ -128,6 +131,12 @@ export async function GET(
   const jpeg = await toLinkPreviewJpeg(proxied.body);
   if (jpeg) {
     return imageResponse(jpeg, 'image/jpeg');
+  }
+
+  /** Never return multi‑MB originals to link-preview crawlers (WhatsApp drops them). */
+  const maxRawBytes = 512 * 1024;
+  if (proxied.body.byteLength > maxRawBytes) {
+    return fallbackResponse();
   }
 
   return imageResponse(new Uint8Array(proxied.body), proxied.contentType);
