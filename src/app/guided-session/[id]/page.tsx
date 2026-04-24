@@ -2,8 +2,10 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { APP_STORE_URL, PLAY_STORE_URL } from '@/lib/appLinks';
 import {
+  absolutizeSessionCoverUrl,
   fetchGuidedSessionPreview,
   isValidGuidedSessionShareId,
+  resolveGuidedSessionShareCanonicalUrl,
   type GuidedSessionPreviewResult,
 } from '@/lib/guidedSessionPreview';
 import { getPublicSiteUrl } from '@/lib/publicSiteUrl';
@@ -25,12 +27,19 @@ function absoluteUrl(site: string, pathOrUrl: string): string {
 }
 
 function pickOgImage(site: string, preview: GuidedSessionPreviewResult): string {
-  if (preview.kind === 'ok' && preview.coverImageUrl) {
-    try {
-      const u = new URL(preview.coverImageUrl);
-      if (u.protocol === 'https:') return u.toString();
-    } catch {
-      /* ignore */
+  if (preview.kind === 'ok') {
+    const src =
+      preview.coverImageUrlResolved ??
+      absolutizeSessionCoverUrl(site, preview.coverImageUrl);
+    if (src) {
+      try {
+        const u = new URL(src);
+        if (u.protocol === 'https:' || u.protocol === 'http:') {
+          return u.toString();
+        }
+      } catch {
+        /* ignore */
+      }
     }
   }
   return absoluteUrl(site, FALLBACK_OG_PATH);
@@ -68,13 +77,12 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const site = getPublicSiteUrl();
-  const canonicalPath = `/guided-session/${id}`;
-  const canonical = new URL(canonicalPath, `${site}/`).toString();
 
   const preview = isValidGuidedSessionShareId(id)
     ? await fetchGuidedSessionPreview(id)
     : { kind: 'not_found' as const };
 
+  const shareCanonicalUrl = resolveGuidedSessionShareCanonicalUrl(site, id, preview);
   const title = metaTitle(preview);
   const description = metaDescription(site, preview);
   const ogImage = pickOgImage(site, preview);
@@ -83,7 +91,7 @@ export async function generateMetadata({
     metadataBase: new URL(site),
     title,
     description,
-    alternates: { canonical: canonicalPath },
+    alternates: { canonical: shareCanonicalUrl },
     robots: {
       index: preview.kind === 'ok',
       follow: true,
@@ -91,7 +99,7 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      url: canonical,
+      url: shareCanonicalUrl,
       siteName: 'Inigo',
       type: 'website',
       images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
@@ -129,8 +137,12 @@ export default async function GuidedSessionSharePage({
     ? await fetchGuidedSessionPreview(id)
     : { kind: 'not_found' as const };
 
-  const showCover = preview.kind === 'ok' && Boolean(preview.coverImageUrl);
-  const coverSrc = preview.kind === 'ok' ? preview.coverImageUrl : undefined;
+  const coverSrc =
+    preview.kind === 'ok'
+      ? (preview.coverImageUrlResolved ??
+          absolutizeSessionCoverUrl(site, preview.coverImageUrl))
+      : undefined;
+  const showCover = Boolean(coverSrc);
 
   return (
     <main className="gss">

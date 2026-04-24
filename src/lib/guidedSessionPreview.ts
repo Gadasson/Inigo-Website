@@ -1,11 +1,14 @@
 import { cache } from 'react';
+import { getPublicSiteUrl } from '@/lib/publicSiteUrl';
 
 /**
  * Guided session share preview — backend contract
  * ================================================
- * The website loads this as JSON (this route is not HTML-proxied like /e/, /s/, …).
+ * The website loads preview JSON (this route is not HTML-proxied like /e/, /s/, …).
  *
- *   GET {INIGO_API_BASE}/api/share/guided_session/{id}/
+ *   HTML share (app / crawlers that want HTML): GET {INIGO_API_BASE}/api/share/guided-session/{identifier}/
+ *   JSON preview (this module): GET {INIGO_API_BASE}/api/share/preview/guided-session/{identifier}/
+ *   `{identifier}` may be a numeric id or a slug (e.g. morning-meditation-1).
  *   Header: Accept: application/json
  *   Response: application/json
  *
@@ -20,6 +23,7 @@ import { cache } from 'react';
  *     "language"?: string,
  *     "playable"?: boolean,              // default true; false = inactive / not openable
  *     "unplayable_reason"?: string       // optional gentle message when playable is false
+ *     "canonical_url"?: string           // optional; full URL or site path for SEO + Open Graph url
  *   }
  *
  * HTTP:
@@ -38,10 +42,12 @@ export function getInigoApiBase(): string {
   return raw.replace(/\/$/, '');
 }
 
-const ID_PATTERN = /^[a-zA-Z0-9_-]{1,128}$/;
+/** Route param: numeric id, slug (e.g. morning-meditation-1), or opaque token — not assumed numeric. */
+const SESSION_IDENTIFIER_PATTERN = /^[-a-zA-Z0-9_.]{1,128}$/;
 
 export function isValidGuidedSessionShareId(id: string): boolean {
-  return ID_PATTERN.test(id);
+  if (!id || id.length > 128) return false;
+  return SESSION_IDENTIFIER_PATTERN.test(id);
 }
 
 export type GuidedSessionPreviewOk = {
@@ -49,11 +55,15 @@ export type GuidedSessionPreviewOk = {
   title: string;
   shortDescription?: string;
   coverImageUrl?: string;
+  /** Resolved public URL for `<img src>` (absolute https preferred). */
+  coverImageUrlResolved?: string;
   durationLabel?: string;
   instructor?: string;
   language?: string;
   playable: boolean;
   unplayableReason?: string;
+  /** When set, use for canonical link, og:url, and share metadata (still use site universal link for “Open in Inigo”). */
+  canonicalUrl?: string;
 };
 
 export type GuidedSessionPreviewNotFound = { kind: 'not_found' };
@@ -69,8 +79,79 @@ export type GuidedSessionPreviewResult =
   | GuidedSessionPreviewUnavailable
   | GuidedSessionPreviewError;
 
-function previewEndpoint(id: string): string {
-  return `${getInigoApiBase()}/api/share/guided_session/${encodeURIComponent(id)}/`;
+function previewEndpoint(identifier: string): string {
+  return `${getInigoApiBase()}/api/share/preview/guided-session/${encodeURIComponent(identifier)}/`;
+}
+
+function absolutizeAgainstBase(baseNoSlash: string, pathOrUrl: string): string {
+  const base = baseNoSlash.endsWith('/') ? baseNoSlash : `${baseNoSlash}/`;
+  const raw = pathOrUrl.trim();
+  if (/^https?:\/\//i.test(raw)) {
+    return new URL(raw).toString();
+  }
+  if (raw.startsWith('//')) {
+    return new URL(`https:${raw}`).toString();
+  }
+  const path = raw.startsWith('/') ? raw : `/${raw}`;
+  return new URL(path, base).toString();
+}
+
+/**
+ * Turn API cover paths into absolute URLs (https) for `<img>` and Open Graph.
+ * Protocol-relative and root-relative URLs resolve against `INIGO_API_BASE` first, then the public site.
+ */
+export function absolutizeSessionCoverUrl(site: string, cover?: string): string | undefined {
+  if (!cover?.trim()) return undefined;
+  const s = cover.trim();
+  const siteBase = site.replace(/\/$/, '');
+  const apiBase = getInigoApiBase();
+  try {
+    if (/^https?:\/\//i.test(s)) {
+      return new URL(s).toString();
+    }
+    if (s.startsWith('//')) {
+      return new URL(`https:${s}`).toString();
+    }
+    if (s.startsWith('/')) {
+      return absolutizeAgainstBase(apiBase, s);
+    }
+    return new URL(s, `${apiBase}/`).toString();
+  } catch {
+    try {
+      return absolutizeAgainstBase(siteBase, s.startsWith('/') ? s : `/${s}`);
+    } catch {
+      return undefined;
+    }
+  }
+}
+
+/**
+ * Canonical / OG URL: prefer backend `canonical_url` when present; otherwise the default share page on this site.
+ * Returns an absolute URL suitable for `alternates.canonical`, `openGraph.url`, and Twitter card URL.
+ */
+export function resolveGuidedSessionShareCanonicalUrl(
+  site: string,
+  routeIdentifier: string,
+  preview: GuidedSessionPreviewResult,
+): string {
+  const siteBase = site.replace(/\/$/, '');
+  const defaultPath = `/guided-session/${routeIdentifier}`;
+  const defaultCanonical = new URL(defaultPath, `${siteBase}/`).toString();
+
+  if (preview.kind !== 'ok') {
+    return defaultCanonical;
+  }
+
+  const raw = preview.canonicalUrl?.trim();
+  if (!raw) {
+    return defaultCanonical;
+  }
+
+  try {
+    return /^https?:\/\//i.test(raw) ? new URL(raw).toString() : absolutizeAgainstBase(siteBase, raw);
+  } catch {
+    return defaultCanonical;
+  }
 }
 
 function pickString(obj: Record<string, unknown>, keys: string[]): string | undefined {
@@ -127,6 +208,17 @@ function parseOkBody(data: Record<string, unknown>): GuidedSessionPreviewOk | Gu
   const longDescription = pickString(data, ['description', 'long_description', 'longDescription']);
   const description = shortDescription ?? longDescription;
 
+  const canonicalUrl = pickString(data, [
+    'canonical_url',
+    'canonicalUrl',
+    'share_url',
+    'shareUrl',
+    'public_url',
+    'publicUrl',
+    'og_url',
+    'ogUrl',
+  ]);
+
   const coverImageUrl = pickString(data, [
     'cover_image_url',
     'coverImageUrl',
@@ -158,6 +250,7 @@ function parseOkBody(data: Record<string, unknown>): GuidedSessionPreviewOk | Gu
     language,
     playable,
     unplayableReason,
+    canonicalUrl,
   };
 }
 
@@ -221,7 +314,14 @@ async function fetchPreviewUncached(id: string): Promise<GuidedSessionPreviewRes
     }
 
     const parsed = parseOkBody(record);
-    return parsed;
+    if (parsed.kind !== 'ok') {
+      return parsed;
+    }
+    const site = getPublicSiteUrl();
+    const coverResolved = parsed.coverImageUrl
+      ? absolutizeSessionCoverUrl(site, parsed.coverImageUrl)
+      : undefined;
+    return { ...parsed, coverImageUrlResolved: coverResolved ?? parsed.coverImageUrl };
   } catch {
     return { kind: 'error' };
   }
