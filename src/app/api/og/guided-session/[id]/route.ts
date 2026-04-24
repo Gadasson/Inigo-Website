@@ -12,6 +12,19 @@ export const runtime = 'nodejs';
 
 const CACHE_HEADER = 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400';
 
+const OG_WIDTH = 1200;
+const OG_HEIGHT = 630;
+
+function imageResponse(body: Uint8Array, contentType: string): Response {
+  const headers = new Headers({
+    'Content-Type': contentType,
+    'Content-Length': String(body.byteLength),
+    'Cache-Control': CACHE_HEADER,
+    'X-Content-Type-Options': 'nosniff',
+  });
+  return new Response(Buffer.from(body), { status: 200, headers });
+}
+
 function isSupportedImageContentType(ct: string): boolean {
   const base = ct.split(';')[0]?.trim().toLowerCase() ?? '';
   return (
@@ -48,27 +61,35 @@ async function fetchUrlBytes(url: string): Promise<{ body: ArrayBuffer; contentT
   return { body, contentType };
 }
 
+/** Re-encode for link previews: smaller JPEG, exact OG dimensions, broad crawler compatibility. */
+async function toLinkPreviewJpeg(imageBytes: ArrayBuffer): Promise<Uint8Array | null> {
+  try {
+    const sharp = (await import('sharp')).default;
+    const buf = await sharp(Buffer.from(imageBytes), { failOn: 'none' })
+      .rotate()
+      .resize(OG_WIDTH, OG_HEIGHT, { fit: 'cover', position: 'centre' })
+      .jpeg({ quality: 84, mozjpeg: true })
+      .toBuffer();
+    return new Uint8Array(buf);
+  } catch {
+    return null;
+  }
+}
+
 async function fallbackResponse(): Promise<Response> {
   const local = await readBundledFallback();
   if (local) {
-    return new Response(new Uint8Array(local.body), {
-      status: 200,
-      headers: {
-        'Content-Type': local.contentType,
-        'Cache-Control': CACHE_HEADER,
-      },
-    });
+    const body = new Uint8Array(local.body);
+    return imageResponse(body, local.contentType);
   }
   const site = getPublicSiteUrl();
   const remote = await fetchUrlBytes(`${site}/static/share/session.jpg`);
   if (remote) {
-    return new Response(remote.body, {
-      status: 200,
-      headers: {
-        'Content-Type': remote.contentType,
-        'Cache-Control': CACHE_HEADER,
-      },
-    });
+    const jpeg = await toLinkPreviewJpeg(remote.body);
+    if (jpeg) {
+      return imageResponse(jpeg, 'image/jpeg');
+    }
+    return imageResponse(new Uint8Array(remote.body), remote.contentType);
   }
   return new Response('Not found', { status: 404 });
 }
@@ -104,11 +125,10 @@ export async function GET(
     return fallbackResponse();
   }
 
-  return new Response(proxied.body, {
-    status: 200,
-    headers: {
-      'Content-Type': proxied.contentType,
-      'Cache-Control': CACHE_HEADER,
-    },
-  });
+  const jpeg = await toLinkPreviewJpeg(proxied.body);
+  if (jpeg) {
+    return imageResponse(jpeg, 'image/jpeg');
+  }
+
+  return imageResponse(new Uint8Array(proxied.body), proxied.contentType);
 }

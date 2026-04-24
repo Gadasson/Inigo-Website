@@ -4,6 +4,15 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin('./src/i18n/config.ts');
 
 const nextConfig: NextConfig = {
+  /** Binary OG proxy: avoid RSC-oriented `Vary` values that confuse some link-preview crawlers. */
+  async headers() {
+    return [
+      {
+        source: '/api/og/guided-session/:path*',
+        headers: [{ key: 'Vary', value: 'Accept-Encoding' }],
+      },
+    ];
+  },
   async redirects() {
     return [
       {
