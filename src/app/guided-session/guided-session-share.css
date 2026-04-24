@@ -1,0 +1,175 @@
+/* Scoped share landing — avoids changing global marketing section styles */
+.gss {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.25rem 3rem;
+  box-sizing: border-box;
+}
+
+.gss__card {
+  width: 100%;
+  max-width: 28rem;
+  background: #fff;
+  border-radius: 1.25rem;
+  box-shadow: 0 8px 32px rgba(17, 17, 17, 0.06);
+  border: 1px solid var(--border-color, #e8e4dc);
+  overflow: hidden;
+  text-align: left;
+}
+
+.gss__media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: var(--soft-green, #e8f5e9);
+}
+
+.gss__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0;
+  margin: 0;
+}
+
+.gss__body {
+  padding: 1.35rem 1.35rem 1.5rem;
+}
+
+.gss__title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--inigo-green, #4f7942);
+  margin: 0 0 0.5rem;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.gss__meta {
+  font-size: 0.9rem;
+  color: var(--earth-brown, #6e5849);
+  margin: 0 0 0.85rem;
+}
+
+.gss__desc {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--deep-earth, #111);
+  margin: 0 0 1.25rem;
+  opacity: 0.92;
+}
+
+.gss__notice {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--earth-brown, #6e5849);
+  margin: 0 0 1rem;
+  padding: 0.65rem 0.75rem;
+  background: var(--soft-amber, #fff8e1);
+  border-radius: 0.65rem;
+}
+
+.gss__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.gss__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+}
+
+.gss__btn:active {
+  transform: scale(0.98);
+}
+
+.gss__btn--primary {
+  background: var(--inigo-green, #4f7942);
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(79, 121, 66, 0.25);
+}
+
+.gss__btn--primary:hover {
+  opacity: 0.95;
+}
+
+.gss__btn--secondary {
+  background: transparent;
+  color: var(--inigo-green, #4f7942);
+  border: 2px solid rgba(79, 121, 66, 0.35);
+}
+
+.gss__btn--secondary:hover {
+  background: rgba(79, 121, 66, 0.06);
+}
+
+.gss__stores {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+.gss__store {
+  flex: 1 1 auto;
+  min-width: 8rem;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.55rem 0.65rem;
+  border-radius: 0.65rem;
+  text-decoration: none;
+  color: var(--deep-earth, #111);
+  border: 1px solid var(--border-color, #e8e4dc);
+  background: var(--soft-sand, #fdf9f2);
+}
+
+.gss__store:hover {
+  border-color: rgba(79, 121, 66, 0.35);
+}
+
+.gss__brand {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.gss__brand a {
+  font-weight: 700;
+  color: var(--inigo-green, #4f7942);
+  text-decoration: none;
+}
+
+.gss__brand a:hover {
+  text-decoration: underline;
+}
+
+.gss__lede {
+  text-align: center;
+  max-width: 24rem;
+  margin: 0 auto 1.25rem;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--earth-brown, #6e5849);
+}
+
+.gss__empty-media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 2.25rem;
+  opacity: 0.35;
+}

@@ -41,7 +41,7 @@ curl https://inigo.now/.well-known/apple-app-site-association
     "details": [
       {
         "appIDs": ["5D7CFYURW8.now.inigo.app"],
-        "paths": ["/e/*", "/s/*", "/event/*", "/spot/*"]
+        "paths": ["/e/*", "/s/*", "/event/*", "/spot/*", "/guided-session/*", "/guided-sessions/*"]
       }
     ]
   }

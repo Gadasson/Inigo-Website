@@ -2,9 +2,12 @@
   "name": "inigo-website",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "dev": "next dev",
-    "build": "next build --turbopack",
+    "dev": "node scripts/ensure-node-version.cjs && next dev",
+    "build": "node scripts/ensure-node-version.cjs && next build --turbopack",
     "start": "next start",
     "lint": "eslint"
   },

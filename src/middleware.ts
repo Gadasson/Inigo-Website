@@ -26,6 +26,8 @@ export default function middleware(request: NextRequest) {
     '/s/',
     '/event/',
     '/spot/',
+    '/guided-session/',
+    '/guided-sessions/',
     '/api/share/',
     '/apple-app-site-association',
     '/.well-known/',

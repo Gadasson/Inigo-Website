@@ -10,7 +10,9 @@
           "/e/*",
           "/s/*",
           "/event/*",
-          "/spot/*"
+          "/spot/*",
+          "/guided-session/*",
+          "/guided-sessions/*"
         ]
       }
     ]
