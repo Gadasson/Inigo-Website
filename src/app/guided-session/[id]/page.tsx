@@ -4,6 +4,7 @@ import { APP_STORE_URL, PLAY_STORE_URL } from '@/lib/appLinks';
 import {
   absolutizeSessionCoverUrl,
   fetchGuidedSessionPreview,
+  getGuidedSessionOgProxyUrl,
   isValidGuidedSessionShareId,
   resolveGuidedSessionShareCanonicalUrl,
   type GuidedSessionPreviewResult,
@@ -26,16 +27,15 @@ function absoluteUrl(site: string, pathOrUrl: string): string {
   return new URL(path, base).toString();
 }
 
-function pickOgImage(site: string, preview: GuidedSessionPreviewResult): string {
+function pickOgImage(site: string, routeIdentifier: string, preview: GuidedSessionPreviewResult): string {
   if (preview.kind === 'ok') {
     const src =
-      preview.coverImageUrlResolved ??
-      absolutizeSessionCoverUrl(site, preview.coverImageUrl);
+      preview.coverImageUrlResolved ?? absolutizeSessionCoverUrl(site, preview.coverImageUrl);
     if (src) {
       try {
         const u = new URL(src);
         if (u.protocol === 'https:' || u.protocol === 'http:') {
-          return u.toString();
+          return getGuidedSessionOgProxyUrl(site, routeIdentifier);
         }
       } catch {
         /* ignore */
@@ -96,7 +96,7 @@ export async function generateMetadata({
   const shareCanonicalUrl = resolveGuidedSessionShareCanonicalUrl(site, id, preview);
   const title = metaTitle(preview);
   const description = metaDescription(site, preview);
-  const ogImage = pickOgImage(site, preview);
+  const ogImage = pickOgImage(site, id, preview);
 
   return {
     metadataBase: new URL(site),

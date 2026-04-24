@@ -34,6 +34,9 @@ import { getPublicSiteUrl } from '@/lib/publicSiteUrl';
  *
  * Environment:
  *   INIGO_API_BASE — optional, default https://api2.inigo.now
+ *
+ * Open Graph images for guided-session pages use the website proxy
+ * `GET /api/og/guided-session/{identifier}/` so scrapers fetch `image/*` from inigo.now.
  */
 const DEFAULT_API_BASE = 'https://api2.inigo.now';
 
@@ -129,6 +132,15 @@ export function absolutizeSessionCoverUrl(site: string, cover?: string): string 
  * Canonical / OG URL: prefer backend `canonical_url` when present; otherwise the default share page on this site.
  * Returns an absolute URL suitable for `alternates.canonical`, `openGraph.url`, and Twitter card URL.
  */
+/**
+ * Absolute HTTPS URL on this site that proxies the session cover (`GET` returns raw image bytes).
+ * Use in `og:image` / `twitter:image` so scrapers fetch from the public domain, not third-party storage.
+ */
+export function getGuidedSessionOgProxyUrl(site: string, identifier: string): string {
+  const base = site.replace(/\/$/, '');
+  return `${base}/api/og/guided-session/${encodeURIComponent(identifier)}`;
+}
+
 export function resolveGuidedSessionShareCanonicalUrl(
   site: string,
   routeIdentifier: string,
