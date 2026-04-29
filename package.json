@@ -6,9 +6,14 @@
     "node": ">=20"
   },
   "scripts": {
+    "clean": "node scripts/clean.cjs",
     "dev": "node scripts/ensure-node-version.cjs && next dev",
-    "build": "node scripts/ensure-node-version.cjs && next build --turbopack",
+    "dev:clean": "npm run clean && node scripts/ensure-node-version.cjs && next dev",
+    "dev:turbo": "node scripts/ensure-node-version.cjs && next dev --turbopack",
+    "build": "node scripts/ensure-node-version.cjs && next build",
+    "build:turbo": "node scripts/ensure-node-version.cjs && next build --turbopack",
     "start": "next start",
+    "start:prod": "npm run build && next start",
     "lint": "eslint"
   },
   "dependencies": {

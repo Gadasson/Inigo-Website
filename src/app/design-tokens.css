@@ -1,0 +1,67 @@
+/**
+ * Inigo website — design tokens (single source of truth for core brand colors).
+ *
+ * Sync when changing primitives (search repo):
+ * - src/app/[locale]/layout.tsx → msapplication-TileColor, theme-color (= --inigo-black-soft)
+ * - src/app/api/world-state/route.ts → fallback state color (= --inigo-accent-primary)
+ */
+:root {
+  /* --- Primitives --- */
+  --inigo-black-soft: #0f0f0f;
+  --inigo-charcoal: #1a1a1a;
+  --inigo-off-white: #f5f5f5;
+  --inigo-light-gray: #eaeaea;
+
+  --inigo-accent-primary: #6f7b5e;
+  --inigo-accent-hover: #5e6a4f;
+  --inigo-accent-muted: #9aa394;
+  /* For rgba(..., opacity) tints — change RGB once */
+  --inigo-accent-rgb: 111, 123, 94;
+  --inigo-accent-soft: rgba(var(--inigo-accent-rgb), 0.08);
+
+  /* --- Semantic: dark strips (hero, footer, final CTA) --- */
+  --color-bg-primary: var(--inigo-black-soft);
+  --color-bg-secondary: var(--inigo-charcoal);
+  --color-text-primary: var(--inigo-off-white);
+  --color-text-secondary: #a0a0a0;
+
+  /* --- Semantic: light “paper” pages (quiet home / about / legal) --- */
+  --color-surface-page: var(--inigo-off-white);
+  --color-surface-elevated: #ffffff;
+  --color-text-body: var(--inigo-charcoal);
+  --color-text-muted: #777777;
+
+  /* --- Semantic: actions --- */
+  --color-action-primary: var(--inigo-accent-primary);
+  --color-action-hover: var(--inigo-accent-hover);
+  --color-action-muted: var(--inigo-accent-muted);
+  --color-action-soft: var(--inigo-accent-soft);
+
+  /* --- Semantic: borders & on-dark text --- */
+  --color-border-subtle: rgba(245, 245, 245, 0.14);
+  --color-border-on-light: rgba(26, 26, 26, 0.12);
+  --color-border-on-light-faint: rgba(26, 26, 26, 0.08);
+  --color-overlay-charcoal: rgba(26, 26, 26, 0.35);
+
+  --color-text-subtle-on-dark: rgba(245, 245, 245, 0.72);
+  --color-text-subtle-on-dark-strong: rgba(245, 245, 245, 0.78);
+  --color-text-subtle-on-dark-muted: rgba(245, 245, 245, 0.62);
+  --color-text-subtle-on-dark-emphasis: rgba(245, 245, 245, 0.85);
+
+  /* --- Legacy / marketing aliases (point at tokens above) --- */
+  --inigo-gray-light: var(--inigo-light-gray);
+  --inigo-green-primary: var(--inigo-accent-primary);
+  --inigo-green-hover: var(--inigo-accent-hover);
+  --inigo-green-soft-tint: var(--inigo-accent-soft);
+  --inigo-green-muted: var(--inigo-accent-muted);
+  --inigo-green: var(--inigo-accent-primary);
+
+  --quiet-black: var(--color-bg-primary);
+  --quiet-white: var(--color-surface-page);
+  --quiet-pure-white: var(--color-surface-elevated);
+  --quiet-text: var(--color-text-body);
+  --quiet-muted: var(--color-text-muted);
+  --quiet-muted-light: var(--color-text-secondary);
+  --quiet-accent: var(--color-action-primary);
+  --quiet-accent-hover: var(--color-action-hover);
+}

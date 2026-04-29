@@ -7,40 +7,18 @@ export default function HowItWorksNew() {
   const t = useTranslations('howItWorksNew');
   const ref = useScrollAnimation();
 
-  const cards = [
-    {
-      icon: '🚀',
-      title: t('card1Title'),
-      description: t('card1Description')
-    },
-    {
-      icon: '👁️',
-      title: t('card2Title'),
-      description: t('card2Description')
-    },
-    {
-      icon: '✨',
-      title: t('card3Title'),
-      description: t('card3Description')
-    },
-    {
-      icon: '🤝',
-      title: t('card4Title'),
-      description: t('card4Description')
-    }
-  ];
-
   return (
-    <section ref={ref} className="how-it-works-new section-fade-in">
-      <div className="container">
-        <div className="how-it-works-grid">
-          {cards.map((card, index) => (
-            <div key={index} className="how-it-works-card">
-              <div className="card-icon">{card.icon}</div>
-              <h3 className="card-title">{card.title}</h3>
-              <p className="card-description">{card.description}</p>
-            </div>
-          ))}
+    <section ref={ref} className="how-it-works-new home-section-shift section-fade-in" aria-labelledby="shift-title">
+      <div className="container container--narrow">
+        <div className="home-shift-copy">
+          <p className="home-shift-lead" id="shift-title">
+            {t('line1')}
+            <br />
+            <span className="home-shift-emphasis">{t('line2')}</span>
+          </p>
+          <p className="home-shift-body">{t('body1')}</p>
+          <p className="home-shift-body home-shift-body--accent">{t('body2')}</p>
+          <p className="home-shift-body">{t('body3')}</p>
         </div>
       </div>
     </section>

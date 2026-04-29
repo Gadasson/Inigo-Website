@@ -2,21 +2,19 @@
 
 import Link from 'next/link';
 import { useTranslations, useLocale } from 'next-intl';
+import FinalCTA from '../../../components/FinalCTA';
 
 export default function Terms() {
   const t = useTranslations();
   const locale = useLocale();
 
   return (
-    <>
-      {/* Hero Section */}
+    <main className="subpage-quiet">
       <section className="terms-hero">
         <div className="container">
           <div className="terms-hero-content">
             <h1>{t('terms.title')}</h1>
-            <p className="hero-subtitle">
-              {t('terms.subtitle')}
-            </p>
+            <p className="hero-subtitle">{t('terms.subtitle')}</p>
             <p className="terms-last-updated">
               <strong>{t('terms.lastUpdated')}</strong> {t('terms.lastUpdatedDate')}
             </p>
@@ -24,7 +22,6 @@ export default function Terms() {
         </div>
       </section>
 
-      {/* Terms Content */}
       <section className="terms-content">
         <div className="container">
           <div className="terms-introduction">
@@ -204,6 +201,8 @@ export default function Terms() {
           </div>
         </div>
       </section>
-    </>
+
+      <FinalCTA anchorId="terms-final-store" titleId="terms-final-cta-title" />
+    </main>
   );
 }

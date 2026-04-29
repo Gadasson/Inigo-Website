@@ -9,7 +9,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        'inigo-green': '#4F7942',
+        'inigo-green': 'var(--inigo-accent-primary)',
         'earth-brown': '#6E5849',
         'soft-sand': '#fdf9f2',
         'warm-clay': '#c08552',

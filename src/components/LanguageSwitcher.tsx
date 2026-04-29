@@ -6,12 +6,24 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { locales, type Locale } from '../i18n/config';
 
+const QUIET_LANG_SUFFIXES = ['/about', '/privacy', '/terms', '/contact'] as const;
+
 function buildHref(targetLocale: Locale, normalizedPath: string) {
   if (normalizedPath === '/' || normalizedPath.length === 0) {
     return `/${targetLocale}`;
   }
 
   return `/${targetLocale}${normalizedPath}`;
+}
+
+function isQuietLangSwitcherPath(pathname: string): boolean {
+  for (const loc of locales) {
+    if (pathname === `/${loc}` || pathname === `/${loc}/`) return true;
+    for (const suffix of QUIET_LANG_SUFFIXES) {
+      if (pathname === `/${loc}${suffix}`) return true;
+    }
+  }
+  return false;
 }
 
 export default function LanguageSwitcher() {
@@ -29,14 +41,16 @@ export default function LanguageSwitcher() {
   const normalizedPath =
     pathWithoutLocale === '' ? '/' : pathWithoutLocale;
 
-  const isHomePage = locales.some((loc) => pathname === `/${loc}`);
+  const isHomePage = locales.some((loc) => pathname === `/${loc}` || pathname === `/${loc}/`);
+
+  const showSwitcher = isQuietLangSwitcherPath(pathname);
 
   // Detect mobile viewport
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -45,14 +59,9 @@ export default function LanguageSwitcher() {
   // Check for stored locale preference on mount and redirect if needed
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    
+
     const storedLocale = localStorage.getItem('inigo-locale') as Locale | null;
-    
-    // Only redirect if:
-    // 1. We have a stored preference
-    // 2. It's a valid locale
-    // 3. We're on the home page (to avoid redirect loops)
-    // 4. Current locale doesn't match stored preference
+
     if (
       storedLocale &&
       locales.includes(storedLocale) &&
@@ -84,7 +93,7 @@ export default function LanguageSwitcher() {
     }
   }, [isOpen]);
 
-  if (!isHomePage) {
+  if (!showSwitcher) {
     return null;
   }
 
@@ -106,7 +115,7 @@ export default function LanguageSwitcher() {
             <span className="lang-icon">⇄</span>
             <span className="lang-current-mobile">{currentLabel}</span>
           </button>
-          
+
           {isOpen && (
             <div ref={popoverRef} className="lang-popover">
               {(['en', 'he'] as Locale[]).map((targetLocale) => {
@@ -133,7 +142,6 @@ export default function LanguageSwitcher() {
                     aria-label={`Switch to ${targetLocale === 'en' ? 'English' : 'Hebrew'}`}
                     onClick={() => {
                       setIsOpen(false);
-                      // Store language preference in localStorage
                       if (typeof window !== 'undefined') {
                         localStorage.setItem('inigo-locale', targetLocale);
                       }
@@ -147,7 +155,6 @@ export default function LanguageSwitcher() {
           )}
         </>
       ) : (
-        /* Desktop: Always visible buttons */
         <>
           {(['en', 'he'] as Locale[]).map((targetLocale) => {
             const isActive = locale === targetLocale;
@@ -172,7 +179,6 @@ export default function LanguageSwitcher() {
                 className="lang-btn"
                 aria-label={`Switch to ${targetLocale === 'en' ? 'English' : 'Hebrew'}`}
                 onClick={() => {
-                  // Store language preference in localStorage
                   if (typeof window !== 'undefined') {
                     localStorage.setItem('inigo-locale', targetLocale);
                   }
@@ -187,4 +193,3 @@ export default function LanguageSwitcher() {
     </div>
   );
 }
-

@@ -6,7 +6,6 @@ import { useWorldStateContext } from '../contexts/WorldStateContext';
 
 export default function WorldState() {
   const t = useTranslations('worldState');
-  const tExplainer = useTranslations('worldStateExplainer');
   const { worldState, loading, error, refetch } = useWorldStateContext();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [cooldown, setCooldown] = useState(false);

@@ -15,52 +15,45 @@
     "primaryCta": "Get Early Access"
   },
   "heroNew": {
-    "headline": "Meditation, but social.",
-    "subheadline": "Be part of something bigger.",
-    "supporting1": "Start a session.",
-    "supporting2": "See the world state.",
-    "supporting3": "Share your presence.",
-    "microcopy": "Your quiet minutes don't disappear.",
+    "headline": "Your presence matters.",
+    "subheadline": "Sit. Feel. Shift the world.",
+    "primaryCta": "Join the quiet movement",
+    "exploreCta": "Explore Inigo",
     "appStore": "App Store",
     "googlePlay": "Google Play",
     "comingSoon": "Coming Soon",
     "download": "Download"
   },
   "howItWorksNew": {
-    "card1Title": "Start",
-    "card1Description": "Quick or guided sessions. Anywhere.",
-    "card2Title": "Become Visible",
-    "card2Description": "Your session adds to the live global World State.",
-    "card3Title": "Create",
-    "card3Description": "Drop a dot. Share a reflection. Post a full experience.",
-    "card4Title": "Connect",
-    "card4Description": "Follow people. Bless moments. Reflect together."
+    "line1": "This is not just meditation.",
+    "line2": "This is shared presence.",
+    "body1": "When you sit,",
+    "body2": "something changes.",
+    "body3": "Not just in you."
   },
   "worldStateNew": {
-    "headline": "One world. One counter.",
-    "subheadline": "Every session moves it forward.",
+    "headline": "A living world.",
+    "subheadline": "Moved by quiet moments.",
     "liveNow": "Live now",
-    "explanation": "As the community meditates, the world state evolves — visually and collectively."
+    "explanation": "Every session adds to something bigger."
   },
   "createYourPresence": {
-    "headline": "Create your presence.",
-    "feature1": "Drop a quiet dot — \"I was here.\"",
-    "feature2": "Share a short reflection",
-    "feature3": "Post a full experience with images",
-    "feature4": "Let AI turn your feeling into a symbolic image",
-    "feature5": "Anchor your moment to a real-world spot"
+    "title1": "See others.",
+    "title2": "Feel connection.",
+    "title3": "Share your presence.",
+    "supporting": "Inigo turns quiet moments into shared signals — small traces of presence, felt together."
   },
   "communityNew": {
-    "headline": "Meditation together.",
-    "feature1": "Follow people.",
-    "feature2": "See their sessions.",
-    "feature3": "Bless moments.",
-    "feature4": "Grow streaks.",
-    "tagline": "Community presence shifts the world state."
+    "headline": "No noise.\nNo pressure.\nJust sit.",
+    "supporting": "When you're ready, simply begin."
   },
   "finalCTA": {
-    "headline": "Ready to be part of something bigger?",
-    "followUs": "Follow us for launch updates."
+    "headline": "Join the quiet movement.",
+    "line1": "Sit.",
+    "line2": "Feel.",
+    "line3": "Share.",
+    "appStore": "App Store",
+    "googlePlay": "Google Play"
   },
   "worldState": {
     "title": "The world state",
@@ -344,159 +337,36 @@
     "invalidEmail": "✗ Please enter a valid email address"
   },
   "footer": {
-    "tagline": "Inigo — Meditation, but social.",
-    "hashtags": "#MeditationButSocial · #Together · #InigoMoments"
+    "tagline": "Inigo — shared presence.",
+    "hashtags": "#QuietMovement · #Presence · #Inigo"
   },
   "about": {
     "hero": {
-      "title": "We are Inigo.",
-      "lines": [
-        "A playful social meditation network",
-        "where presence becomes visible",
-        "and collective.",
-        "",
-        "Meditation, but social.",
-        "Be part of something bigger."
-      ],
-      "secondaryCta": "Back to Home"
+      "title": "A different kind of space.",
+      "backCta": "Back to home"
     },
-    "sections": {
-      "whyBorn": {
-        "title": "Why it was born",
-        "body": [
-          "The world today rarely lets the heart rest on the ground.",
-          "",
-          "We are either pulled upward —",
-          "into noise, speed, and constant emotion —",
-          "",
-          "or pushed downward —",
-          "into exhaustion and numbness.",
-          "",
-          "Both keep us moving.",
-          "Both keep us disconnected.",
-          "",
-          "Presence — meditation —",
-          "is where the heart can rest.",
-          "Where we meet life fully,",
-          "as it is.",
-          "",
-          "We wanted meditation to be social.",
-          "Not isolated.",
-          "Not competitive.",
-          "",
-          "A place where your quiet minutes",
-          "don't disappear.",
-          "",
-          "Where presence becomes visible",
-          "and adds to something bigger."
-        ]
+    "blocks": [
+      {
+        "lead": "Inigo was created from a simple idea:",
+        "lines": ["Presence matters."]
       },
-      "notChasing": {
-        "title": "What we're building",
-        "body": [
-          "Quick or guided sessions.",
-          "Anywhere.",
-          "",
-          "Start a session.",
-          "See the world state.",
-          "Share your presence.",
-          "",
-          "Simple. Clear. Product-first."
-        ]
+      {
+        "lead": "Most of the world moves fast.",
+        "lines": ["Noise.", "Pressure.", "Disconnection."]
       },
-      "meditationLife": {
-        "title": "Meditation, but social",
-        "body": [
-          "Meditation sessions are at the core.",
-          "Silent. Guided. Your choice.",
-          "",
-          "But it doesn't stop there.",
-          "",
-          "Every session moves the world state forward.",
-          "Your presence becomes visible.",
-          "Together, we build something bigger."
-        ]
+      {
+        "lead": "We wanted something quieter.",
+        "lines": ["Something real.", "Something shared."]
       },
-      "whySocial": {
-        "title": "Why it's social",
-        "body": [
-          "Presence is easier to maintain together.",
-          "",
-          "When others also practice —",
-          "something shifts.",
-          "",
-          "In Inigo, we share time.",
-          "We share presence.",
-          "We share the journey.",
-          "",
-          "Not results. Not perfection.",
-          "Just the practice itself."
-        ]
+      {
+        "lead": "Meditation is not just personal.",
+        "lines": ["It can be felt together."]
       },
-      "places": {
-        "title": "Create your presence",
-        "body": [
-          "Drop a quiet dot.",
-          "Share a reflection.",
-          "Post a full experience.",
-          "",
-          "Anchor your moment to a real-world spot.",
-          "",
-          "Your presence matters.",
-          "Every session counts."
-        ]
-      },
-      "language": {
-        "title": "A different social language",
-        "body": [
-          "We don't \"like.\"",
-          "We bless.",
-          "",
-          "We don't comment.",
-          "We reflect.",
-          "",
-          "We keep streaks",
-          "to support continuity —",
-          "not pressure."
-        ],
-        "aiSharing": {
-          "title": "",
-          "body": [
-            "Not always comfortable sharing something personal?",
-            "AI helps you share through a symbolic image",
-            "or a gently phrased reflection.",
-            "",
-            "Technology that protects —",
-            "not one that exploits."
-          ]
-        }
-      },
-      "whereNow": {
-        "title": "Where we are now",
-        "body": [
-          "Inigo is still early.",
-          "",
-          "We're building.",
-          "Testing.",
-          "Listening.",
-          "",
-          "Not trying to be everything for everyone —",
-          "just right for the people it speaks to."
-        ]
-      },
-      "closing": {
-        "title": "Ready to be part of something bigger?",
-        "body": [
-          "Your quiet minutes don't disappear.",
-          "",
-          "They become visible.",
-          "They add to the world state.",
-          "",
-          "Meditation, but social."
-        ]
+      {
+        "lead": "Every moment of presence",
+        "lines": ["adds to something bigger.", "", "A shared field.", "A living state."]
       }
-    },
-    "cta": "Get Early Access"
+    ]
   },
   "contact": {
     "title": "Get in Touch",

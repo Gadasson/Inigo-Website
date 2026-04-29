@@ -8,17 +8,13 @@ export default function CommunityNew() {
   const ref = useScrollAnimation();
 
   return (
-    <section ref={ref} className="community-new section-fade-in">
-      <div className="container">
+    <section ref={ref} className="community-new home-section-simplicity section-fade-in" aria-labelledby="simplicity-title">
+      <div className="container container--narrow">
         <div className="community-new-content">
-          <h2 className="community-new-headline">{t('headline')}</h2>
-          <div className="community-features">
-            <p>{t('feature1')}</p>
-            <p>{t('feature2')}</p>
-            <p>{t('feature3')}</p>
-            <p>{t('feature4')}</p>
-          </div>
-          <p className="community-tagline">{t('tagline')}</p>
+          <h2 id="simplicity-title" className="community-new-headline community-new-headline--preline">
+            {t('headline')}
+          </h2>
+          <p className="community-supporting">{t('supporting')}</p>
         </div>
       </div>
     </section>

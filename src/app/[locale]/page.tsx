@@ -7,14 +7,14 @@ import FinalCTA from '../../components/FinalCTA';
 
 export default function Home() {
   return (
-    <>
+    <main className="home-quiet" id="top">
       <HeroNew />
       <HowItWorksNew />
       <WorldStateNew />
       <CreateYourPresence />
       <CommunityNew />
       <FinalCTA />
-    </>
+    </main>
   );
 }
 

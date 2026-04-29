@@ -2,98 +2,72 @@
 
 import Link from 'next/link';
 import { useTranslations, useLocale } from 'next-intl';
+import { useScrollAnimation } from '../../../hooks/useScrollAnimation';
+import FinalCTA from '../../../components/FinalCTA';
+
+type AboutBlock = { lead?: string; lines: string[] };
+
+function AboutNarrativeSection({
+  index,
+  block,
+}: {
+  index: number;
+  block: AboutBlock;
+}) {
+  const ref = useScrollAnimation();
+  const alt = index % 2 === 1;
+
+  return (
+    <section
+      ref={ref}
+      className={`about-quiet-block section-fade-in${alt ? ' about-quiet-block--alt' : ''}`}
+    >
+      <div className="container container--narrow about-quiet-inner">
+        {block.lead ? <p className="about-quiet-lead">{block.lead}</p> : null}
+        {block.lines.map((line, i) =>
+          line === '' ? (
+            <div key={i} className="about-quiet-stanza-gap" aria-hidden />
+          ) : (
+            <p
+              key={i}
+              className={`about-quiet-line${line.length <= 14 ? ' about-quiet-line--staccato' : ''}`}
+            >
+              {line}
+            </p>
+          )
+        )}
+      </div>
+    </section>
+  );
+}
 
 export default function About() {
   const t = useTranslations('about');
   const locale = useLocale();
-
-  const heroLines = t.raw('hero.lines') as string[];
-  const sections = [
-    { key: 'whyBorn', bgClass: 'about-bg-soft-green' },
-    { key: 'notChasing', bgClass: 'about-bg-white' },
-    { key: 'meditationLife', bgClass: 'about-bg-soft-teal' },
-    { key: 'whySocial', bgClass: 'about-bg-white' },
-    { key: 'places', bgClass: 'about-bg-soft-amber' },
-    { key: 'language', bgClass: 'about-bg-white' },
-    { key: 'whereNow', bgClass: 'about-bg-soft-green' },
-    { key: 'closing', bgClass: 'about-bg-white' }
-  ];
+  const heroRef = useScrollAnimation();
+  const blocks = t.raw('blocks') as AboutBlock[];
 
   return (
-    <div className="about-page">
-      {/* Hero Section */}
-      <section className="about-hero">
-        <div className="about-container">
-          <div className="about-hero-content">
-            <h1 className="about-hero-title">{t('hero.title')}</h1>
-            <div className="about-hero-lines">
-              {heroLines.map((line, i) => (
-                <p key={i} className="about-hero-line">
-                  {line || '\u00A0'}
-                </p>
-              ))}
-            </div>
-            <div className="about-hero-ctas">
-              <Link href={`/${locale}`} className="btn btn-ghost">
-                {t('hero.secondaryCta')}
-              </Link>
-            </div>
+    <main className="about-quiet">
+      <section ref={heroRef} className="about-quiet-hero section-fade-in" aria-labelledby="about-quiet-hero-title">
+        <div className="about-quiet-hero-glow" aria-hidden />
+        <div className="container container--narrow about-quiet-hero-inner">
+          <h1 id="about-quiet-hero-title" className="about-quiet-hero-title">
+            {t('hero.title')}
+          </h1>
+          <div className="about-quiet-hero-cta">
+            <Link href={`/${locale}`} className="btn-quiet-secondary">
+              {t('hero.backCta')}
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Sections */}
-      {sections.map((section, idx) => {
-        const sectionData = t.raw(`sections.${section.key}`) as {
-          title: string;
-          body: string[];
-          aiSharing?: { title: string; body: string[] };
-        };
+      {blocks.map((block, index) => (
+        <AboutNarrativeSection key={index} index={index} block={block} />
+      ))}
 
-        return (
-          <section key={section.key} className={`about-section ${section.bgClass}`}>
-            <div className="about-container">
-              <div className="about-section-content">
-                <h2 className="about-section-title">{sectionData.title}</h2>
-                <div className="about-section-body">
-                  {sectionData.body.map((line, i) => (
-                    <p key={i} className="about-section-line">
-                      {line || '\u00A0'}
-                    </p>
-                  ))}
-                </div>
-                
-                {/* AI Sharing sub-section for language section */}
-                {sectionData.aiSharing && (
-                  <div className="about-ai-sharing">
-                    {sectionData.aiSharing.body.map((line, i) => (
-                      <p key={i} className="about-section-line">
-                        {line || '\u00A0'}
-                      </p>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          </section>
-        );
-      })}
-
-      {/* Closing CTA */}
-      <section className="about-closing-cta">
-        <div className="about-container">
-          <div className="about-closing-content">
-            <h2 className="about-closing-title">{t('sections.closing.title')}</h2>
-            <div className="about-closing-body">
-              {(t.raw('sections.closing.body') as string[]).map((line, i) => (
-                <p key={i} className="about-closing-line">
-                  {line || '\u00A0'}
-                </p>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
+      <FinalCTA anchorId="about-final-store" titleId="about-final-cta-title" />
+    </main>
   );
 }

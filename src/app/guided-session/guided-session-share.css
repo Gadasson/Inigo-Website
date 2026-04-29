@@ -1,3 +1,5 @@
+@import "../design-tokens.css";
+
 /* Scoped share landing — avoids changing global marketing section styles */
 .gss {
   min-height: 100vh;
@@ -12,7 +14,7 @@
 .gss__card {
   width: 100%;
   max-width: 28rem;
-  background: #fff;
+  background: var(--color-surface-elevated);
   border-radius: 1.25rem;
   box-shadow: 0 8px 32px rgba(17, 17, 17, 0.06);
   border: 1px solid var(--border-color, #e8e4dc);
@@ -41,7 +43,7 @@
 .gss__title {
   font-size: 1.35rem;
   font-weight: 800;
-  color: var(--inigo-green, #4f7942);
+  color: var(--inigo-green);
   margin: 0 0 0.5rem;
   line-height: 1.25;
   letter-spacing: -0.02em;
@@ -97,9 +99,9 @@
 }
 
 .gss__btn--primary {
-  background: var(--inigo-green, #4f7942);
-  color: #fff;
-  box-shadow: 0 2px 12px rgba(79, 121, 66, 0.25);
+  background: var(--inigo-green);
+  color: var(--quiet-pure-white);
+  box-shadow: 0 2px 12px rgba(var(--inigo-accent-rgb), 0.25);
 }
 
 .gss__btn--primary:hover {
@@ -108,12 +110,12 @@
 
 .gss__btn--secondary {
   background: transparent;
-  color: var(--inigo-green, #4f7942);
-  border: 2px solid rgba(79, 121, 66, 0.35);
+  color: var(--inigo-green);
+  border: 2px solid rgba(var(--inigo-accent-rgb), 0.35);
 }
 
 .gss__btn--secondary:hover {
-  background: rgba(79, 121, 66, 0.06);
+  background: rgba(var(--inigo-accent-rgb), 0.06);
 }
 
 .gss__stores {
@@ -138,7 +140,7 @@
 }
 
 .gss__store:hover {
-  border-color: rgba(79, 121, 66, 0.35);
+  border-color: rgba(var(--inigo-accent-rgb), 0.35);
 }
 
 .gss__brand {
@@ -148,7 +150,7 @@
 
 .gss__brand a {
   font-weight: 700;
-  color: var(--inigo-green, #4f7942);
+  color: var(--inigo-green);
   text-decoration: none;
 }
 

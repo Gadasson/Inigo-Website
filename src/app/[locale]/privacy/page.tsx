@@ -1,20 +1,19 @@
 'use client';
 
 import Link from 'next/link';
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
+import FinalCTA from '../../../components/FinalCTA';
 
 export default function Privacy() {
   const t = useTranslations();
-  const locale = useLocale();
 
   return (
-    <>
-      {/* Hero Section */}
+    <main className="subpage-quiet">
       <section className="privacy-hero">
         <div className="container">
           <div className="privacy-hero-content">
             <h1>{t('privacy.title')}</h1>
-            <p>{t('privacy.subtitle')}</p>
+            <p className="hero-subtitle">{t('privacy.subtitle')}</p>
             <p className="terms-last-updated">
               <strong>{t('privacy.lastUpdated')}</strong> {t('privacy.lastUpdatedDate')}
             </p>
@@ -22,7 +21,6 @@ export default function Privacy() {
         </div>
       </section>
 
-      {/* Privacy Content */}
       <section className="privacy-content">
         <div className="container">
           <div className="privacy-sections">
@@ -107,9 +105,11 @@ export default function Privacy() {
               <h2>{t('privacy.sections.contact.title')}</h2>
               <p>{t('privacy.sections.contact.text')}</p>
               <ul>
-                <li>📩 <a href="mailto:inigomeditation@gmail.com">inigomeditation@gmail.com</a></li>
                 <li>
-                  🌐 <Link href="https://inigo.now">https://inigo.now</Link>
+                  <a href="mailto:inigomeditation@gmail.com">inigomeditation@gmail.com</a>
+                </li>
+                <li>
+                  <Link href="https://inigo.now">https://inigo.now</Link>
                 </li>
               </ul>
             </div>
@@ -117,20 +117,7 @@ export default function Privacy() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="privacy-cta">
-        <div className="container">
-          <div className="cta-content">
-            <h2>{t('privacy.cta.title')}</h2>
-            <p>{t('privacy.cta.subtitle')}</p>
-            <div className="cta-buttons">
-              <Link href={`/${locale}/about`} className="btn btn-primary">
-                {t('common.learnMore')}
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-    </>
+      <FinalCTA anchorId="privacy-final-store" titleId="privacy-final-cta-title" />
+    </main>
   );
 }

@@ -1,68 +1,49 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import Image from 'next/image';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
 export default function CreateYourPresence() {
   const t = useTranslations('createYourPresence');
   const ref = useScrollAnimation();
 
-  const features = [
-    t('feature1'),
-    t('feature2'),
-    t('feature3'),
-    t('feature4'),
-    t('feature5')
-  ];
-
   return (
-    <section ref={ref} className="create-presence section-fade-in">
+    <section ref={ref} className="create-presence home-section-social section-fade-in" aria-labelledby="social-quiet-title">
       <div className="container">
-        <div className="create-presence-content">
+        <div className="create-presence-content create-presence-content--quiet">
           <div className="create-presence-text">
-            <h2 className="create-presence-headline">{t('headline')}</h2>
-            <ul className="create-presence-features">
-              {features.map((feature, index) => (
-                <li key={index} className="feature-item">
-                  <span className="feature-bullet">•</span>
-                  <span>{feature}</span>
-                </li>
-              ))}
-            </ul>
+            <h2 id="social-quiet-title" className="create-presence-headline create-presence-headline--stacked">
+              <span className="create-presence-headline-line">{t('title1')}</span>
+              <span className="create-presence-headline-line">{t('title2')}</span>
+              <span className="create-presence-headline-line">{t('title3')}</span>
+            </h2>
+            <p className="create-presence-supporting">{t('supporting')}</p>
           </div>
-          
-          <div className="create-presence-visual">
-            <div className="feed-mockup">
+
+          <div className="create-presence-visual" aria-hidden>
+            <div className="feed-mockup feed-mockup--quiet">
               <div className="feed-header">
-                <div className="feed-avatar"></div>
+                <div className="feed-avatar feed-avatar--quiet" />
                 <div className="feed-user-info">
-                  <div className="feed-line short"></div>
-                  <div className="feed-line shorter"></div>
+                  <div className="feed-line short feed-line--quiet" />
+                  <div className="feed-line shorter feed-line--quiet" />
                 </div>
               </div>
-              
+
               <div className="feed-content">
-                <div className="feed-image-placeholder">
-                  <Image 
-                    src="/images/nature.png" 
-                    alt="AI Symbolic Image" 
-                    className="feed-ai-image"
-                    width={400}
-                    height={225}
-                    quality={85}
-                  />
+                <div className="feed-image-placeholder feed-image-placeholder--quiet">
+                  <div className="feed-abstract-shapes" />
                 </div>
-                
+
                 <div className="feed-text">
-                  <div className="feed-line"></div>
-                  <div className="feed-line"></div>
-                  <div className="feed-line short"></div>
+                  <div className="feed-line feed-line--quiet" />
+                  <div className="feed-line short feed-line--quiet" />
+                  <div className="feed-line shorter feed-line--quiet" />
                 </div>
-                
-                <div className="feed-actions">
-                  <span className="feed-action">💚</span>
-                  <span className="feed-action">💭</span>
+
+                <div className="feed-actions feed-actions--quiet">
+                  <span className="feed-pill feed-pill--quiet" />
+                  <span className="feed-pill feed-pill--quiet feed-pill--narrow" />
                 </div>
               </div>
             </div>

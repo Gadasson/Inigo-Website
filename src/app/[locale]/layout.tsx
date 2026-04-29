@@ -20,43 +20,52 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  
+  const isHe = locale === 'he';
+
+  const title = isHe
+    ? 'איניגו — נוכחות משותפת'
+    : 'Inigo — Your presence matters';
+  const description = isHe
+    ? 'נוכחות משותפת. תנועה שקטה. שבו, הרגישו, והזיזו משהו יחד.'
+    : 'Shared presence. A quiet movement. Sit, feel, and shift the world together.';
+
   return {
     metadataBase: new URL('https://inigo.now'),
-    title: 'Inigo — Meditation, but social.',
-    description: 'Be part of something bigger. A playful social meditation network where presence becomes visible and collective.',
+    title,
+    description,
     icons: { 
-      icon: '/images/heart_logo.svg',
-      apple: '/images/heart_logo.svg'
+      icon: '/images/heart_logo_light.svg',
+      apple: '/images/heart_logo_light.svg'
     },
     openGraph: {
-      title: 'Inigo — Meditation, but social.',
-      description: 'Be part of something bigger. A playful social meditation network where presence becomes visible and collective.',
+      title,
+      description,
       type: 'website',
       url: 'https://inigo.now',
       siteName: 'Inigo',
       images: [
         {
-          url: '/images/heart_logo.svg',
+          url: '/images/heart_logo_light.svg',
           width: 512,
           height: 512,
           alt: 'Inigo - Heart Logo'
         }
       ],
-      locale: locale === 'he' ? 'he_IL' : 'en_US'
+      locale: isHe ? 'he_IL' : 'en_US'
     },
     twitter: {
       card: 'summary_large_image',
-      title: 'Inigo — Meditation, but social.',
-      description: 'Be part of something bigger. A playful social meditation network where presence becomes visible and collective.',
-      images: ['/images/heart_logo.svg'],
+      title,
+      description,
+      images: ['/images/heart_logo_light.svg'],
       creator: '@inigo',
       site: '@inigo'
     },
+    /* Must match src/app/design-tokens.css --inigo-black-soft (metadata cannot use CSS variables). */
     other: {
-      'msapplication-TileColor': '#4F7942',
-      'theme-color': '#4F7942'
-    }
+      'msapplication-TileColor': '#0F0F0F',
+      'theme-color': '#0F0F0F',
+    },
   };
 }
 

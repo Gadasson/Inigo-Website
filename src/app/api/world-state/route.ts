@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
 
+/** Fallback only — must match src/app/design-tokens.css --inigo-accent-primary (JSON cannot use var()). */
+const FALLBACK_STATE_COLOR = '#6F7B5E';
+
 const API_ENDPOINT = 'https://api2.inigo.now/api/world-state/';
 
 // Fallback data when API is unavailable
@@ -35,7 +38,7 @@ const FALLBACK_DATA = {
       state_key: 'WORLD_STATE_GETTING_STARTED',
       description_key: 'WORLD_STATE_GETTING_STARTED_DESCRIPTION',
       icon: '🌿',
-      color: '#4F7942',
+      color: FALLBACK_STATE_COLOR,
       threshold: 0,
       order_index: 1,
     },
