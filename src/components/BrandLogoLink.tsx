@@ -23,7 +23,7 @@ export default function BrandLogoLink() {
       aria-label="Back to home"
     >
       <Image
-        src="/images/heart_logo_light.svg"
+        src="/images/heart_logo_last.svg"
         alt="Inigo logo"
         width={36}
         height={36}

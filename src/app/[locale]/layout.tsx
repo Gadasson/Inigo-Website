@@ -34,8 +34,8 @@ export async function generateMetadata({
     title,
     description,
     icons: { 
-      icon: '/images/heart_logo_light.svg',
-      apple: '/images/heart_logo_light.svg'
+      icon: '/images/heart_logo_last.svg',
+      apple: '/images/heart_logo_last.svg'
     },
     openGraph: {
       title,
@@ -45,7 +45,7 @@ export async function generateMetadata({
       siteName: 'Inigo',
       images: [
         {
-          url: '/images/heart_logo_light.svg',
+          url: '/images/heart_logo_last.svg',
           width: 512,
           height: 512,
           alt: 'Inigo - Heart Logo'
@@ -57,7 +57,7 @@ export async function generateMetadata({
       card: 'summary_large_image',
       title,
       description,
-      images: ['/images/heart_logo_light.svg'],
+      images: ['/images/heart_logo_last.svg'],
       creator: '@inigo',
       site: '@inigo'
     },

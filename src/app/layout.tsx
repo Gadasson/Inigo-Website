@@ -11,8 +11,8 @@ export const metadata: Metadata = {
   title: defaultTitle,
   description: defaultDescription,
   icons: {
-    icon: '/images/heart_logo_light.svg',
-    apple: '/images/heart_logo_light.svg',
+    icon: '/images/heart_logo_last.svg',
+    apple: '/images/heart_logo_last.svg',
   },
   openGraph: {
     title: defaultTitle,
