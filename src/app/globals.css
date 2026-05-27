@@ -5571,7 +5571,8 @@ main.subpage-quiet ~ footer.footer .footer-bottom p {
   html:has(main.home-quiet) .lang-option.active,
   html:has(main.about-quiet) .lang-option.active,
   html:has(main.subpage-quiet) .lang-option.active {
-    color: var(--quiet-accent);
+    background: var(--quiet-accent);
+    color: var(--quiet-pure-white);
   }
 }
 
