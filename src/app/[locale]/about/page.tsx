@@ -1,8 +1,5 @@
-'use client';
-
 import Link from 'next/link';
-import { useTranslations, useLocale } from 'next-intl';
-import { useScrollAnimation } from '../../../hooks/useScrollAnimation';
+import { getTranslations } from 'next-intl/server';
 import FinalCTA from '../../../components/FinalCTA';
 
 type AboutBlock = { lead?: string; lines: string[] };
@@ -14,13 +11,11 @@ function AboutNarrativeSection({
   index: number;
   block: AboutBlock;
 }) {
-  const ref = useScrollAnimation();
   const alt = index % 2 === 1;
 
   return (
     <section
-      ref={ref}
-      className={`about-quiet-block section-fade-in${alt ? ' about-quiet-block--alt' : ''}`}
+      className={`about-quiet-block${alt ? ' about-quiet-block--alt' : ''}`}
     >
       <div className="container container--narrow about-quiet-inner">
         {block.lead ? <p className="about-quiet-lead">{block.lead}</p> : null}
@@ -41,15 +36,21 @@ function AboutNarrativeSection({
   );
 }
 
-export default function About() {
-  const t = useTranslations('about');
-  const locale = useLocale();
-  const heroRef = useScrollAnimation();
+export default async function About({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations('about');
   const blocks = t.raw('blocks') as AboutBlock[];
 
   return (
     <main className="about-quiet">
-      <section ref={heroRef} className="about-quiet-hero section-fade-in" aria-labelledby="about-quiet-hero-title">
+      <section
+        className="about-quiet-hero"
+        aria-labelledby="about-quiet-hero-title"
+      >
         <div className="about-quiet-hero-glow" aria-hidden />
         <div className="container container--narrow about-quiet-hero-inner">
           <h1 id="about-quiet-hero-title" className="about-quiet-hero-title">

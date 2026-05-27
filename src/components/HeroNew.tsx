@@ -27,7 +27,11 @@ export default function HeroNew() {
               >
                 {t('primaryCta')}
               </a>
-              <Link href={`/${locale}/about`} className="btn btn-quiet-secondary">
+              <Link
+                href={`/${locale}/about`}
+                className="btn btn-quiet-secondary"
+                prefetch
+              >
                 {t('exploreCta')}
               </Link>
             </div>

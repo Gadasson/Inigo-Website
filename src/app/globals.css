@@ -35,7 +35,7 @@ body {
 html,body{
   background:var(--soft-sand);
   color:var(--deep-earth);
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 
 img { 
@@ -170,10 +170,22 @@ p {
 }
 
 @media (max-width: 768px) {
-  html, body {
-    overflow-x: hidden;
+  /* overflow-x: hidden on both html+body can trap vertical scroll on iOS Safari */
+  html {
+    overflow-x: clip;
+  }
+
+  body {
+    overflow-x: clip;
     width: 100%;
     max-width: 100vw;
+  }
+
+  /* backdrop-filter on fixed UI hurts scroll performance on mobile */
+  .language-switcher,
+  .brand-logo-link,
+  .scroll-to-top {
+    backdrop-filter: none;
   }
   
   .container {
@@ -4572,6 +4584,21 @@ html[dir="rtl"] p.about-opening-line {
   transform: translateY(0);
 }
 
+@media (max-width: 768px) {
+  .section-fade-in {
+    transform: translateY(12px);
+    transition: opacity 0.35s ease-out, transform 0.35s ease-out;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-fade-in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 /* Hero New */
 .hero-new {
   position: relative;
@@ -4586,6 +4613,22 @@ html[dir="rtl"] p.about-opening-line {
 .hero-new.section-fade-in {
   opacity: 1;
   transform: none;
+}
+
+/* Above-the-fold heroes must be visible before JS/hydration (section-fade-in starts at opacity 0) */
+main.subpage-quiet .privacy-hero,
+main.subpage-quiet .terms-hero,
+main.subpage-quiet .contact-hero {
+  opacity: 1;
+  transform: none;
+}
+
+/* About / legal pages: no scroll fade — content must be scrollable immediately after navigation */
+main.about-quiet .section-fade-in,
+main.subpage-quiet .section-fade-in {
+  opacity: 1;
+  transform: none;
+  transition: none;
 }
 
 .hero-new-container {
@@ -5462,9 +5505,17 @@ main.subpage-quiet ~ footer.footer .footer-bottom p {
   html:has(main.home-quiet) .language-switcher,
   html:has(main.about-quiet) .language-switcher,
   html:has(main.subpage-quiet) .language-switcher {
-    background: rgba(15, 15, 15, 0.72);
+    background: rgba(15, 15, 15, 0.92);
     backdrop-filter: blur(12px);
     box-shadow: 0 2px 24px rgba(0, 0, 0, 0.25);
+  }
+
+  @media (max-width: 768px) {
+    html:has(main.home-quiet) .language-switcher,
+    html:has(main.about-quiet) .language-switcher,
+    html:has(main.subpage-quiet) .language-switcher {
+      backdrop-filter: none;
+    }
   }
 
   html:has(main.home-quiet) .lang-btn,
@@ -6097,6 +6148,14 @@ main.about-quiet .about-quiet-hero {
   align-items: center;
   justify-content: center;
   text-align: center;
+}
+
+@media (max-width: 768px) {
+  main.about-quiet .about-quiet-hero {
+    min-height: auto;
+    padding-top: clamp(5rem, 14vw, 7rem);
+    padding-bottom: clamp(3rem, 10vw, 5rem);
+  }
 }
 
 main.about-quiet .about-quiet-hero-glow {

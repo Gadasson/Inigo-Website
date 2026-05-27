@@ -3,6 +3,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { locales } from '@/i18n/config';
 import ScrollToTop from '../../components/ScrollToTop';
+import ScrollOnNavigate from '../../components/ScrollOnNavigate';
 import { WorldStateProvider } from '../../contexts/WorldStateContext';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import LocaleHtmlAttributes from '../../components/LocaleHtmlAttributes';
@@ -99,6 +100,7 @@ export default async function LocaleLayout({
     <NextIntlClientProvider locale={locale} messages={messages}>
       <LocaleHtmlAttributes />
       <WorldStateProvider>
+        <ScrollOnNavigate />
         <BrandLogoLink />
         <LanguageSwitcher />
         <HomeShortcutButton />
