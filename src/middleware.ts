@@ -26,6 +26,8 @@ export default function middleware(request: NextRequest) {
     '/s/',
     '/event/',
     '/spot/',
+    '/m/',
+    '/moment/',
     '/guided-session/',
     '/guided-sessions/',
     '/api/share/',

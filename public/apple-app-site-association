@@ -12,7 +12,9 @@
           "/event/*",
           "/spot/*",
           "/guided-session/*",
-          "/guided-sessions/*"
+          "/guided-sessions/*",
+          "/m/*",
+          "/moment/*"
         ]
       }
     ]
