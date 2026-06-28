@@ -41,7 +41,7 @@ curl https://inigo.now/.well-known/apple-app-site-association
     "details": [
       {
         "appIDs": ["5D7CFYURW8.now.inigo.app"],
-        "paths": ["/e/*", "/s/*", "/event/*", "/spot/*", "/guided-session/*", "/guided-sessions/*", "/m/*", "/moment/*"]
+        "paths": ["/e/*", "/s/*", "/event/*", "/spot/*", "/guided-session/*", "/guided-sessions/*", "/m/*", "/moment/*", "/i/*"]
       }
     ]
   }
@@ -96,10 +96,47 @@ curl https://inigo.now/.well-known/apple-app-site-association
    - Safari (should work)
    - WhatsApp (may be picky, but should work if Notes works)
 
+## Invite Friends (`/i/{code}`)
+
+Invite links use the same proxied share pattern as `/m/{id}` and `/e/{id}`: the website rewrites to backend HTML at `https://api2.inigo.now/api/share/i/{code}/`. Middleware excludes `/i/` so URLs are not redirected to `/en/i/...`.
+
+### Verify no locale redirect
+
+```bash
+curl -I https://inigo.now/i/test
+```
+
+**Expected:**
+- `HTTP/2 200` or `404` (from backend for invalid code)
+- **No** `Location: /en/i/test` redirect
+
+### Verify backend invite HTML and OG tags
+
+```bash
+curl -s https://inigo.now/i/{valid-code} | head -40
+```
+
+**Expected:**
+- HTML from backend (not Next.js marketing layout)
+- `og:title`, `og:description`, and `og:url` present in `<head>`
+
+### Test Universal Link for invites
+
+1. Install the app fresh on an iOS device
+2. Open Notes app
+3. Paste: `https://inigo.now/i/{valid-code}`
+4. Tap the link
+
+**Expected:** Opens the app to the invite flow (after app adds `/i/*` to Associated Domains handling).
+
+### Android App Links
+
+`public/.well-known/assetlinks.json` uses domain-wide `handle_all_urls` — **no website change** is required for new paths. The Android app must declare an intent filter for `https://inigo.now/i/*` in its manifest.
+
 ## Notes
 
 - Universal Links work in Notes/Safari even when WhatsApp is picky
 - The AASA file must be served with `Content-Type: application/json` (no `.json` extension)
 - Both `/apple-app-site-association` and `/.well-known/apple-app-site-association` are configured for compatibility
-- Middleware excludes `/.well-known/` paths to prevent locale redirects
+- Middleware excludes `/.well-known/` and `/i/` paths to prevent locale redirects
 

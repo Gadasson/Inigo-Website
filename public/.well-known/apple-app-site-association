@@ -14,7 +14,8 @@
           "/guided-session/*",
           "/guided-sessions/*",
           "/m/*",
-          "/moment/*"
+          "/moment/*",
+          "/i/*"
         ]
       }
     ]
