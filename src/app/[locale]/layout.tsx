@@ -34,9 +34,10 @@ export async function generateMetadata({
     metadataBase: new URL('https://inigo.now'),
     title,
     description,
-    icons: { 
-      icon: '/images/heart_logo_last.svg',
-      apple: '/images/heart_logo_last.svg'
+    icons: {
+      icon: { url: '/images/heart_logo_last.svg', type: 'image/svg+xml' },
+      apple: '/apple-touch-icon.png',
+      shortcut: '/favicon.ico',
     },
     openGraph: {
       title,

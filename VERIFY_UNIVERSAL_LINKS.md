@@ -119,6 +119,32 @@ curl -s https://inigo.now/i/{valid-code} | head -40
 **Expected:**
 - HTML from backend (not Next.js marketing layout)
 - `og:title`, `og:description`, and `og:url` present in `<head>`
+- `og:image` should be `https://inigo.now/static/share/invite.jpg` (backend must reference this URL)
+
+### Verify invite OG image
+
+```bash
+curl -I https://inigo.now/static/share/invite.jpg
+```
+
+**Expected:** `HTTP/2 200`, `content-type: image/jpeg`, no redirect
+
+### Verify site icons (iOS share sheet)
+
+Proxied invite pages do not include `<link rel="icon">` in HTML; iOS falls back to domain icons:
+
+```bash
+curl -I https://inigo.now/favicon.ico
+curl -I https://inigo.now/apple-touch-icon.png
+```
+
+**Expected:** `200` — Inigo heart logo (not default Vercel favicon)
+
+Regenerate icons and `invite.jpg` after logo changes:
+
+```bash
+node scripts/generate-brand-assets.cjs
+```
 
 ### Test Universal Link for invites
 

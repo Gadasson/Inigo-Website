@@ -24,6 +24,13 @@ This directory contains Open Graph images for share pages.
   - Format: JPG (baseline, WhatsApp-safe)
   - Size: < 500KB
 
+- **`invite.jpg`** - OG image for invite shares (`/i/{code}`)
+  - URL: `https://inigo.now/static/share/invite.jpg`
+  - Dimensions: 1200×630
+  - Format: JPG (baseline, WhatsApp-safe)
+  - Size: < 500KB
+  - Backend `og:image` should reference this URL (not `default.jpg`)
+
 ### Fallback Image
 
 - **`default.jpg`** - Default OG image fallback
@@ -50,6 +57,7 @@ After deployment, verify all images are accessible:
 curl -I https://inigo.now/static/share/spot.jpg
 curl -I https://inigo.now/static/share/session.jpg
 curl -I https://inigo.now/static/share/event.jpg
+curl -I https://inigo.now/static/share/invite.jpg
 curl -I https://inigo.now/static/share/default.jpg
 ```
 

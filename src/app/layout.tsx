@@ -11,8 +11,9 @@ export const metadata: Metadata = {
   title: defaultTitle,
   description: defaultDescription,
   icons: {
-    icon: '/images/heart_logo_last.svg',
-    apple: '/images/heart_logo_last.svg',
+    icon: { url: '/images/heart_logo_last.svg', type: 'image/svg+xml' },
+    apple: '/apple-touch-icon.png',
+    shortcut: '/favicon.ico',
   },
   openGraph: {
     title: defaultTitle,
