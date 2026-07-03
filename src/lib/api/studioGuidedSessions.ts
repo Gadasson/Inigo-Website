@@ -33,8 +33,55 @@ export type StudioGuidedSession = {
   language?: string;
   sound_gender?: string;
   duration?: string;
+  duration_minutes?: number;
   instructor?: string;
+  environment?: string;
+  background_music?: string;
+  background_music_creator?: string | null;
+  access_tier?: string;
+  tags?: string[];
+  sub_categories?: string[];
+  created_at?: string;
+  updated_at?: string;
 };
+
+/** PATCH payload — only editable draft fields; omit immutable/media/status fields. */
+export type UpdateGuidedSessionDraftPayload = Partial<{
+  title: string;
+  description: string;
+  duration: string;
+  difficulty: string;
+  category: string;
+  primary_category: string;
+  instructor: string;
+  environment: string;
+  background_music: string;
+  background_music_creator: string;
+  language: string;
+  sound_gender: string;
+  access_tier: string;
+  tags: string[];
+}>;
+
+type StudioGuidedSessionListResponse =
+  | StudioGuidedSession[]
+  | { sessions: StudioGuidedSession[] }
+  | { results: StudioGuidedSession[] };
+
+/** Backend list endpoint returns `{ sessions: [...] }` (not DRF default `results`). */
+function normalizeGuidedSessionList(data: unknown): StudioGuidedSession[] {
+  if (Array.isArray(data)) return data;
+  if (data && typeof data === 'object') {
+    const record = data as Record<string, unknown>;
+    if (Array.isArray(record.sessions)) {
+      return record.sessions as StudioGuidedSession[];
+    }
+    if (Array.isArray(record.results)) {
+      return record.results as StudioGuidedSession[];
+    }
+  }
+  return [];
+}
 
 async function withToken<T>(
   token: string | null,
@@ -69,4 +116,34 @@ export async function getGuidedSession(
       token: authToken,
     }),
   );
+}
+
+export async function updateGuidedSessionDraft(
+  id: number,
+  payload: UpdateGuidedSessionDraftPayload,
+  token: string | null,
+): Promise<StudioGuidedSession> {
+  return withToken(token, (authToken) =>
+    studioFetch<StudioGuidedSession>(`${BASE}/${id}/`, {
+      method: 'PATCH',
+      body: payload,
+      token: authToken,
+    }),
+  );
+}
+
+export async function listGuidedSessions(
+  token: string | null,
+): Promise<StudioGuidedSession[]> {
+  return withToken(token, async (authToken) => {
+    const data = await studioFetch<StudioGuidedSessionListResponse>(`${BASE}/`, {
+      method: 'GET',
+      token: authToken,
+    });
+    return normalizeGuidedSessionList(data).sort((a, b) => {
+      const aTime = Date.parse(a.updated_at ?? a.created_at ?? '') || 0;
+      const bTime = Date.parse(b.updated_at ?? b.created_at ?? '') || 0;
+      return bTime - aTime;
+    });
+  });
 }

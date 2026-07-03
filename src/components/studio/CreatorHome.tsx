@@ -2,8 +2,12 @@
 
 import type { ComponentType } from 'react';
 import Link from 'next/link';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import MyGuidedSessions from './MyGuidedSessions';
 
 type IconProps = { className?: string };
+
+type StudioHomeTab = 'create' | 'sessions';
 
 function GuidedSessionIcon({ className }: IconProps) {
   return (
@@ -103,7 +107,32 @@ const CREATION_OPTIONS: CreationOption[] = [
   },
 ];
 
+const STUDIO_TABS: { id: StudioHomeTab; label: string }[] = [
+  { id: 'create', label: 'Create' },
+  { id: 'sessions', label: 'My guided sessions' },
+];
+
+function tabFromSearchParams(searchParams: ReturnType<typeof useSearchParams>): StudioHomeTab {
+  return searchParams.get('tab') === 'sessions' ? 'sessions' : 'create';
+}
+
 export default function CreatorHome() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const activeTab = tabFromSearchParams(searchParams);
+
+  const setActiveTab = (tab: StudioHomeTab) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (tab === 'sessions') {
+      params.set('tab', 'sessions');
+    } else {
+      params.delete('tab');
+    }
+    const query = params.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  };
+
   return (
     <main className="studio-workspace">
       <div className="studio-workspace__container">
@@ -115,53 +144,78 @@ export default function CreatorHome() {
           </p>
         </header>
 
-        <section className="studio-workspace__create" aria-labelledby="studio-create-heading">
-          <h2 id="studio-create-heading" className="studio-workspace__create-label">
-            Create
-          </h2>
-          <ul className="studio-workspace__cards">
-            {CREATION_OPTIONS.map((option) => (
-              <li key={option.id}>
-                {option.available ? (
-                  <Link href="/studio/guided-sessions/new" className="studio-card-link">
-                    <article className="studio-card studio-card--active">
+        <nav className="studio-workspace__tabs" aria-label="Studio sections">
+          {STUDIO_TABS.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`studio-workspace__tab${
+                activeTab === tab.id ? ' studio-workspace__tab--active' : ''
+              }`}
+              aria-current={activeTab === tab.id ? 'page' : undefined}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </nav>
+
+        {activeTab === 'create' ? (
+          <section className="studio-workspace__create" aria-labelledby="studio-create-heading">
+            <h2 id="studio-create-heading" className="visually-hidden">
+              Create
+            </h2>
+            <ul className="studio-workspace__cards">
+              {CREATION_OPTIONS.map((option) => (
+                <li key={option.id}>
+                  {option.available ? (
+                    <Link href="/studio/guided-sessions/new" className="studio-card-link">
+                      <article className="studio-card studio-card--active">
+                        <div className="studio-card__icon-wrap" aria-hidden>
+                          <option.Icon className="studio-card__icon" />
+                        </div>
+                        <div className="studio-card__body">
+                          <div className="studio-card__heading-row">
+                            <h3 className="studio-card__title">{option.title}</h3>
+                          </div>
+                          <p className="studio-card__desc">{option.description}</p>
+                          {option.action ? (
+                            <span className="studio-card__cta">
+                              {option.action}
+                              <span className="studio-card__cta-arrow" aria-hidden>
+                                →
+                              </span>
+                            </span>
+                          ) : null}
+                        </div>
+                      </article>
+                    </Link>
+                  ) : (
+                    <article className="studio-card studio-card--soon">
                       <div className="studio-card__icon-wrap" aria-hidden>
                         <option.Icon className="studio-card__icon" />
                       </div>
                       <div className="studio-card__body">
                         <div className="studio-card__heading-row">
                           <h3 className="studio-card__title">{option.title}</h3>
+                          <span className="studio-card__badge">Soon</span>
                         </div>
                         <p className="studio-card__desc">{option.description}</p>
-                        {option.action ? (
-                          <span className="studio-card__cta">
-                            {option.action}
-                            <span className="studio-card__cta-arrow" aria-hidden>
-                              →
-                            </span>
-                          </span>
-                        ) : null}
                       </div>
                     </article>
-                  </Link>
-                ) : (
-                  <article className="studio-card studio-card--soon">
-                    <div className="studio-card__icon-wrap" aria-hidden>
-                      <option.Icon className="studio-card__icon" />
-                    </div>
-                    <div className="studio-card__body">
-                      <div className="studio-card__heading-row">
-                        <h3 className="studio-card__title">{option.title}</h3>
-                        <span className="studio-card__badge">Soon</span>
-                      </div>
-                      <p className="studio-card__desc">{option.description}</p>
-                    </div>
-                  </article>
-                )}
-              </li>
-            ))}
-          </ul>
-        </section>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : (
+          <section aria-labelledby="studio-library-heading">
+            <h2 id="studio-library-heading" className="visually-hidden">
+              Your guided sessions
+            </h2>
+            <MyGuidedSessions active />
+          </section>
+        )}
       </div>
     </main>
   );

@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import CreatorHome from './CreatorHome';
@@ -35,7 +36,19 @@ export default function StudioShell() {
         </div>
       </header>
 
-      <CreatorHome />
+      <Suspense
+        fallback={
+          <main className="studio-workspace">
+            <div className="studio-workspace__container">
+              <p className="studio-session-list__status" role="status">
+                Loading…
+              </p>
+            </div>
+          </main>
+        }
+      >
+        <CreatorHome />
+      </Suspense>
 
       <footer className="studio-shell__dev-footer">
         <div className="studio-shell__header-inner">

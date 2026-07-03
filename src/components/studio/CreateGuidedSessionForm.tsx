@@ -113,7 +113,7 @@ export default function CreateGuidedSessionForm() {
 
   return (
     <div className="studio-form-page">
-      <Link href="/studio" className="studio-form-page__back">
+      <Link href="/studio?tab=sessions" className="studio-form-page__back">
         ← Back to Studio
       </Link>
 

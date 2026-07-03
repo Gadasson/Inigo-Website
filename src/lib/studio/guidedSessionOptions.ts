@@ -37,6 +37,13 @@ export const GUIDED_SESSION_PRIMARY_CATEGORIES = [
   { value: 'sound-healing', label: 'Sound Healing' },
 ] as const;
 
+export const GUIDED_SESSION_ACCESS_TIERS = [
+  { value: 'free', label: 'Free' },
+  { value: 'plus', label: 'Plus' },
+  { value: 'premium', label: 'Premium' },
+  { value: 'pro', label: 'Pro' },
+] as const;
+
 export const GUIDED_SESSION_CREATE_DEFAULTS = {
   environment: 'indoor',
   background_music: 'ambient',
