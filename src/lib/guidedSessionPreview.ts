@@ -1,4 +1,5 @@
 import { cache } from 'react';
+import { getInigoApiBase } from '@/lib/inigoApiBase';
 import { getPublicSiteUrl } from '@/lib/publicSiteUrl';
 
 /**
@@ -38,13 +39,6 @@ import { getPublicSiteUrl } from '@/lib/publicSiteUrl';
  * Open Graph images for guided-session pages use the website proxy
  * `GET /api/og/guided-session/{identifier}/` so scrapers fetch `image/*` from inigo.now.
  */
-const DEFAULT_API_BASE = 'https://api2.inigo.now';
-
-export function getInigoApiBase(): string {
-  const raw = process.env.INIGO_API_BASE?.trim() || DEFAULT_API_BASE;
-  return raw.replace(/\/$/, '');
-}
-
 /** Route param: numeric id, slug (e.g. morning-meditation-1), or opaque token — not assumed numeric. */
 const SESSION_IDENTIFIER_PATTERN = /^[-a-zA-Z0-9_.]{1,128}$/;
 

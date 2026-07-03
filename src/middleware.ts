@@ -31,6 +31,7 @@ export default function middleware(request: NextRequest) {
     '/moment/',
     '/guided-session/',
     '/guided-sessions/',
+    '/studio',
     '/api/share/',
     '/apple-app-site-association',
     '/.well-known/',
