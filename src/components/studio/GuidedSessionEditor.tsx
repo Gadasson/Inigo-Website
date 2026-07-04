@@ -22,24 +22,24 @@ import {
   type CreatorWorkspaceSection,
 } from '@/lib/studio/creatorWorkspaceSections';
 import { formatSessionDate, sessionTimestampLabel } from '@/lib/studio/formatSessionDate';
-import { buildGuidedSessionShareReadiness } from '@/lib/studio/guidedSessionShareReadiness';
+import { buildGuidedSessionWorkspaceReadiness } from '@/lib/studio/workspaceReadiness';
 import GuidedSessionFormFields from '@/components/studio/GuidedSessionFormFields';
 import CreatorWorkspace from '@/components/studio/workspace/CreatorWorkspace';
 import WorkspaceOverview from '@/components/studio/workspace/WorkspaceOverview';
-import WorkspacePreviewSection from '@/components/studio/workspace/WorkspacePreviewSection';
-import WorkspaceShareSection from '@/components/studio/workspace/WorkspaceShareSection';
 
-const GuidedSessionMediaSection = dynamic(
-  () => import('@/components/studio/guided-session/GuidedSessionMediaSection'),
+const GuidedSessionWorkspaceTabs = dynamic(
+  () => import('@/components/studio/guided-session/GuidedSessionWorkspaceTabs'),
   {
     ssr: false,
     loading: () => (
       <p className="studio-form-page__status" role="status">
-        Loading media…
+        Loading…
       </p>
     ),
   },
 );
+
+const LAZY_WORKSPACE_SECTIONS = new Set(['media', 'preview', 'share']);
 
 type Props = {
   sessionId: number;
@@ -98,6 +98,18 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
     setSession(updated);
     setStatus(updated.status);
     applySessionTimestamps(updated, setLastUpdatedLabel, setUpdatedAtDisplay);
+  }, []);
+
+  const onSessionPublished = useCallback((updated: StudioGuidedSession) => {
+    const nextForm = sessionToEditorForm(updated);
+    setSession(updated);
+    setStatus(updated.status);
+    setForm(nextForm);
+    setBaseline(nextForm);
+    baselineRef.current = nextForm;
+    applySessionTimestamps(updated, setLastUpdatedLabel, setUpdatedAtDisplay);
+    setSaveState('idle');
+    setSaveError(null);
   }, []);
 
   useEffect(() => {
@@ -206,11 +218,9 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
     return null;
   }, [saveState, lastUpdatedLabel]);
 
-  const shareReadiness = useMemo(() => {
-    if (!session || !form) return [];
-    const metadataComplete =
-      Boolean(form.title.trim()) && Boolean(form.description.trim());
-    return buildGuidedSessionShareReadiness(session, metadataComplete);
+  const workspaceReadiness = useMemo(() => {
+    if (!session || !form) return null;
+    return buildGuidedSessionWorkspaceReadiness(session, form);
   }, [session, form]);
 
   if (loading) {
@@ -260,7 +270,7 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
           </h2>
           {!isEditable ? (
             <p className="creator-workspace__section-lede">
-              Published and archived sessions are read-only in Studio V1.
+              Shared and archived sessions are read-only in Studio V1.
             </p>
           ) : (
             <p className="creator-workspace__section-lede">
@@ -280,16 +290,19 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
         </section>
       ) : null}
 
-      {activeSection === 'media' ? (
-        <GuidedSessionMediaSection
+      {LAZY_WORKSPACE_SECTIONS.has(activeSection) && workspaceReadiness ? (
+        <GuidedSessionWorkspaceTabs
+          activeSection={activeSection}
           session={session}
+          form={form}
+          sessionId={sessionId}
+          status={status}
+          readiness={workspaceReadiness}
           isEditable={isEditable}
           onSessionUpdated={onSessionUpdated}
+          onSessionPublished={onSessionPublished}
         />
       ) : null}
-
-      {activeSection === 'preview' ? <WorkspacePreviewSection /> : null}
-      {activeSection === 'share' ? <WorkspaceShareSection items={shareReadiness} /> : null}
     </CreatorWorkspace>
   );
 }

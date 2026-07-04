@@ -6,7 +6,6 @@ import {
   attachGuidedSessionMedia,
   type StudioGuidedSession,
 } from '@/lib/api/studioGuidedSessions';
-import { uploadFileToFirebaseStorage } from '@/lib/firebase/storage';
 import { isFirebaseStorageConfigured } from '@/lib/firebase/config';
 import { parseStudioApiError } from '@/lib/studio/parseStudioApiError';
 import {
@@ -87,6 +86,7 @@ export default function GuidedSessionMediaSlot({
     try {
       const ext = fileExtension(file.name);
       const storagePath = buildGuidedSessionStoragePath(session.session_id, slot.role, ext);
+      const { uploadFileToFirebaseStorage } = await import('@/lib/firebase/storage');
       const storageUrl = await uploadFileToFirebaseStorage(storagePath, file);
       const token = await getIdToken();
       const updated = await attachGuidedSessionMedia(
@@ -141,6 +141,17 @@ export default function GuidedSessionMediaSlot({
             alt=""
             className="creator-workspace__media-thumb"
           />
+        ) : null}
+
+        {slot.role === 'audio' && attachedUrl ? (
+          <audio
+            className="creator-workspace__media-audio"
+            controls
+            preload="metadata"
+            src={attachedUrl}
+          >
+            Your browser does not support audio playback.
+          </audio>
         ) : null}
 
         {error ? (

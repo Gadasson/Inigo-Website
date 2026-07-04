@@ -981,6 +981,199 @@
   color: var(--color-text-muted);
 }
 
+.creator-workspace__readiness-item--recommended .creator-workspace__readiness-state {
+  color: #6b6b62;
+}
+
+.creator-workspace__media-audio {
+  display: block;
+  width: 100%;
+  max-width: 18rem;
+  margin-top: 0.75rem;
+}
+
+/* --- Guided session library preview --- */
+
+.guided-session-preview {
+  border-radius: 0.875rem;
+  border: 1px solid rgba(var(--inigo-accent-rgb), 0.16);
+  background: linear-gradient(
+    165deg,
+    rgba(255, 255, 255, 0.96) 0%,
+    rgba(var(--inigo-accent-rgb), 0.06) 100%
+  );
+  box-shadow: 0 8px 28px rgba(var(--inigo-accent-rgb), 0.1);
+  overflow: hidden;
+}
+
+.guided-session-preview__cover {
+  aspect-ratio: 16 / 9;
+  background: rgba(var(--inigo-accent-rgb), 0.1);
+}
+
+.guided-session-preview__cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.guided-session-preview__cover-placeholder {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    145deg,
+    rgba(var(--inigo-accent-rgb), 0.18) 0%,
+    rgba(var(--inigo-accent-rgb), 0.08) 100%
+  );
+  color: var(--color-action-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.guided-session-preview__body {
+  padding: 1.125rem 1.25rem 1.25rem;
+}
+
+.guided-session-preview__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+  color: var(--inigo-charcoal);
+}
+
+.guided-session-preview__description {
+  margin: 0.5rem 0 0;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: #52524a;
+}
+
+.guided-session-preview__meta {
+  margin: 0.875rem 0 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-action-muted);
+}
+
+.guided-session-preview__media-state {
+  margin: 0.75rem 0 0;
+  font-size: 0.8125rem;
+  color: #666660;
+}
+
+.guided-session-preview__audio {
+  display: block;
+  width: 100%;
+  margin-top: 0.75rem;
+}
+
+.guided-session-preview__note {
+  margin: 1rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: #666660;
+}
+
+.creator-workspace__share-actions {
+  margin-top: 1.25rem;
+}
+
+.creator-workspace__share-btn {
+  width: 100%;
+  max-width: 18rem;
+}
+
+.creator-workspace__share-btn:disabled {
+  opacity: 0.72;
+  cursor: not-allowed;
+  background: rgba(var(--inigo-accent-rgb), 0.35);
+  border-color: rgba(var(--inigo-accent-rgb), 0.35);
+}
+
+.creator-workspace__share-success {
+  margin: 1rem 0 0;
+  padding: 0.75rem 0.875rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #3d6b45;
+  background: rgba(61, 107, 69, 0.1);
+  border: 1px solid rgba(61, 107, 69, 0.18);
+}
+
+.creator-workspace__dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  background: rgba(26, 26, 26, 0.32);
+}
+
+.creator-workspace__dialog {
+  width: 100%;
+  max-width: 22rem;
+  padding: 1.25rem 1.375rem;
+  border-radius: 0.875rem;
+  border: 1px solid rgba(var(--inigo-accent-rgb), 0.16);
+  background: #f8f7f3;
+  box-shadow: 0 16px 40px rgba(15, 15, 15, 0.14);
+}
+
+.creator-workspace__dialog-title {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--inigo-charcoal);
+}
+
+.creator-workspace__dialog-text {
+  margin: 0.625rem 0 0;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: #52524a;
+}
+
+.creator-workspace__dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.625rem;
+  margin-top: 1.25rem;
+}
+
+.creator-workspace__dialog-btn {
+  padding: 0.5625rem 1rem;
+  font-size: 0.875rem;
+}
+
+.creator-workspace__dialog-btn--secondary {
+  border: 1px solid rgba(var(--inigo-accent-rgb), 0.22);
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--inigo-charcoal);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.creator-workspace__dialog-btn--secondary:hover:not(:disabled) {
+  border-color: rgba(var(--inigo-accent-rgb), 0.4);
+  color: var(--color-action-primary);
+}
+
+.creator-workspace__dialog-btn--secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .creator-workspace__media-readonly {
   margin: 0 0 1rem;
   padding: 0.75rem 0.875rem;

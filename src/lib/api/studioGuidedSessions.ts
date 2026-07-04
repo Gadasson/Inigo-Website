@@ -175,3 +175,15 @@ export async function attachGuidedSessionMedia(
     }),
   );
 }
+
+export async function publishGuidedSession(
+  id: number,
+  token: string | null,
+): Promise<StudioGuidedSession> {
+  return withToken(token, (authToken) =>
+    studioFetch<StudioGuidedSession>(`${BASE}/${id}/publish/`, {
+      method: 'POST',
+      token: authToken,
+    }),
+  );
+}
