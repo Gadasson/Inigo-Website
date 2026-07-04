@@ -58,7 +58,7 @@ function partitionReadiness(items: WorkspaceReadinessItem[]): WorkspaceReadiness
   };
 }
 
-/** Guided Session V1 — reusable by Share, Preview, and future Publish. */
+/** Guided Session V1 — reusable by Share and future Publish. */
 export function buildGuidedSessionWorkspaceReadiness(
   session: StudioGuidedSession,
   form: GuidedSessionEditorForm,
@@ -85,12 +85,6 @@ export function buildGuidedSessionWorkspaceReadiness(
       label: 'Cover image',
       state: hasCover ? 'complete' : 'recommended',
       kind: 'recommended',
-    },
-    {
-      id: 'preview',
-      label: 'Preview',
-      state: 'coming',
-      kind: 'informational',
     },
   ];
 
