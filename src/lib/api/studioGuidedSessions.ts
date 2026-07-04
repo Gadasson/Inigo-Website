@@ -13,6 +13,7 @@ export type CreateGuidedSessionDraftPayload = {
   instructor: string;
   environment: string;
   background_music: string;
+  background_music_creator?: string;
   language: string;
   sound_gender: string;
   access_tier: string;

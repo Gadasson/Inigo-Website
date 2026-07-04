@@ -136,12 +136,25 @@ export default function CreatorHome() {
   return (
     <main className="studio-workspace">
       <div className="studio-workspace__container">
-        <header className="studio-workspace__intro">
-          <p className="studio-workspace__greeting">Welcome back</p>
-          <h1 className="studio-workspace__title">What would you like to create today?</h1>
-          <p className="studio-workspace__lede">
-            Pass something meaningful forward through Inigo.
-          </p>
+        <header
+          className={`studio-workspace__intro${
+            activeTab === 'sessions' ? ' studio-workspace__intro--compact' : ''
+          }`}
+        >
+          {activeTab === 'create' ? (
+            <>
+              <p className="studio-workspace__greeting">Welcome back</p>
+              <h1 className="studio-workspace__title">What would you like to create today?</h1>
+              <p className="studio-workspace__lede">
+                Pass something meaningful forward through Inigo.
+              </p>
+            </>
+          ) : (
+            <>
+              <h1 className="studio-workspace__title">Your guided sessions</h1>
+              <p className="studio-workspace__lede">Pick up where you left off.</p>
+            </>
+          )}
         </header>
 
         <nav className="studio-workspace__tabs" aria-label="Studio sections">
@@ -209,12 +222,7 @@ export default function CreatorHome() {
             </ul>
           </section>
         ) : (
-          <section aria-labelledby="studio-library-heading">
-            <h2 id="studio-library-heading" className="visually-hidden">
-              Your guided sessions
-            </h2>
-            <MyGuidedSessions active />
-          </section>
+          <MyGuidedSessions active />
         )}
       </div>
     </main>

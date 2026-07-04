@@ -50,17 +50,6 @@ export default function MyGuidedSessions({ active = true }: Props) {
     void loadSessions();
   }, [active, user, loadSessions]);
 
-  useEffect(() => {
-    if (!active || !user) return;
-
-    const onFocus = () => {
-      void loadSessions();
-    };
-
-    window.addEventListener('focus', onFocus);
-    return () => window.removeEventListener('focus', onFocus);
-  }, [active, user, loadSessions]);
-
   const filteredSessions = useMemo(
     () => sessions.filter((session) => matchesStatusFilter(session.status, filter)),
     [sessions, filter],
@@ -85,6 +74,9 @@ export default function MyGuidedSessions({ active = true }: Props) {
 
   return (
     <section className="studio-workspace__library" aria-labelledby="studio-library-heading">
+      <h2 id="studio-library-heading" className="visually-hidden">
+        Your guided sessions
+      </h2>
       <div className="studio-session-filters" role="tablist" aria-label="Filter sessions">
         {GUIDED_SESSION_STATUS_FILTERS.map((option) => {
           const count = filterCounts[option.id];

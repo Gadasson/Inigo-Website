@@ -15,7 +15,7 @@ import {
   sessionToEditorForm,
   type GuidedSessionEditorForm,
 } from '@/lib/studio/guidedSessionEditorForm';
-import GuidedSessionEditorFields from '@/components/studio/GuidedSessionEditorFields';
+import GuidedSessionFormFields from '@/components/studio/GuidedSessionFormFields';
 
 type Props = {
   sessionId: number;
@@ -142,7 +142,7 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
   })();
 
   return (
-    <div className="studio-form-page studio-editor">
+    <div className="studio-form-page">
       <Link href="/studio?tab=sessions" className="studio-form-page__back">
         ← Back to Studio
       </Link>
@@ -161,32 +161,30 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
 
       {form && !loadError ? (
         <>
-          <header className="studio-editor__header">
-            <div className="studio-editor__header-row">
-              <div>
-                <h1 className="studio-form-page__title">Edit guided session</h1>
-                <p className="studio-form-page__lede">
-                  {isEditable
-                    ? 'Changes are saved automatically.'
-                    : 'Published and archived sessions are read-only in Studio V1.'}
-                </p>
-              </div>
-              <div className="studio-editor__meta">
+          <header className="studio-form-page__header studio-form-page__header--split">
+            <div>
+              <h1 className="studio-form-page__title">Edit guided session</h1>
+              <p className="studio-form-page__lede">
+                {isEditable
+                  ? 'Changes are saved automatically.'
+                  : 'Published and archived sessions are read-only in Studio V1.'}
+              </p>
+            </div>
+            <div className="studio-form-page__header-meta">
+              <span
+                className={`studio-editor__status-badge studio-editor__status-badge--${status}`}
+              >
+                {guidedSessionStatusLabel(status)}
+              </span>
+              {saveStatusLabel ? (
                 <span
-                  className={`studio-editor__status-badge studio-editor__status-badge--${status}`}
+                  className={`studio-editor__save-status studio-editor__save-status--${saveState}`}
+                  role="status"
+                  aria-live="polite"
                 >
-                  {guidedSessionStatusLabel(status)}
+                  {saveStatusLabel}
                 </span>
-                {saveStatusLabel ? (
-                  <span
-                    className={`studio-editor__save-status studio-editor__save-status--${saveState}`}
-                    role="status"
-                    aria-live="polite"
-                  >
-                    {saveStatusLabel}
-                  </span>
-                ) : null}
-              </div>
+              ) : null}
             </div>
           </header>
 
@@ -196,7 +194,7 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
             </p>
           ) : null}
 
-          <GuidedSessionEditorFields
+          <GuidedSessionFormFields
             form={form}
             disabled={!isEditable}
             onChange={onFieldChange}

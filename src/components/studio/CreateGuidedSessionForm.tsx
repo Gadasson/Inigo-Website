@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -9,45 +9,43 @@ import { generateSessionId } from '@/lib/studio/generateSessionId';
 import { minutesToDurationString } from '@/lib/studio/formatDuration';
 import { parseStudioApiError } from '@/lib/studio/parseStudioApiError';
 import {
-  GUIDED_SESSION_CATEGORIES,
-  GUIDED_SESSION_CREATE_DEFAULTS,
-  GUIDED_SESSION_DIFFICULTIES,
-  GUIDED_SESSION_LANGUAGES,
-  GUIDED_SESSION_PRIMARY_CATEGORIES,
-  GUIDED_SESSION_SOUND_GENDERS,
-} from '@/lib/studio/guidedSessionOptions';
+  createDefaultGuidedSessionForm,
+  parseTagsText,
+  type GuidedSessionEditorForm,
+} from '@/lib/studio/guidedSessionEditorForm';
+import { GUIDED_SESSION_CREATE_DEFAULTS } from '@/lib/studio/guidedSessionOptions';
+import GuidedSessionFormFields from '@/components/studio/GuidedSessionFormFields';
 
-type FormState = {
-  title: string;
-  description: string;
-  durationMinutes: string;
-  language: string;
-  soundGender: string;
-  difficulty: string;
-  category: string;
-  primaryCategory: string;
-};
-
-const INITIAL_FORM: FormState = {
-  title: '',
-  description: '',
-  durationMinutes: '10',
-  language: 'en',
-  soundGender: 'neutral',
-  difficulty: 'beginner',
-  category: 'stress-relief',
-  primaryCategory: 'meditation',
-};
+function instructorFromUser(user: {
+  displayName?: string | null;
+  email?: string | null;
+} | null): string {
+  return (
+    user?.displayName?.trim() ||
+    user?.email?.split('@')[0] ||
+    user?.email ||
+    'Creator'
+  );
+}
 
 export default function CreateGuidedSessionForm() {
   const router = useRouter();
   const { user, getIdToken } = useAuth();
-  const [form, setForm] = useState<FormState>(INITIAL_FORM);
+  const [form, setForm] = useState<GuidedSessionEditorForm>(() =>
+    createDefaultGuidedSessionForm(),
+  );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const instructor =
-    user?.displayName?.trim() || user?.email?.split('@')[0] || user?.email || 'Creator';
+  useEffect(() => {
+    if (!user) return;
+    const suggested = instructorFromUser(user);
+    setForm((prev) =>
+      prev.instructor === '' || prev.instructor === 'Creator'
+        ? { ...prev, instructor: suggested }
+        : prev,
+    );
+  }, [user]);
 
   const onChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
@@ -63,6 +61,9 @@ export default function CreateGuidedSessionForm() {
     if (!Number.isFinite(minutes) || minutes < 1 || minutes > 180) {
       return 'Duration must be between 1 and 180 minutes.';
     }
+    if (form.instructor.trim().length < 1) return 'Please add an instructor name.';
+    if (form.environment.trim().length < 1) return 'Please add an environment.';
+    if (form.backgroundMusic.trim().length < 1) return 'Please add background music.';
     return null;
   };
 
@@ -81,6 +82,7 @@ export default function CreateGuidedSessionForm() {
     try {
       const token = await getIdToken();
       const sessionId = generateSessionId(form.title.trim());
+      const musicCreator = form.backgroundMusicCreator.trim();
 
       const draft = await createGuidedSessionDraft(
         {
@@ -91,13 +93,14 @@ export default function CreateGuidedSessionForm() {
           difficulty: form.difficulty,
           category: form.category,
           primary_category: form.primaryCategory,
-          instructor,
-          environment: GUIDED_SESSION_CREATE_DEFAULTS.environment,
-          background_music: GUIDED_SESSION_CREATE_DEFAULTS.background_music,
+          instructor: form.instructor.trim(),
+          environment: form.environment.trim(),
+          background_music: form.backgroundMusic.trim(),
+          background_music_creator: musicCreator || undefined,
           language: form.language,
           sound_gender: form.soundGender,
-          access_tier: GUIDED_SESSION_CREATE_DEFAULTS.access_tier,
-          tags: GUIDED_SESSION_CREATE_DEFAULTS.tags,
+          access_tier: form.accessTier,
+          tags: parseTagsText(form.tagsText),
           sub_category_codes: GUIDED_SESSION_CREATE_DEFAULTS.sub_category_codes,
         },
         token,
@@ -113,7 +116,7 @@ export default function CreateGuidedSessionForm() {
 
   return (
     <div className="studio-form-page">
-      <Link href="/studio?tab=sessions" className="studio-form-page__back">
+      <Link href="/studio" className="studio-form-page__back">
         ← Back to Studio
       </Link>
 
@@ -124,117 +127,8 @@ export default function CreateGuidedSessionForm() {
         </p>
       </header>
 
-      <form className="studio-form" onSubmit={onSubmit} noValidate>
-        <div className="studio-form__field">
-          <label htmlFor="title">Title</label>
-          <input
-            id="title"
-            name="title"
-            type="text"
-            required
-            value={form.title}
-            onChange={onChange}
-            autoComplete="off"
-            placeholder="Morning breath"
-          />
-        </div>
-
-        <div className="studio-form__field">
-          <label htmlFor="description">Description</label>
-          <textarea
-            id="description"
-            name="description"
-            required
-            rows={4}
-            value={form.description}
-            onChange={onChange}
-            placeholder="What will someone feel or learn in this session?"
-          />
-        </div>
-
-        <div className="studio-form__row">
-          <div className="studio-form__field">
-            <label htmlFor="durationMinutes">Duration (minutes)</label>
-            <input
-              id="durationMinutes"
-              name="durationMinutes"
-              type="number"
-              min={1}
-              max={180}
-              required
-              value={form.durationMinutes}
-              onChange={onChange}
-            />
-          </div>
-
-          <div className="studio-form__field">
-            <label htmlFor="language">Language</label>
-            <select id="language" name="language" value={form.language} onChange={onChange}>
-              {GUIDED_SESSION_LANGUAGES.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div className="studio-form__row">
-          <div className="studio-form__field">
-            <label htmlFor="soundGender">Voice</label>
-            <select id="soundGender" name="soundGender" value={form.soundGender} onChange={onChange}>
-              {GUIDED_SESSION_SOUND_GENDERS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="studio-form__field">
-            <label htmlFor="difficulty">Difficulty</label>
-            <select id="difficulty" name="difficulty" value={form.difficulty} onChange={onChange}>
-              {GUIDED_SESSION_DIFFICULTIES.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div className="studio-form__row">
-          <div className="studio-form__field">
-            <label htmlFor="category">Category</label>
-            <select id="category" name="category" value={form.category} onChange={onChange}>
-              {GUIDED_SESSION_CATEGORIES.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="studio-form__field">
-            <label htmlFor="primaryCategory">Primary category</label>
-            <select
-              id="primaryCategory"
-              name="primaryCategory"
-              value={form.primaryCategory}
-              onChange={onChange}
-            >
-              {GUIDED_SESSION_PRIMARY_CATEGORIES.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <p className="studio-form__meta">
-          Instructor: <span>{instructor}</span>
-        </p>
+      <form onSubmit={onSubmit} noValidate>
+        <GuidedSessionFormFields form={form} onChange={onChange} />
 
         {error ? (
           <p className="studio-form__error" role="alert">

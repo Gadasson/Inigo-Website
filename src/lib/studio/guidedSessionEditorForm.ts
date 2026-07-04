@@ -33,6 +33,27 @@ export function tagsToText(tags: string[] | undefined): string {
   return (tags ?? []).join(', ');
 }
 
+export function createDefaultGuidedSessionForm(
+  instructor = 'Creator',
+): GuidedSessionEditorForm {
+  return {
+    title: '',
+    description: '',
+    durationMinutes: '10',
+    language: 'en',
+    soundGender: 'neutral',
+    difficulty: 'beginner',
+    category: 'stress-relief',
+    primaryCategory: 'meditation',
+    instructor,
+    environment: GUIDED_SESSION_CREATE_DEFAULTS.environment,
+    backgroundMusic: GUIDED_SESSION_CREATE_DEFAULTS.background_music,
+    backgroundMusicCreator: '',
+    accessTier: GUIDED_SESSION_CREATE_DEFAULTS.access_tier,
+    tagsText: '',
+  };
+}
+
 export function sessionToEditorForm(session: StudioGuidedSession): GuidedSessionEditorForm {
   const minutes =
     session.duration_minutes ?? durationToMinutes(session.duration);
