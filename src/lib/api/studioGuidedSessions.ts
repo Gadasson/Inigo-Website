@@ -42,8 +42,21 @@ export type StudioGuidedSession = {
   access_tier?: string;
   tags?: string[];
   sub_categories?: string[];
+  thumbnail_url?: string | null;
+  audio_url?: string | null;
+  video_url?: string | null;
+  has_audio?: boolean;
+  has_video?: boolean;
+  file_metadata?: Record<string, Record<string, unknown>>;
   created_at?: string;
   updated_at?: string;
+};
+
+export type AttachGuidedSessionMediaPayload = {
+  media_role: 'audio' | 'thumbnail' | 'video';
+  storage_url: string;
+  storage_path: string;
+  file_metadata?: Record<string, unknown>;
 };
 
 /** PATCH payload — only editable draft fields; omit immutable/media/status fields. */
@@ -147,4 +160,18 @@ export async function listGuidedSessions(
       return bTime - aTime;
     });
   });
+}
+
+export async function attachGuidedSessionMedia(
+  id: number,
+  payload: AttachGuidedSessionMediaPayload,
+  token: string | null,
+): Promise<StudioGuidedSession> {
+  return withToken(token, (authToken) =>
+    studioFetch<StudioGuidedSession>(`${BASE}/${id}/attach-media/`, {
+      method: 'POST',
+      body: payload,
+      token: authToken,
+    }),
+  );
 }

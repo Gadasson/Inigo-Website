@@ -45,3 +45,7 @@ export function isFirebaseConfigured(): boolean {
       process.env.NEXT_PUBLIC_FIREBASE_APP_ID?.trim(),
   );
 }
+
+export function isFirebaseStorageConfigured(): boolean {
+  return Boolean(process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET?.trim());
+}
