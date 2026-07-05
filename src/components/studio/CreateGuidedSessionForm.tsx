@@ -13,7 +13,8 @@ import {
   parseTagsText,
   type GuidedSessionEditorForm,
 } from '@/lib/studio/guidedSessionEditorForm';
-import { GUIDED_SESSION_CREATE_DEFAULTS } from '@/lib/studio/guidedSessionOptions';
+import { buildGuidedSessionTaxonomyPayload, applyPracticeSelectionToForm } from '@/lib/studio/guidedSessionTaxonomy';
+import { useGuidedSessionTaxonomy } from '@/hooks/useGuidedSessionTaxonomy';
 import GuidedSessionFormFields from '@/components/studio/GuidedSessionFormFields';
 
 function instructorFromUser(user: {
@@ -28,9 +29,23 @@ function instructorFromUser(user: {
   );
 }
 
+function applyTaxonomyDefaults(
+  form: GuidedSessionEditorForm,
+  practiceCode: string | undefined,
+  focusCode: string | undefined,
+): GuidedSessionEditorForm {
+  return {
+    ...form,
+    practice: form.practice || practiceCode || '',
+    focus: form.focus || focusCode || '',
+  };
+}
+
 export default function CreateGuidedSessionForm() {
   const router = useRouter();
   const { user, getIdToken } = useAuth();
+  const { taxonomy, loading: taxonomyLoading, error: taxonomyError } =
+    useGuidedSessionTaxonomy();
   const [form, setForm] = useState<GuidedSessionEditorForm>(() =>
     createDefaultGuidedSessionForm(),
   );
@@ -47,11 +62,28 @@ export default function CreateGuidedSessionForm() {
     );
   }, [user]);
 
+  useEffect(() => {
+    if (!taxonomy?.practices[0]) return;
+    const firstPractice = taxonomy.practices[0];
+    setForm((prev) =>
+      applyTaxonomyDefaults(
+        prev,
+        firstPractice.code,
+        firstPractice.subCategories[0]?.code,
+      ),
+    );
+  }, [taxonomy]);
+
   const onChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm((prev) => {
+      if (name === 'practice') {
+        return applyPracticeSelectionToForm(prev, value, taxonomy);
+      }
+      return { ...prev, [name]: value };
+    });
   };
 
   const validate = (): string | null => {
@@ -60,6 +92,8 @@ export default function CreateGuidedSessionForm() {
     if (!isValidEstimatedDurationMmSs(form.durationMm, form.durationSs)) {
       return 'Duration must be between 00:01 and 180:00.';
     }
+    if (!form.practice.trim()) return 'Please select a practice.';
+    if (!form.focus.trim()) return 'Please select a focus.';
     if (form.instructor.trim().length < 1) return 'Please add an instructor name.';
     if (form.environment.trim().length < 1) return 'Please add an environment.';
     if (form.backgroundMusic.trim().length < 1) return 'Please add background music.';
@@ -82,6 +116,7 @@ export default function CreateGuidedSessionForm() {
       const token = await getIdToken();
       const sessionId = generateSessionId(form.title.trim());
       const musicCreator = form.backgroundMusicCreator.trim();
+      const taxonomyPayload = buildGuidedSessionTaxonomyPayload(form.practice, form.focus);
 
       const draft = await createGuidedSessionDraft(
         {
@@ -90,8 +125,8 @@ export default function CreateGuidedSessionForm() {
           description: form.description.trim(),
           duration: mmSsToDurationString(Number(form.durationMm), Number(form.durationSs)),
           difficulty: form.difficulty,
-          category: form.category,
-          primary_category: form.primaryCategory,
+          category: taxonomyPayload.category,
+          primary_category: taxonomyPayload.primary_category,
           instructor: form.instructor.trim(),
           environment: form.environment.trim(),
           background_music: form.backgroundMusic.trim(),
@@ -100,7 +135,7 @@ export default function CreateGuidedSessionForm() {
           sound_gender: form.soundGender,
           access_tier: form.accessTier,
           tags: parseTagsText(form.tagsText),
-          sub_category_codes: GUIDED_SESSION_CREATE_DEFAULTS.sub_category_codes,
+          sub_category_codes: taxonomyPayload.sub_category_codes,
         },
         token,
       );
@@ -131,6 +166,9 @@ export default function CreateGuidedSessionForm() {
           form={form}
           durationFromMedia={false}
           durationMediaSource={null}
+          taxonomy={taxonomy}
+          taxonomyLoading={taxonomyLoading}
+          taxonomyError={taxonomyError}
           onChange={onChange}
         />
 
@@ -141,7 +179,11 @@ export default function CreateGuidedSessionForm() {
         ) : null}
 
         <div className="studio-form__actions">
-          <button type="submit" className="studio-form__submit" disabled={submitting}>
+          <button
+            type="submit"
+            className="studio-form__submit"
+            disabled={submitting || taxonomyLoading}
+          >
             {submitting ? 'Creating…' : 'Create draft'}
           </button>
         </div>

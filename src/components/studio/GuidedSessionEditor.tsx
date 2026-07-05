@@ -29,6 +29,8 @@ import {
   guidedSessionDurationMediaSource,
 } from '@/lib/studio/guidedSessionDuration';
 import type { OnGuidedSessionMediaUpdated } from '@/lib/studio/guidedSessionMediaTypes';
+import { useGuidedSessionTaxonomy } from '@/hooks/useGuidedSessionTaxonomy';
+import { applyPracticeSelectionToForm } from '@/lib/studio/guidedSessionTaxonomy';
 import GuidedSessionFormFields from '@/components/studio/GuidedSessionFormFields';
 import CreatorWorkspace from '@/components/studio/workspace/CreatorWorkspace';
 import WorkspaceOverview from '@/components/studio/workspace/WorkspaceOverview';
@@ -69,6 +71,8 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { getIdToken } = useAuth();
+  const { taxonomy, loading: taxonomyLoading, error: taxonomyError } =
+    useGuidedSessionTaxonomy();
   const [session, setSession] = useState<StudioGuidedSession | null>(null);
   const [form, setForm] = useState<GuidedSessionEditorForm | null>(null);
   const [baseline, setBaseline] = useState<GuidedSessionEditorForm | null>(null);
@@ -190,13 +194,20 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
   const onFieldChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
       const { name, value } = e.target;
-      setForm((prev) => (prev ? { ...prev, [name]: value } : prev));
+      setForm((prev) => {
+        if (!prev) return prev;
+        const next =
+          name === 'practice'
+            ? applyPracticeSelectionToForm(prev, value, taxonomy)
+            : { ...prev, [name]: value };
+        return next;
+      });
       setSaveError(null);
       if (saveState === 'saved' || saveState === 'error') {
         setSaveState('idle');
       }
     },
-    [saveState],
+    [saveState, taxonomy],
   );
 
   useEffect(() => {
@@ -323,6 +334,9 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
             form={form}
             durationFromMedia={durationFromMedia}
             durationMediaSource={durationMediaSource}
+            taxonomy={taxonomy}
+            taxonomyLoading={taxonomyLoading}
+            taxonomyError={taxonomyError}
             disabled={!isEditable}
             onChange={onFieldChange}
           />

@@ -75,6 +75,7 @@ export type UpdateGuidedSessionDraftPayload = Partial<{
   sound_gender: string;
   access_tier: string;
   tags: string[];
+  sub_category_codes?: string[];
 }>;
 
 type StudioGuidedSessionListResponse =

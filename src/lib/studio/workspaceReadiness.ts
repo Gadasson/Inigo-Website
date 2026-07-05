@@ -33,6 +33,8 @@ function isGuidedSessionDetailsComplete(form: GuidedSessionEditorForm): boolean 
     form.title.trim().length >= 2 &&
     form.description.trim().length >= 10 &&
     isValidEstimatedDurationMmSs(form.durationMm, form.durationSs) &&
+    form.practice.trim().length >= 1 &&
+    form.focus.trim().length >= 1 &&
     form.instructor.trim().length >= 1 &&
     form.environment.trim().length >= 1 &&
     form.backgroundMusic.trim().length >= 1

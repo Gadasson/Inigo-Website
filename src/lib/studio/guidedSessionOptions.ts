@@ -17,26 +17,6 @@ export const GUIDED_SESSION_DIFFICULTIES = [
   { value: 'advanced', label: 'Advanced' },
 ] as const;
 
-export const GUIDED_SESSION_CATEGORIES = [
-  { value: 'mindful-living', label: 'Mindful Living' },
-  { value: 'nature-connection', label: 'Nature Connection' },
-  { value: 'inner-journey', label: 'Inner Journey' },
-  { value: 'stress-relief', label: 'Stress Relief' },
-  { value: 'focus-concentration', label: 'Focus & Concentration' },
-  { value: 'love', label: 'Love' },
-] as const;
-
-export const GUIDED_SESSION_PRIMARY_CATEGORIES = [
-  { value: 'meditation', label: 'Meditation' },
-  { value: 'breathing', label: 'Breathing' },
-  { value: 'yoga', label: 'Yoga' },
-  { value: 'pilates-core', label: 'Pilates / Core' },
-  { value: 'qigong', label: 'Qigong' },
-  { value: 'somatic-body-awareness', label: 'Somatic / Body Awareness' },
-  { value: 'relaxation-rest', label: 'Relaxation / Rest' },
-  { value: 'sound-healing', label: 'Sound Healing' },
-] as const;
-
 export const GUIDED_SESSION_ACCESS_TIERS = [
   { value: 'free', label: 'Free' },
   { value: 'plus', label: 'Plus' },

@@ -7,6 +7,7 @@ import {
   mmSsToDurationString,
   parseApiDurationToMmSsParts,
 } from '@/lib/studio/formatDuration';
+import { buildGuidedSessionTaxonomyPayload } from '@/lib/studio/guidedSessionTaxonomy';
 import { GUIDED_SESSION_CREATE_DEFAULTS } from '@/lib/studio/guidedSessionOptions';
 
 export type GuidedSessionEditorForm = {
@@ -17,8 +18,8 @@ export type GuidedSessionEditorForm = {
   language: string;
   soundGender: string;
   difficulty: string;
-  category: string;
-  primaryCategory: string;
+  practice: string;
+  focus: string;
   instructor: string;
   environment: string;
   backgroundMusic: string;
@@ -38,6 +39,14 @@ export function tagsToText(tags: string[] | undefined): string {
   return (tags ?? []).join(', ');
 }
 
+function sessionFocusCode(session: StudioGuidedSession): string {
+  const fromSubCategories = session.sub_categories?.[0];
+  if (typeof fromSubCategories === 'string' && fromSubCategories.trim()) {
+    return fromSubCategories.trim();
+  }
+  return '';
+}
+
 export function createDefaultGuidedSessionForm(
   instructor = 'Creator',
 ): GuidedSessionEditorForm {
@@ -49,8 +58,8 @@ export function createDefaultGuidedSessionForm(
     language: 'en',
     soundGender: 'neutral',
     difficulty: 'beginner',
-    category: 'stress-relief',
-    primaryCategory: 'meditation',
+    practice: '',
+    focus: '',
     instructor,
     environment: GUIDED_SESSION_CREATE_DEFAULTS.environment,
     backgroundMusic: GUIDED_SESSION_CREATE_DEFAULTS.background_music,
@@ -71,8 +80,8 @@ export function sessionToEditorForm(session: StudioGuidedSession): GuidedSession
     language: session.language ?? 'en',
     soundGender: session.sound_gender ?? 'neutral',
     difficulty: session.difficulty ?? 'beginner',
-    category: session.category ?? 'stress-relief',
-    primaryCategory: session.primary_category ?? 'meditation',
+    practice: session.primary_category ?? '',
+    focus: sessionFocusCode(session),
     instructor: session.instructor ?? '',
     environment: session.environment ?? GUIDED_SESSION_CREATE_DEFAULTS.environment,
     backgroundMusic: session.background_music ?? GUIDED_SESSION_CREATE_DEFAULTS.background_music,
@@ -87,6 +96,13 @@ function durationChanged(
   baseline: GuidedSessionEditorForm,
 ): boolean {
   return form.durationMm !== baseline.durationMm || form.durationSs !== baseline.durationSs;
+}
+
+function taxonomyChanged(
+  form: GuidedSessionEditorForm,
+  baseline: GuidedSessionEditorForm,
+): boolean {
+  return form.practice !== baseline.practice || form.focus !== baseline.focus;
 }
 
 export function buildGuidedSessionPatch(
@@ -111,9 +127,11 @@ export function buildGuidedSessionPatch(
   if (form.language !== baseline.language) patch.language = form.language;
   if (form.soundGender !== baseline.soundGender) patch.sound_gender = form.soundGender;
   if (form.difficulty !== baseline.difficulty) patch.difficulty = form.difficulty;
-  if (form.category !== baseline.category) patch.category = form.category;
-  if (form.primaryCategory !== baseline.primaryCategory) {
-    patch.primary_category = form.primaryCategory;
+  if (taxonomyChanged(form, baseline)) {
+    const taxonomyPayload = buildGuidedSessionTaxonomyPayload(form.practice, form.focus);
+    patch.primary_category = taxonomyPayload.primary_category;
+    patch.sub_category_codes = taxonomyPayload.sub_category_codes;
+    patch.category = taxonomyPayload.category;
   }
   if (form.instructor.trim() !== baseline.instructor.trim()) {
     patch.instructor = form.instructor.trim();

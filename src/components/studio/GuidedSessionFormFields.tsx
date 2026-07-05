@@ -1,11 +1,11 @@
 import type { GuidedSessionEditorForm } from '@/lib/studio/guidedSessionEditorForm';
 import type { GuidedSessionDurationMediaSource } from '@/lib/studio/guidedSessionDuration';
+import type { GuidedSessionTaxonomy } from '@/lib/studio/guidedSessionTaxonomy';
+import { getFocusOptionsForPractice } from '@/lib/studio/guidedSessionTaxonomy';
 import {
   GUIDED_SESSION_ACCESS_TIERS,
-  GUIDED_SESSION_CATEGORIES,
   GUIDED_SESSION_DIFFICULTIES,
   GUIDED_SESSION_LANGUAGES,
-  GUIDED_SESSION_PRIMARY_CATEGORIES,
   GUIDED_SESSION_SOUND_GENDERS,
 } from '@/lib/studio/guidedSessionOptions';
 import StudioFieldLabel from '@/components/studio/StudioFieldLabel';
@@ -15,19 +15,52 @@ type Props = {
   form: GuidedSessionEditorForm;
   durationFromMedia: boolean;
   durationMediaSource: GuidedSessionDurationMediaSource | null;
+  taxonomy: GuidedSessionTaxonomy | null;
+  taxonomyLoading: boolean;
+  taxonomyError?: string | null;
   disabled?: boolean;
   onChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => void;
 };
 
+function taxonomySelectDisabled(
+  disabled: boolean,
+  taxonomyLoading: boolean,
+  optionsCount: number,
+): boolean {
+  return disabled || taxonomyLoading || optionsCount === 0;
+}
+
+function withCurrentTaxonomyOption(
+  options: { code: string; label: string }[],
+  currentCode: string,
+): { code: string; label: string }[] {
+  if (!currentCode || options.some((option) => option.code === currentCode)) {
+    return options;
+  }
+  return [{ code: currentCode, label: currentCode }, ...options];
+}
+
 export default function GuidedSessionFormFields({
   form,
   durationFromMedia,
   durationMediaSource,
+  taxonomy,
+  taxonomyLoading,
+  taxonomyError = null,
   disabled = false,
   onChange,
 }: Props) {
+  const practices = withCurrentTaxonomyOption(taxonomy?.practices ?? [], form.practice);
+  const practiceFocuses = getFocusOptionsForPractice(taxonomy, form.practice);
+  const focuses = withCurrentTaxonomyOption(practiceFocuses, form.focus);
+  const focusSelectDisabled =
+    disabled ||
+    taxonomyLoading ||
+    !form.practice.trim() ||
+    practiceFocuses.length === 0;
+
   return (
     <div className="studio-form">
       <div className="studio-form__field">
@@ -129,18 +162,23 @@ export default function GuidedSessionFormFields({
 
       <div className="studio-form__row">
         <div className="studio-form__field">
-          <StudioFieldLabel htmlFor="category" hintKey="category">
-            Category
+          <StudioFieldLabel htmlFor="practice" hintKey="practice">
+            Practice
           </StudioFieldLabel>
           <select
-            id="category"
-            name="category"
-            value={form.category}
+            id="practice"
+            name="practice"
+            value={form.practice}
             onChange={onChange}
-            disabled={disabled}
+            disabled={taxonomySelectDisabled(disabled, taxonomyLoading, practices.length)}
           >
-            {GUIDED_SESSION_CATEGORIES.map((opt) => (
-              <option key={opt.value} value={opt.value}>
+            {!form.practice ? (
+              <option value="">
+                {taxonomyLoading ? 'Loading practices…' : 'Select practice'}
+              </option>
+            ) : null}
+            {practices.map((opt) => (
+              <option key={opt.code} value={opt.code}>
                 {opt.label}
               </option>
             ))}
@@ -148,24 +186,41 @@ export default function GuidedSessionFormFields({
         </div>
 
         <div className="studio-form__field">
-          <StudioFieldLabel htmlFor="primaryCategory" hintKey="primaryCategory">
-            Primary category
+          <StudioFieldLabel htmlFor="focus" hintKey="focus">
+            Focus
           </StudioFieldLabel>
           <select
-            id="primaryCategory"
-            name="primaryCategory"
-            value={form.primaryCategory}
+            id="focus"
+            name="focus"
+            value={form.focus}
             onChange={onChange}
-            disabled={disabled}
+            disabled={focusSelectDisabled}
           >
-            {GUIDED_SESSION_PRIMARY_CATEGORIES.map((opt) => (
-              <option key={opt.value} value={opt.value}>
+            {!form.focus ? (
+              <option value="">
+                {!form.practice.trim()
+                  ? 'Select a practice first'
+                  : taxonomyLoading
+                    ? 'Loading focus options…'
+                    : practiceFocuses.length === 0
+                      ? 'No focus options'
+                      : 'Select focus'}
+              </option>
+            ) : null}
+            {focuses.map((opt) => (
+              <option key={opt.code} value={opt.code}>
                 {opt.label}
               </option>
             ))}
           </select>
         </div>
       </div>
+
+      {taxonomyError ? (
+        <p className="studio-form__error" role="alert">
+          {taxonomyError}
+        </p>
+      ) : null}
 
       <div className="studio-form__field">
         <StudioFieldLabel htmlFor="instructor" hintKey="instructor">
