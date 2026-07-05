@@ -1,5 +1,6 @@
 import type { StudioGuidedSession } from '@/lib/api/studioGuidedSessions';
 import type { GuidedSessionEditorForm } from '@/lib/studio/guidedSessionEditorForm';
+import { isValidEstimatedDurationMmSs } from '@/lib/studio/formatDuration';
 import {
   hasGuidedSessionCover,
   hasGuidedSessionPrimaryMedia,
@@ -28,14 +29,10 @@ export type WorkspaceReadiness = {
 };
 
 function isGuidedSessionDetailsComplete(form: GuidedSessionEditorForm): boolean {
-  const minutes = Number(form.durationMinutes);
-
   return (
     form.title.trim().length >= 2 &&
     form.description.trim().length >= 10 &&
-    Number.isFinite(minutes) &&
-    minutes >= 1 &&
-    minutes <= 180 &&
+    isValidEstimatedDurationMmSs(form.durationMm, form.durationSs) &&
     form.instructor.trim().length >= 1 &&
     form.environment.trim().length >= 1 &&
     form.backgroundMusic.trim().length >= 1

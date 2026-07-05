@@ -4,6 +4,8 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin('./src/i18n/config.ts');
 
 const nextConfig: NextConfig = {
+  /** Keep Firebase SDK out of the server bundle (Studio auth + media upload are client-only). */
+  serverExternalPackages: ['firebase'],
   /** Binary OG proxy: avoid RSC-oriented `Vary` values that confuse some link-preview crawlers. */
   async headers() {
     return [

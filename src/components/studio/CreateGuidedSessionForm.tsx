@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { createGuidedSessionDraft } from '@/lib/api/studioGuidedSessions';
 import { generateSessionId } from '@/lib/studio/generateSessionId';
-import { minutesToDurationString } from '@/lib/studio/formatDuration';
+import { isValidEstimatedDurationMmSs, mmSsToDurationString } from '@/lib/studio/formatDuration';
 import { parseStudioApiError } from '@/lib/studio/parseStudioApiError';
 import {
   createDefaultGuidedSessionForm,
@@ -57,9 +57,8 @@ export default function CreateGuidedSessionForm() {
   const validate = (): string | null => {
     if (form.title.trim().length < 2) return 'Please add a title.';
     if (form.description.trim().length < 10) return 'Description should be at least a few words.';
-    const minutes = Number(form.durationMinutes);
-    if (!Number.isFinite(minutes) || minutes < 1 || minutes > 180) {
-      return 'Duration must be between 1 and 180 minutes.';
+    if (!isValidEstimatedDurationMmSs(form.durationMm, form.durationSs)) {
+      return 'Duration must be between 00:01 and 180:00.';
     }
     if (form.instructor.trim().length < 1) return 'Please add an instructor name.';
     if (form.environment.trim().length < 1) return 'Please add an environment.';
@@ -89,7 +88,7 @@ export default function CreateGuidedSessionForm() {
           session_id: sessionId,
           title: form.title.trim(),
           description: form.description.trim(),
-          duration: minutesToDurationString(Number(form.durationMinutes)),
+          duration: mmSsToDurationString(Number(form.durationMm), Number(form.durationSs)),
           difficulty: form.difficulty,
           category: form.category,
           primary_category: form.primaryCategory,
@@ -128,7 +127,12 @@ export default function CreateGuidedSessionForm() {
       </header>
 
       <form onSubmit={onSubmit} noValidate>
-        <GuidedSessionFormFields form={form} onChange={onChange} />
+        <GuidedSessionFormFields
+          form={form}
+          durationFromMedia={false}
+          durationMediaSource={null}
+          onChange={onChange}
+        />
 
         {error ? (
           <p className="studio-form__error" role="alert">

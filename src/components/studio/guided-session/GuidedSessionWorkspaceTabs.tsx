@@ -4,6 +4,7 @@ import type { StudioGuidedSession } from '@/lib/api/studioGuidedSessions';
 import type { GuidedSessionEditorForm } from '@/lib/studio/guidedSessionEditorForm';
 import type { CreatorWorkspaceSection } from '@/lib/studio/creatorWorkspaceSections';
 import type { WorkspaceReadiness } from '@/lib/studio/workspaceReadiness';
+import type { OnGuidedSessionMediaUpdated } from '@/lib/studio/guidedSessionMediaTypes';
 import GuidedSessionMediaSection from '@/components/studio/guided-session/GuidedSessionMediaSection';
 import GuidedSessionPreviewSection from '@/components/studio/guided-session/GuidedSessionPreviewSection';
 import GuidedSessionShareSection from '@/components/studio/guided-session/GuidedSessionShareSection';
@@ -16,7 +17,7 @@ type Props = {
   status: string;
   readiness: WorkspaceReadiness;
   isEditable: boolean;
-  onSessionUpdated: (session: StudioGuidedSession) => void;
+  onSessionUpdated: OnGuidedSessionMediaUpdated;
   onSessionPublished: (session: StudioGuidedSession) => void;
 };
 

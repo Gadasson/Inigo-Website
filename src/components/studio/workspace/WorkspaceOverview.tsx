@@ -1,6 +1,12 @@
+import type { GuidedSessionDurationMediaSource } from '@/lib/studio/guidedSessionDuration';
+import { guidedSessionDurationDetectedMessage } from '@/lib/studio/guidedSessionDuration';
+
 type Props = {
   title: string;
   description: string;
+  durationLabel: string;
+  durationFromMedia: boolean;
+  durationMediaSource: GuidedSessionDurationMediaSource | null;
   statusLabel: string;
   lastUpdated: string | null;
   creator: string;
@@ -9,6 +15,9 @@ type Props = {
 export default function WorkspaceOverview({
   title,
   description,
+  durationLabel,
+  durationFromMedia,
+  durationMediaSource,
   statusLabel,
   lastUpdated,
   creator,
@@ -30,6 +39,17 @@ export default function WorkspaceOverview({
         <div className="creator-workspace__overview-item">
           <dt>Description</dt>
           <dd>{description.trim() || 'No description yet.'}</dd>
+        </div>
+        <div className="creator-workspace__overview-item">
+          <dt>Duration</dt>
+          <dd>
+            {durationLabel}
+            {durationFromMedia && durationMediaSource ? (
+              <span className="creator-workspace__overview-duration-note">
+                {guidedSessionDurationDetectedMessage(durationMediaSource)}
+              </span>
+            ) : null}
+          </dd>
         </div>
         <div className="creator-workspace__overview-item">
           <dt>Status</dt>

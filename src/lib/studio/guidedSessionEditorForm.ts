@@ -2,13 +2,18 @@ import type {
   StudioGuidedSession,
   UpdateGuidedSessionDraftPayload,
 } from '@/lib/api/studioGuidedSessions';
-import { durationToMinutes, minutesToDurationString } from '@/lib/studio/formatDuration';
+import {
+  isValidEstimatedDurationMmSs,
+  mmSsToDurationString,
+  parseApiDurationToMmSsParts,
+} from '@/lib/studio/formatDuration';
 import { GUIDED_SESSION_CREATE_DEFAULTS } from '@/lib/studio/guidedSessionOptions';
 
 export type GuidedSessionEditorForm = {
   title: string;
   description: string;
-  durationMinutes: string;
+  durationMm: string;
+  durationSs: string;
   language: string;
   soundGender: string;
   difficulty: string;
@@ -39,7 +44,8 @@ export function createDefaultGuidedSessionForm(
   return {
     title: '',
     description: '',
-    durationMinutes: '10',
+    durationMm: '10',
+    durationSs: '00',
     language: 'en',
     soundGender: 'neutral',
     difficulty: 'beginner',
@@ -55,13 +61,13 @@ export function createDefaultGuidedSessionForm(
 }
 
 export function sessionToEditorForm(session: StudioGuidedSession): GuidedSessionEditorForm {
-  const minutes =
-    session.duration_minutes ?? durationToMinutes(session.duration);
+  const durationParts = parseApiDurationToMmSsParts(session.duration);
 
   return {
     title: session.title ?? '',
     description: session.description ?? '',
-    durationMinutes: String(minutes),
+    durationMm: durationParts.mm,
+    durationSs: durationParts.ss,
     language: session.language ?? 'en',
     soundGender: session.sound_gender ?? 'neutral',
     difficulty: session.difficulty ?? 'beginner',
@@ -76,6 +82,13 @@ export function sessionToEditorForm(session: StudioGuidedSession): GuidedSession
   };
 }
 
+function durationChanged(
+  form: GuidedSessionEditorForm,
+  baseline: GuidedSessionEditorForm,
+): boolean {
+  return form.durationMm !== baseline.durationMm || form.durationSs !== baseline.durationSs;
+}
+
 export function buildGuidedSessionPatch(
   form: GuidedSessionEditorForm,
   baseline: GuidedSessionEditorForm,
@@ -88,10 +101,11 @@ export function buildGuidedSessionPatch(
   if (form.description.trim() !== baseline.description.trim()) {
     patch.description = form.description.trim();
   }
-  if (form.durationMinutes !== baseline.durationMinutes) {
-    const minutes = Number(form.durationMinutes);
-    if (Number.isFinite(minutes) && minutes >= 1 && minutes <= 180) {
-      patch.duration = minutesToDurationString(minutes);
+  if (durationChanged(form, baseline)) {
+    const minutes = Number(form.durationMm);
+    const seconds = Number(form.durationSs);
+    if (isValidEstimatedDurationMmSs(form.durationMm, form.durationSs)) {
+      patch.duration = mmSsToDurationString(minutes, seconds);
     }
   }
   if (form.language !== baseline.language) patch.language = form.language;

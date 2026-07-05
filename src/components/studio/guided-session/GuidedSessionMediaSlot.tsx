@@ -8,7 +8,7 @@ import {
   validateGuidedSessionMediaFile,
 } from '@/lib/studio/guidedSessionMedia';
 import { formatMediaUploadError, MediaUploadError } from '@/lib/studio/guidedSessionMediaErrors';
-import { uploadGuidedSessionMedia } from '@/lib/studio/guidedSessionMediaUpload';
+import type { OnGuidedSessionMediaUpdated } from '@/lib/studio/guidedSessionMediaTypes';
 import { isFirebaseStorageConfigured } from '@/lib/firebase/config';
 import { useAuth } from '@/contexts/AuthContext';
 import type { StudioGuidedSession } from '@/lib/api/studioGuidedSessions';
@@ -17,7 +17,7 @@ type Props = {
   slot: GuidedSessionMediaSlotConfig;
   session: StudioGuidedSession;
   disabled: boolean;
-  onSessionUpdated: (session: StudioGuidedSession) => void;
+  onSessionUpdated: OnGuidedSessionMediaUpdated;
 };
 
 type SlotPhase = 'idle' | 'uploading' | 'error';
@@ -88,7 +88,8 @@ export default function GuidedSessionMediaSlot({
     setError(null);
 
     try {
-      const { session: updated } = await uploadGuidedSessionMedia({
+      const { uploadGuidedSessionMedia } = await import('@/lib/studio/guidedSessionMediaUpload');
+      const result = await uploadGuidedSessionMedia({
         session,
         role: slot.role,
         file,
@@ -98,7 +99,12 @@ export default function GuidedSessionMediaSlot({
         },
       });
 
-      onSessionUpdated(updated);
+      if (result.durationDetected) {
+        onSessionUpdated(result.session, { durationDetected: result.durationDetected });
+      } else {
+        onSessionUpdated(result.session);
+      }
+
       setPhase('idle');
       setUploadPercent(0);
     } catch (err) {

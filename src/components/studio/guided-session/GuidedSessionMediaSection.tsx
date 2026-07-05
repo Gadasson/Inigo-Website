@@ -2,12 +2,13 @@
 
 import type { StudioGuidedSession } from '@/lib/api/studioGuidedSessions';
 import { GUIDED_SESSION_MEDIA_SLOTS } from '@/lib/studio/guidedSessionMedia';
+import type { OnGuidedSessionMediaUpdated } from '@/lib/studio/guidedSessionMediaTypes';
 import GuidedSessionMediaSlot from '@/components/studio/guided-session/GuidedSessionMediaSlot';
 
 type Props = {
   session: StudioGuidedSession;
   isEditable: boolean;
-  onSessionUpdated: (session: StudioGuidedSession) => void;
+  onSessionUpdated: OnGuidedSessionMediaUpdated;
 };
 
 export default function GuidedSessionMediaSection({

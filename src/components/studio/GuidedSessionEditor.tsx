@@ -23,6 +23,12 @@ import {
 } from '@/lib/studio/creatorWorkspaceSections';
 import { formatSessionDate, sessionTimestampLabel } from '@/lib/studio/formatSessionDate';
 import { buildGuidedSessionWorkspaceReadiness } from '@/lib/studio/workspaceReadiness';
+import {
+  guidedSessionDurationDisplayLabel,
+  isGuidedSessionDurationFromMedia,
+  guidedSessionDurationMediaSource,
+} from '@/lib/studio/guidedSessionDuration';
+import type { OnGuidedSessionMediaUpdated } from '@/lib/studio/guidedSessionMediaTypes';
 import GuidedSessionFormFields from '@/components/studio/GuidedSessionFormFields';
 import CreatorWorkspace from '@/components/studio/workspace/CreatorWorkspace';
 import WorkspaceOverview from '@/components/studio/workspace/WorkspaceOverview';
@@ -94,10 +100,34 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
     [pathname, router, searchParams],
   );
 
-  const onSessionUpdated = useCallback((updated: StudioGuidedSession) => {
+  const onSessionUpdated = useCallback<OnGuidedSessionMediaUpdated>((updated, meta) => {
     setSession(updated);
     setStatus(updated.status);
     applySessionTimestamps(updated, setLastUpdatedLabel, setUpdatedAtDisplay);
+
+    if (meta?.durationDetected) {
+      const nextForm = sessionToEditorForm(updated);
+      setForm((prev) =>
+        prev
+          ? {
+              ...prev,
+              durationMm: nextForm.durationMm,
+              durationSs: nextForm.durationSs,
+            }
+          : nextForm,
+      );
+      setBaseline((prev) => {
+        const merged = prev
+          ? {
+              ...prev,
+              durationMm: nextForm.durationMm,
+              durationSs: nextForm.durationSs,
+            }
+          : nextForm;
+        baselineRef.current = merged;
+        return merged;
+      });
+    }
   }, []);
 
   const onSessionPublished = useCallback((updated: StudioGuidedSession) => {
@@ -243,6 +273,10 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
     return null;
   }
 
+  const durationFromMedia = isGuidedSessionDurationFromMedia(session);
+  const durationMediaSource = guidedSessionDurationMediaSource(session);
+  const durationLabel = guidedSessionDurationDisplayLabel(session, form);
+
   return (
     <CreatorWorkspace
       title={form.title}
@@ -257,6 +291,9 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
         <WorkspaceOverview
           title={form.title}
           description={form.description}
+          durationLabel={durationLabel}
+          durationFromMedia={durationFromMedia}
+          durationMediaSource={durationMediaSource}
           statusLabel={guidedSessionStatusLabel(status)}
           lastUpdated={updatedAtDisplay}
           creator={form.instructor}
@@ -284,6 +321,8 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
           ) : null}
           <GuidedSessionFormFields
             form={form}
+            durationFromMedia={durationFromMedia}
+            durationMediaSource={durationMediaSource}
             disabled={!isEditable}
             onChange={onFieldChange}
           />

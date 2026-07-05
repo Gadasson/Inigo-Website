@@ -1,4 +1,5 @@
 import type { GuidedSessionEditorForm } from '@/lib/studio/guidedSessionEditorForm';
+import type { GuidedSessionDurationMediaSource } from '@/lib/studio/guidedSessionDuration';
 import {
   GUIDED_SESSION_ACCESS_TIERS,
   GUIDED_SESSION_CATEGORIES,
@@ -8,9 +9,12 @@ import {
   GUIDED_SESSION_SOUND_GENDERS,
 } from '@/lib/studio/guidedSessionOptions';
 import StudioFieldLabel from '@/components/studio/StudioFieldLabel';
+import GuidedSessionDurationField from '@/components/studio/GuidedSessionDurationField';
 
 type Props = {
   form: GuidedSessionEditorForm;
+  durationFromMedia: boolean;
+  durationMediaSource: GuidedSessionDurationMediaSource | null;
   disabled?: boolean;
   onChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
@@ -19,6 +23,8 @@ type Props = {
 
 export default function GuidedSessionFormFields({
   form,
+  durationFromMedia,
+  durationMediaSource,
   disabled = false,
   onChange,
 }: Props) {
@@ -54,19 +60,14 @@ export default function GuidedSessionFormFields({
       </div>
 
       <div className="studio-form__row">
-        <div className="studio-form__field">
-          <StudioFieldLabel htmlFor="durationMinutes">Duration (minutes)</StudioFieldLabel>
-          <input
-            id="durationMinutes"
-            name="durationMinutes"
-            type="number"
-            min={1}
-            max={180}
-            value={form.durationMinutes}
-            onChange={onChange}
-            disabled={disabled}
-          />
-        </div>
+        <GuidedSessionDurationField
+          durationMm={form.durationMm}
+          durationSs={form.durationSs}
+          isFromMedia={durationFromMedia}
+          mediaSource={durationMediaSource}
+          disabled={disabled}
+          onChange={onChange}
+        />
 
         <div className="studio-form__field">
           <StudioFieldLabel htmlFor="language">Language</StudioFieldLabel>

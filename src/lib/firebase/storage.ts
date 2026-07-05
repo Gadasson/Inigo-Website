@@ -1,11 +1,19 @@
 'use client';
 
-import { getFirebaseApp } from '@/lib/firebase/client';
 import { getFirebaseClientConfig } from '@/lib/firebase/config';
 
 export type UploadProgressCallback = (percent: number) => void;
 
-/** Loads firebase/storage on demand so it stays out of the server bundle. */
+async function getOrInitFirebaseApp() {
+  const { initializeApp, getApps } = await import('firebase/app');
+  const existing = getApps();
+  if (existing.length > 0) {
+    return existing[0]!;
+  }
+  return initializeApp(getFirebaseClientConfig());
+}
+
+/** Loads firebase/storage on demand — never imports firebase/auth. */
 export async function uploadFileToFirebaseStorage(
   storagePath: string,
   file: File,
@@ -18,10 +26,12 @@ export async function uploadFileToFirebaseStorage(
     );
   }
 
-  const { getDownloadURL, getStorage, ref, uploadBytesResumable } = await import(
-    'firebase/storage'
-  );
-  const firebaseStorage = getStorage(getFirebaseApp(), `gs://${bucket}`);
+  const [{ getDownloadURL, getStorage, ref, uploadBytesResumable }, app] = await Promise.all([
+    import('firebase/storage'),
+    getOrInitFirebaseApp(),
+  ]);
+
+  const firebaseStorage = getStorage(app, `gs://${bucket}`);
   const objectRef = ref(firebaseStorage, storagePath);
 
   const uploadTask = uploadBytesResumable(objectRef, file, {

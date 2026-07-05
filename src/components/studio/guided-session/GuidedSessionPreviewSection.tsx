@@ -4,6 +4,7 @@ import {
   GUIDED_SESSION_DIFFICULTIES,
   GUIDED_SESSION_LANGUAGES,
 } from '@/lib/studio/guidedSessionOptions';
+import { guidedSessionDurationDisplayLabel } from '@/lib/studio/guidedSessionDuration';
 import {
   guidedSessionMediaUrl,
   hasGuidedSessionCover,
@@ -20,12 +21,6 @@ function optionLabel(
   value: string,
 ): string {
   return options.find((opt) => opt.value === value)?.label ?? value;
-}
-
-function formatDurationLabel(minutesStr: string): string {
-  const minutes = Number(minutesStr);
-  if (!Number.isFinite(minutes) || minutes < 1) return '—';
-  return minutes === 1 ? '1 minute' : `${minutes} minutes`;
 }
 
 function mediaStateLabel(session: StudioGuidedSession): string {
@@ -46,7 +41,7 @@ export default function GuidedSessionPreviewSection({ session, form }: Props) {
     form.description.trim() || 'Your description will appear here in the library.';
 
   const metaParts = [
-    formatDurationLabel(form.durationMinutes),
+    guidedSessionDurationDisplayLabel(session, form),
     optionLabel(GUIDED_SESSION_DIFFICULTIES, form.difficulty),
     optionLabel(GUIDED_SESSION_LANGUAGES, form.language),
     form.instructor.trim() || null,
