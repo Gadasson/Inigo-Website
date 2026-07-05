@@ -1262,6 +1262,16 @@
   word-break: break-word;
 }
 
+.creator-workspace__media-format-guide {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  margin: 0.25rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: #8a8a82;
+}
+
 .creator-workspace__media-thumb {
   display: block;
   margin-top: 0.75rem;
@@ -1277,6 +1287,7 @@
   font-size: 0.8125rem;
   line-height: 1.45;
   color: #b42318;
+  white-space: pre-line;
 }
 
 .creator-workspace__media-slot-actions {

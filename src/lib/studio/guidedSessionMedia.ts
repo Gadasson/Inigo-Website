@@ -4,41 +4,83 @@ export type GuidedSessionMediaRole = 'audio' | 'thumbnail' | 'video';
 
 export type GuidedSessionMediaSlotId = 'audio' | 'cover' | 'video';
 
-export const GUIDED_SESSION_MEDIA_SLOTS: {
+export type GuidedSessionMediaFormatGuidance = {
+  formats: string;
+  maxSize: string;
+};
+
+export type GuidedSessionMediaSlotConfig = {
   id: GuidedSessionMediaSlotId;
   role: GuidedSessionMediaRole;
   label: string;
   accept: string;
   emptyHint: string;
-}[] = [
-  {
-    id: 'audio',
-    role: 'audio',
-    label: 'Audio',
-    accept: 'audio/*',
-    emptyHint: 'Add the guided audio for this session.',
-  },
-  {
-    id: 'cover',
-    role: 'thumbnail',
-    label: 'Cover image',
-    accept: 'image/*',
-    emptyHint: 'Optional, but helps people recognize your session.',
-  },
-  {
-    id: 'video',
-    role: 'video',
-    label: 'Video',
-    accept: 'video/*',
-    emptyHint: 'Use video instead of audio, or add both.',
-  },
-];
+  formatGuidance: GuidedSessionMediaFormatGuidance;
+};
 
 const MAX_FILE_BYTES: Record<GuidedSessionMediaRole, number> = {
   audio: 50 * 1024 * 1024,
   thumbnail: 10 * 1024 * 1024,
   video: 500 * 1024 * 1024,
 };
+
+const ALLOWED_AUDIO_EXTENSIONS = new Set(['mp3', 'm4a']);
+
+const ALLOWED_AUDIO_MIME_TYPES = new Set([
+  'audio/mpeg',
+  'audio/mp3',
+  'audio/mp4',
+  'audio/x-m4a',
+  'audio/m4a',
+  'audio/aac',
+]);
+
+const REJECTED_AUDIO_MIME_TYPES = new Set([
+  'audio/wav',
+  'audio/x-wav',
+  'audio/wave',
+  'audio/flac',
+  'audio/x-flac',
+  'audio/ogg',
+  'audio/aiff',
+  'audio/x-aiff',
+]);
+
+export const GUIDED_SESSION_MEDIA_SLOTS: GuidedSessionMediaSlotConfig[] = [
+  {
+    id: 'audio',
+    role: 'audio',
+    label: 'Audio',
+    accept: '.mp3,.m4a,audio/mpeg,audio/mp4,audio/x-m4a',
+    emptyHint: 'Add the guided audio for this session.',
+    formatGuidance: {
+      formats: 'MP3 or M4A',
+      maxSize: 'Maximum size: 50 MB',
+    },
+  },
+  {
+    id: 'cover',
+    role: 'thumbnail',
+    label: 'Cover image',
+    accept: 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp',
+    emptyHint: 'Optional, but helps people recognize your session.',
+    formatGuidance: {
+      formats: 'JPEG, PNG or WebP',
+      maxSize: 'Maximum size: 10 MB',
+    },
+  },
+  {
+    id: 'video',
+    role: 'video',
+    label: 'Video',
+    accept: 'video/*,.mp4',
+    emptyHint: 'Use video instead of audio, or add both.',
+    formatGuidance: {
+      formats: 'MP4 recommended',
+      maxSize: 'Maximum size: 500 MB',
+    },
+  },
+];
 
 const ROLE_TO_URL_FIELD: Record<GuidedSessionMediaRole, keyof StudioGuidedSession> = {
   audio: 'audio_url',
@@ -92,6 +134,24 @@ export function buildGuidedSessionStoragePath(
   return `guided-sessions/${folder}/${sessionSlug}.${ext}`;
 }
 
+function isAllowedAudioFile(file: File): boolean {
+  const ext = fileExtension(file.name);
+  if (!ALLOWED_AUDIO_EXTENSIONS.has(ext)) {
+    return false;
+  }
+
+  const mime = file.type.trim().toLowerCase();
+  if (!mime) {
+    return true;
+  }
+
+  if (REJECTED_AUDIO_MIME_TYPES.has(mime)) {
+    return false;
+  }
+
+  return ALLOWED_AUDIO_MIME_TYPES.has(mime);
+}
+
 export function validateGuidedSessionMediaFile(
   file: File,
   role: GuidedSessionMediaRole,
@@ -106,12 +166,17 @@ export function validateGuidedSessionMediaFile(
     return `This file is too large. Please choose one under ${maxMb} MB.`;
   }
 
-  if (role === 'audio' && !file.type.startsWith('audio/')) {
-    return 'Please choose an audio file.';
+  if (role === 'audio') {
+    if (!isAllowedAudioFile(file)) {
+      return 'Please upload an MP3 or M4A audio file.';
+    }
+    return null;
   }
+
   if (role === 'thumbnail' && !file.type.startsWith('image/')) {
     return 'Please choose an image file.';
   }
+
   if (role === 'video' && !file.type.startsWith('video/')) {
     return 'Please choose a video file.';
   }

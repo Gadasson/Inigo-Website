@@ -1,33 +1,20 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
 import {
-  attachGuidedSessionMedia,
-  type StudioGuidedSession,
-} from '@/lib/api/studioGuidedSessions';
-import { isFirebaseStorageConfigured } from '@/lib/firebase/config';
-import { parseStudioApiError } from '@/lib/studio/parseStudioApiError';
-import {
-  buildGuidedSessionFileMetadata,
-  buildGuidedSessionStoragePath,
-  fileExtension,
+  type GuidedSessionMediaSlotConfig,
   guidedSessionMediaFileName,
   guidedSessionMediaUrl,
   validateGuidedSessionMediaFile,
-  type GuidedSessionMediaRole,
 } from '@/lib/studio/guidedSessionMedia';
-
-type SlotConfig = {
-  id: string;
-  role: GuidedSessionMediaRole;
-  label: string;
-  accept: string;
-  emptyHint: string;
-};
+import { formatMediaUploadError, MediaUploadError } from '@/lib/studio/guidedSessionMediaErrors';
+import { uploadGuidedSessionMedia } from '@/lib/studio/guidedSessionMediaUpload';
+import { isFirebaseStorageConfigured } from '@/lib/firebase/config';
+import { useAuth } from '@/contexts/AuthContext';
+import type { StudioGuidedSession } from '@/lib/api/studioGuidedSessions';
 
 type Props = {
-  slot: SlotConfig;
+  slot: GuidedSessionMediaSlotConfig;
   session: StudioGuidedSession;
   disabled: boolean;
   onSessionUpdated: (session: StudioGuidedSession) => void;
@@ -44,6 +31,7 @@ export default function GuidedSessionMediaSlot({
   const { getIdToken } = useAuth();
   const inputRef = useRef<HTMLInputElement>(null);
   const [phase, setPhase] = useState<SlotPhase>('idle');
+  const [uploadPercent, setUploadPercent] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
   const attachedUrl = guidedSessionMediaUrl(session, slot.role);
@@ -51,10 +39,23 @@ export default function GuidedSessionMediaSlot({
   const isAttached = Boolean(attachedUrl);
 
   const statusLabel = (() => {
-    if (phase === 'uploading') return 'Uploading…';
-    if (phase === 'error') return 'Could not attach';
-    if (isAttached) return 'Attached';
+    if (phase === 'uploading') {
+      return `Uploading… ${uploadPercent}%`;
+    }
+    if (phase === 'error') {
+      return 'Upload failed';
+    }
+    if (isAttached) {
+      return '✓ Uploaded';
+    }
     return 'Not added yet';
+  })();
+
+  const buttonLabel = (() => {
+    if (phase === 'uploading') {
+      return `Uploading… ${uploadPercent}%`;
+    }
+    return isAttached ? 'Replace' : 'Choose file';
   })();
 
   const onChooseFile = () => {
@@ -69,42 +70,41 @@ export default function GuidedSessionMediaSlot({
 
     const validationError = validateGuidedSessionMediaFile(file, slot.role);
     if (validationError) {
-      setPhase('error');
+      setPhase('idle');
       setError(validationError);
+      setUploadPercent(0);
       return;
     }
 
     if (!isFirebaseStorageConfigured()) {
-      setPhase('error');
-      setError('File uploads are not configured yet. Contact your Studio admin.');
+      setPhase('idle');
+      setError(formatMediaUploadError(new MediaUploadError('config', '', null)));
+      setUploadPercent(0);
       return;
     }
 
     setPhase('uploading');
+    setUploadPercent(0);
     setError(null);
 
     try {
-      const ext = fileExtension(file.name);
-      const storagePath = buildGuidedSessionStoragePath(session.session_id, slot.role, ext);
-      const { uploadFileToFirebaseStorage } = await import('@/lib/firebase/storage');
-      const storageUrl = await uploadFileToFirebaseStorage(storagePath, file);
-      const token = await getIdToken();
-      const updated = await attachGuidedSessionMedia(
-        session.id,
-        {
-          media_role: slot.role,
-          storage_url: storageUrl,
-          storage_path: storagePath,
-          file_metadata: buildGuidedSessionFileMetadata(file),
+      const { session: updated } = await uploadGuidedSessionMedia({
+        session,
+        role: slot.role,
+        file,
+        getIdToken,
+        onProgress: ({ percent }) => {
+          setUploadPercent(percent);
         },
-        token,
-      );
+      });
 
       onSessionUpdated(updated);
       setPhase('idle');
+      setUploadPercent(0);
     } catch (err) {
       setPhase('error');
-      setError(parseStudioApiError(err));
+      setUploadPercent(0);
+      setError(formatMediaUploadError(err));
     }
   };
 
@@ -120,12 +120,19 @@ export default function GuidedSessionMediaSlot({
         <div className="creator-workspace__media-slot-heading">
           <span className="creator-workspace__slot-label">{slot.label}</span>
           <span
-            className={`creator-workspace__media-status creator-workspace__media-status--${phase === 'idle' && isAttached ? 'attached' : phase}`}
+            className={`creator-workspace__media-status creator-workspace__media-status--${
+              phase === 'idle' && isAttached ? 'attached' : phase
+            }`}
             role="status"
           >
             {statusLabel}
           </span>
         </div>
+
+        <p className="creator-workspace__media-format-guide">
+          <span>{slot.formatGuidance.formats}</span>
+          <span>{slot.formatGuidance.maxSize}</span>
+        </p>
 
         {isAttached && attachedName ? (
           <p className="creator-workspace__media-filename">{attachedName}</p>
@@ -176,7 +183,7 @@ export default function GuidedSessionMediaSlot({
           disabled={disabled || phase === 'uploading'}
           onClick={onChooseFile}
         >
-          {phase === 'uploading' ? 'Uploading…' : isAttached ? 'Replace' : 'Choose file'}
+          {buttonLabel}
         </button>
       </div>
     </li>
