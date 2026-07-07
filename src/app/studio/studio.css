@@ -1378,6 +1378,11 @@
   border-color: rgba(220, 53, 69, 0.22);
 }
 
+.creator-workspace__media-slot--attach-pending {
+  border-color: rgba(180, 120, 40, 0.28);
+  background: rgba(255, 252, 245, 0.72);
+}
+
 .creator-workspace__media-slot-main {
   flex: 1;
   min-width: 0;
@@ -1407,6 +1412,28 @@
 
 .creator-workspace__media-status--error {
   color: #b42318;
+}
+
+.creator-workspace__media-status--attach-pending {
+  color: #9a6b1f;
+}
+
+.creator-workspace__media-recovery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.creator-workspace__media-btn--primary {
+  background: rgba(var(--inigo-accent-rgb), 0.1);
+  border-color: rgba(var(--inigo-accent-rgb), 0.35);
+}
+
+.creator-workspace__media-btn--ghost {
+  background: transparent;
+  border-color: rgba(var(--inigo-accent-rgb), 0.18);
+  font-weight: 500;
 }
 
 .creator-workspace__media-hint,

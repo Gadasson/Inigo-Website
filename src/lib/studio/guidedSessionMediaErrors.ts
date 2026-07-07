@@ -1,4 +1,5 @@
 import { StudioApiError } from '@/lib/api/studioApiClient';
+import type { PendingMediaAttach } from '@/lib/studio/guidedSessionMediaTypes';
 
 export type MediaUploadFailureKind =
   | 'validation'
@@ -8,15 +9,26 @@ export type MediaUploadFailureKind =
   | 'auth'
   | 'config';
 
+export const ATTACH_PENDING_ERROR_MESSAGE =
+  'Upload completed, but attaching it to the session failed.';
+
 export class MediaUploadError extends Error {
   readonly kind: MediaUploadFailureKind;
   readonly causeError: unknown;
+  /** Present when Firebase upload succeeded but attach-media failed. */
+  readonly pendingAttach?: PendingMediaAttach;
 
-  constructor(kind: MediaUploadFailureKind, message: string, causeError: unknown = null) {
+  constructor(
+    kind: MediaUploadFailureKind,
+    message: string,
+    causeError: unknown = null,
+    pendingAttach?: PendingMediaAttach,
+  ) {
     super(message);
     this.name = 'MediaUploadError';
     this.kind = kind;
     this.causeError = causeError;
+    this.pendingAttach = pendingAttach;
   }
 }
 
@@ -50,6 +62,9 @@ export function formatMediaUploadError(error: unknown): string {
       return 'Upload failed.\nPlease try again.';
     }
     if (error.kind === 'attach') {
+      if (error.pendingAttach) {
+        return ATTACH_PENDING_ERROR_MESSAGE;
+      }
       return (
         'The media uploaded successfully, but could not be attached to this session.\n\n' +
         'Please try again.'
@@ -88,4 +103,12 @@ export function formatMediaUploadError(error: unknown): string {
   }
 
   return 'Upload failed.\nPlease try again.';
+}
+
+/** Returns pending attach payload when Firebase succeeded but attach-media failed. */
+export function getPendingMediaAttach(error: unknown): PendingMediaAttach | undefined {
+  if (error instanceof MediaUploadError && error.pendingAttach) {
+    return error.pendingAttach;
+  }
+  return undefined;
 }
