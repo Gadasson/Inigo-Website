@@ -5,6 +5,7 @@ import {
   GUIDED_SESSION_LANGUAGES,
 } from '@/lib/studio/guidedSessionOptions';
 import { guidedSessionDurationDisplayLabel } from '@/lib/studio/guidedSessionDuration';
+import { guidedSessionStatusLabel } from '@/lib/studio/guidedSessionStatus';
 import {
   guidedSessionMediaUrl,
   hasGuidedSessionCover,
@@ -69,7 +70,14 @@ export default function GuidedSessionPreviewSection({ session, form }: Props) {
         </div>
 
         <div className="guided-session-preview__body">
-          <h3 className="guided-session-preview__title">{title}</h3>
+          <div className="guided-session-preview__heading-row">
+            <h3 className="guided-session-preview__title">{title}</h3>
+            <span
+              className={`guided-session-preview__status guided-session-preview__status--${session.status}`}
+            >
+              {guidedSessionStatusLabel(session.status)}
+            </span>
+          </div>
           <p className="guided-session-preview__description">{description}</p>
 
           <p className="guided-session-preview__meta">{metaParts.join(' · ')}</p>

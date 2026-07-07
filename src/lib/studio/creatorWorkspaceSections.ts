@@ -4,7 +4,8 @@ export const CREATOR_WORKSPACE_SECTIONS = [
   { id: 'content', label: 'Content' },
   { id: 'media', label: 'Media' },
   { id: 'preview', label: 'Preview' },
-  { id: 'share', label: 'Share' },
+  // `share` id kept for URL/query stability; labelled "Publish" per Studio V1 publish flow.
+  { id: 'share', label: 'Publish' },
 ] as const;
 
 export type CreatorWorkspaceSection = (typeof CREATOR_WORKSPACE_SECTIONS)[number]['id'];

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   publishGuidedSession,
@@ -13,13 +14,19 @@ import WorkspaceReadinessChecklist from '@/components/studio/workspace/Workspace
 
 type Props = {
   sessionId: number;
+  sessionSlug: string;
   status: string;
   readiness: WorkspaceReadiness;
   onSessionPublished: (session: StudioGuidedSession) => void;
 };
 
+function publicSessionPath(slug: string): string {
+  return `/guided-session/${slug}`;
+}
+
 export default function GuidedSessionShareSection({
   sessionId,
+  sessionSlug,
   status,
   readiness,
   onSessionPublished,
@@ -27,15 +34,25 @@ export default function GuidedSessionShareSection({
   const { getIdToken } = useAuth();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [publishing, setPublishing] = useState(false);
-  const [shareError, setShareError] = useState<string | null>(null);
-  const [shareSuccess, setShareSuccess] = useState(false);
+  const [publishError, setPublishError] = useState<string | null>(null);
+  const [publishedSlug, setPublishedSlug] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const isDraft = status === 'draft';
-  const isShared = status === 'available';
+  const isPublished = status === 'available';
   const { publishable } = readiness;
 
-  const onShareClick = () => {
-    setShareError(null);
+  const slug = publishedSlug ?? sessionSlug;
+  const publicPath = slug ? publicSessionPath(slug) : null;
+
+  const publicUrl = useMemo(() => {
+    if (!publicPath) return null;
+    if (typeof window === 'undefined') return publicPath;
+    return `${window.location.origin}${publicPath}`;
+  }, [publicPath]);
+
+  const onPublishClick = () => {
+    setPublishError(null);
     setConfirmOpen(true);
   };
 
@@ -44,56 +61,104 @@ export default function GuidedSessionShareSection({
     setConfirmOpen(false);
   };
 
-  const onConfirmShare = async () => {
+  const onConfirmPublish = async () => {
     setPublishing(true);
-    setShareError(null);
+    setPublishError(null);
 
     try {
       const token = await getIdToken();
       const updated = await publishGuidedSession(sessionId, token);
+      setPublishedSlug(updated.session_id ?? sessionSlug);
       onSessionPublished(updated);
-      setShareSuccess(true);
       setConfirmOpen(false);
     } catch (err) {
       if (err instanceof StudioApiError && (err.status === 403 || err.status === 404)) {
-        setShareError('You do not have access to share this session.');
+        setPublishError('You do not have access to publish this session.');
       } else {
-        setShareError(parseStudioApiError(err));
+        setPublishError(parseStudioApiError(err));
       }
     } finally {
       setPublishing(false);
     }
   };
 
+  const onCopyLink = async () => {
+    if (!publicUrl) return;
+    try {
+      await navigator.clipboard.writeText(publicUrl);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
+    }
+  };
+
+  if (isPublished) {
+    return (
+      <section className="creator-workspace__section" aria-labelledby="workspace-publish-heading">
+        <h2 id="workspace-publish-heading" className="creator-workspace__section-title">
+          Published to Inigo
+        </h2>
+
+        <div className="creator-workspace__published" role="status">
+          <p className="creator-workspace__published-title">Published to the Inigo library</p>
+          <p className="creator-workspace__published-text">
+            This session is live in Inigo. In Studio V1, published sessions are read-only — you can
+            still view and share this page anytime.
+          </p>
+
+          {publicPath ? (
+            <div className="creator-workspace__published-actions">
+              <a
+                className="studio-form__submit creator-workspace__published-link"
+                href={publicPath}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View public page
+              </a>
+              {publicUrl ? (
+                <button
+                  type="button"
+                  className="creator-workspace__published-btn"
+                  onClick={() => void onCopyLink()}
+                >
+                  {copied ? 'Link copied' : 'Copy link'}
+                </button>
+              ) : null}
+              <Link href="/studio?tab=sessions" className="creator-workspace__published-btn">
+                Back to sessions
+              </Link>
+            </div>
+          ) : (
+            <div className="creator-workspace__published-actions">
+              <Link href="/studio?tab=sessions" className="creator-workspace__published-btn">
+                Back to sessions
+              </Link>
+            </div>
+          )}
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <section className="creator-workspace__section" aria-labelledby="workspace-share-heading">
-      <h2 id="workspace-share-heading" className="creator-workspace__section-title">
-        Ready to share
+    <section className="creator-workspace__section" aria-labelledby="workspace-publish-heading">
+      <h2 id="workspace-publish-heading" className="creator-workspace__section-title">
+        Ready to publish
       </h2>
 
-      {isShared ? (
-        <p className="creator-workspace__section-lede">
-          This session has been shared with Inigo.
-        </p>
-      ) : (
-        <p className="creator-workspace__section-lede">
-          {publishable
-            ? 'Everything required is ready.'
-            : 'Complete the missing items before sharing.'}
-        </p>
-      )}
+      <p className="creator-workspace__section-lede">
+        {publishable
+          ? 'Everything required is ready. Publish to add this session to the Inigo library.'
+          : 'Complete the missing items before publishing.'}
+      </p>
 
       <WorkspaceReadinessChecklist readiness={readiness} />
 
-      {shareSuccess ? (
-        <p className="creator-workspace__share-success" role="status">
-          Your session is now shared with Inigo.
-        </p>
-      ) : null}
-
-      {shareError ? (
+      {publishError ? (
         <p className="studio-form__error" role="alert">
-          {shareError}
+          {publishError}
         </p>
       ) : null}
 
@@ -103,9 +168,9 @@ export default function GuidedSessionShareSection({
             type="button"
             className="studio-form__submit creator-workspace__share-btn"
             disabled={!publishable || publishing}
-            onClick={onShareClick}
+            onClick={onPublishClick}
           >
-            {publishable ? 'Share with Inigo' : 'Complete required items first'}
+            {publishable ? 'Publish' : 'Complete required items first'}
           </button>
         </div>
       ) : null}
@@ -116,15 +181,16 @@ export default function GuidedSessionShareSection({
             className="creator-workspace__dialog"
             role="dialog"
             aria-modal="true"
-            aria-labelledby="share-confirm-title"
+            aria-labelledby="publish-confirm-title"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 id="share-confirm-title" className="creator-workspace__dialog-title">
-              Share this session?
+            <h3 id="publish-confirm-title" className="creator-workspace__dialog-title">
+              Publish this session?
             </h3>
             <p className="creator-workspace__dialog-text">
-              Once shared, this session will appear in the Inigo library and can no longer be
-              edited in Studio V1.
+              This session will appear in the Inigo library. In Studio V1, published sessions are
+              read-only and can no longer be edited — but you can still view and share the published
+              session page.
             </p>
             <div className="creator-workspace__dialog-actions">
               <button
@@ -139,9 +205,9 @@ export default function GuidedSessionShareSection({
                 type="button"
                 className="studio-form__submit creator-workspace__dialog-btn"
                 disabled={publishing}
-                onClick={() => void onConfirmShare()}
+                onClick={() => void onConfirmPublish()}
               >
-                {publishing ? 'Sharing…' : 'Share session'}
+                {publishing ? 'Publishing…' : 'Publish'}
               </button>
             </div>
           </div>

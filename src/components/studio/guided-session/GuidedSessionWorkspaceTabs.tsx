@@ -51,6 +51,7 @@ export default function GuidedSessionWorkspaceTabs({
     return (
       <GuidedSessionShareSection
         sessionId={sessionId}
+        sessionSlug={session.session_id}
         status={status}
         readiness={readiness}
         onSessionPublished={onSessionPublished}
