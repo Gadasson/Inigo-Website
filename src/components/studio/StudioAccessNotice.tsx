@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 
 type Props =
@@ -14,14 +15,14 @@ type Props =
  */
 export default function StudioAccessNotice(props: Props) {
   const { user, signOut } = useAuth();
+  const t = useTranslations('access');
 
-  const title =
-    props.variant === 'denied' ? 'Creator Studio is by invitation' : 'We could not confirm your access';
+  const title = props.variant === 'denied' ? t('deniedTitle') : t('errorTitle');
 
   const body =
     props.variant === 'denied'
-      ? 'Creator Studio is currently available by invitation. If you believe you should have access, please reach out to the Inigo team.'
-      : props.message || 'Something went wrong while checking your access. Please try again in a moment.';
+      ? t('deniedBody')
+      : props.message || t('errorBody');
 
   return (
     <div className="studio-access">
@@ -42,7 +43,7 @@ export default function StudioAccessNotice(props: Props) {
 
         {user?.email ? (
           <p className="studio-access__account">
-            Signed in as <span>{user.email}</span>
+            {t('signedInAs')} <span>{user.email}</span>
           </p>
         ) : null}
 
@@ -53,7 +54,7 @@ export default function StudioAccessNotice(props: Props) {
               className="studio-access__btn studio-access__btn--primary"
               onClick={props.onRetry}
             >
-              Try again
+              {t('tryAgain')}
             </button>
           ) : null}
 
@@ -62,7 +63,7 @@ export default function StudioAccessNotice(props: Props) {
             className="studio-access__btn"
             onClick={() => signOut()}
           >
-            {props.variant === 'denied' ? 'Sign out' : 'Sign in with a different account'}
+            {props.variant === 'denied' ? t('signOut') : t('signInDifferent')}
           </button>
         </div>
       </div>

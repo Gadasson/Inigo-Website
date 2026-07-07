@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import { useStudioAccess } from '@/contexts/StudioAccessContext';
 import StudioAccessNotice from '@/components/studio/StudioAccessNotice';
@@ -20,6 +21,7 @@ function StudioLoading({ label }: { label: string }) {
 export default function StudioGate({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const { status, retry } = useStudioAccess();
+  const t = useTranslations('gate');
   const pathname = usePathname();
   const router = useRouter();
 
@@ -39,15 +41,15 @@ export default function StudioGate({ children }: { children: React.ReactNode }) 
   }, [user, loading, isLoginRoute, router]);
 
   if (loading) {
-    return <StudioLoading label="Loading…" />;
+    return <StudioLoading label={t('loading')} />;
   }
 
   if (!user && !isLoginRoute) {
-    return <StudioLoading label="Redirecting to sign in…" />;
+    return <StudioLoading label={t('redirectingToSignIn')} />;
   }
 
   if (user && isLoginRoute) {
-    return <StudioLoading label="Redirecting…" />;
+    return <StudioLoading label={t('redirecting')} />;
   }
 
   // Login route (signed out): render sign-in without an access check.
@@ -58,7 +60,7 @@ export default function StudioGate({ children }: { children: React.ReactNode }) 
   // Authenticated Studio routes: gate on the bootstrap/access signal so the
   // workspace never renders (or flashes) before access is known.
   if (status.state === 'idle' || status.state === 'loading') {
-    return <StudioLoading label="Checking access…" />;
+    return <StudioLoading label={t('checkingAccess')} />;
   }
 
   if (status.state === 'denied') {

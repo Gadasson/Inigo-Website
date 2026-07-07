@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   listGuidedSessions,
@@ -21,8 +22,26 @@ type Props = {
   active?: boolean;
 };
 
+const FILTER_LABEL_KEYS: Record<GuidedSessionStatusFilter, string> = {
+  all: 'filterAll',
+  draft: 'filterDrafts',
+  published: 'filterPublished',
+  archived: 'filterArchived',
+};
+
+const STATUS_LABEL_KEYS: Record<string, string> = {
+  draft: 'statusDraft',
+  available: 'statusPublished',
+  archived: 'statusArchived',
+};
+
 export default function MyGuidedSessions({ active = true }: Props) {
   const { user, getIdToken } = useAuth();
+  const t = useTranslations('sessions');
+  const statusLabel = (status: string): string => {
+    const key = STATUS_LABEL_KEYS[status];
+    return key ? t(key) : guidedSessionStatusLabel(status);
+  };
   const [sessions, setSessions] = useState<StudioGuidedSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -93,7 +112,7 @@ export default function MyGuidedSessions({ active = true }: Props) {
               }`}
               onClick={() => setFilter(option.id)}
             >
-              {option.label}
+              {t(FILTER_LABEL_KEYS[option.id])}
               {count > 0 ? (
                 <span className="studio-session-filters__count">{count}</span>
               ) : null}
@@ -104,7 +123,7 @@ export default function MyGuidedSessions({ active = true }: Props) {
 
       {loading ? (
         <p className="studio-session-list__status" role="status">
-          Loading your sessions…
+          {t('loading')}
         </p>
       ) : null}
 
@@ -118,18 +137,13 @@ export default function MyGuidedSessions({ active = true }: Props) {
         <div className="studio-session-list__empty">
           {sessions.length === 0 ? (
             <>
-              <p className="studio-session-list__empty-title">Nothing here yet</p>
-              <p className="studio-session-list__empty-text">
-                When you create a guided session, it will appear here so you can pick up where
-                you left off.
-              </p>
+              <p className="studio-session-list__empty-title">{t('emptyTitle')}</p>
+              <p className="studio-session-list__empty-text">{t('emptyText')}</p>
             </>
           ) : (
             <>
-              <p className="studio-session-list__empty-title">No sessions in this view</p>
-              <p className="studio-session-list__empty-text">
-                Try another filter, or create something new in the Create tab.
-              </p>
+              <p className="studio-session-list__empty-title">{t('emptyFilteredTitle')}</p>
+              <p className="studio-session-list__empty-text">{t('emptyFilteredText')}</p>
             </>
           )}
         </div>
@@ -155,7 +169,7 @@ export default function MyGuidedSessions({ active = true }: Props) {
                       <span
                         className={`studio-session-item__status studio-session-item__status--${session.status}`}
                       >
-                        {guidedSessionStatusLabel(session.status)}
+                        {statusLabel(session.status)}
                       </span>
                       {timestamp ? (
                         <span className="studio-session-item__date">{timestamp}</span>
@@ -164,7 +178,7 @@ export default function MyGuidedSessions({ active = true }: Props) {
                   </div>
                   {isDraft ? (
                     <span className="studio-session-item__continue">
-                      Continue
+                      {t('continue')}
                       <span className="studio-card__cta-arrow" aria-hidden>
                         →
                       </span>

@@ -2,10 +2,12 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function StudioSignIn() {
   const { signInWithGoogle, configError } = useAuth();
+  const t = useTranslations('signIn');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,8 +40,8 @@ export default function StudioSignIn() {
           <span className="studio-signin__brand-name">Inigo</span>
         </div>
 
-        <h1 className="studio-signin__title">Studio</h1>
-        <p className="studio-signin__subtitle">Sign in with your Inigo account to continue.</p>
+        <h1 className="studio-signin__title">{t('title')}</h1>
+        <p className="studio-signin__subtitle">{t('subtitle')}</p>
 
         {configError ? (
           <p className="studio-signin__error" role="alert">
@@ -59,7 +61,7 @@ export default function StudioSignIn() {
           onClick={onSignIn}
           disabled={submitting || Boolean(configError)}
         >
-          {submitting ? 'Signing in…' : 'Continue with Google'}
+          {submitting ? t('googleBusy') : t('google')}
         </button>
       </div>
     </div>

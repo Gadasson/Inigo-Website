@@ -2,13 +2,19 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useLocale, useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   publishGuidedSession,
   type StudioGuidedSession,
 } from '@/lib/api/studioGuidedSessions';
 import { StudioApiError } from '@/lib/api/studioApiClient';
+import { formatPublishAvailableAt } from '@/lib/studio/formatPublishAvailableAt';
 import { parseStudioApiError } from '@/lib/studio/parseStudioApiError';
+import {
+  parsePublishControlError,
+  type PublishControlError,
+} from '@/lib/studio/parsePublishControlError';
 import type { WorkspaceReadiness } from '@/lib/studio/workspaceReadiness';
 import WorkspaceReadinessChecklist from '@/components/studio/workspace/WorkspaceReadinessChecklist';
 
@@ -32,9 +38,12 @@ export default function GuidedSessionShareSection({
   onSessionPublished,
 }: Props) {
   const { getIdToken } = useAuth();
+  const t = useTranslations('publish');
+  const locale = useLocale();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [publishError, setPublishError] = useState<string | null>(null);
+  const [publishControlError, setPublishControlError] = useState<PublishControlError | null>(null);
   const [publishedSlug, setPublishedSlug] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -53,6 +62,7 @@ export default function GuidedSessionShareSection({
 
   const onPublishClick = () => {
     setPublishError(null);
+    setPublishControlError(null);
     setConfirmOpen(true);
   };
 
@@ -64,6 +74,7 @@ export default function GuidedSessionShareSection({
   const onConfirmPublish = async () => {
     setPublishing(true);
     setPublishError(null);
+    setPublishControlError(null);
 
     try {
       const token = await getIdToken();
@@ -72,11 +83,15 @@ export default function GuidedSessionShareSection({
       onSessionPublished(updated);
       setConfirmOpen(false);
     } catch (err) {
-      if (err instanceof StudioApiError && (err.status === 403 || err.status === 404)) {
+      const controlError = parsePublishControlError(err);
+      if (controlError) {
+        setPublishControlError(controlError);
+      } else if (err instanceof StudioApiError && (err.status === 403 || err.status === 404)) {
         setPublishError('You do not have access to publish this session.');
       } else {
         setPublishError(parseStudioApiError(err));
       }
+      setConfirmOpen(false);
     } finally {
       setPublishing(false);
     }
@@ -155,6 +170,25 @@ export default function GuidedSessionShareSection({
       </p>
 
       <WorkspaceReadinessChecklist readiness={readiness} />
+
+      {publishControlError?.kind === 'cooldown' ? (
+        <div className="creator-workspace__publish-notice" role="status">
+          <p className="creator-workspace__publish-notice-title">
+            {publishControlError.retryAfterAt
+              ? t('cooldownWithTime', {
+                  time: formatPublishAvailableAt(publishControlError.retryAfterAt, locale),
+                })
+              : t('cooldownNoTime')}
+          </p>
+        </div>
+      ) : null}
+
+      {publishControlError?.kind === 'limit' ? (
+        <div className="creator-workspace__publish-notice" role="status">
+          <p className="creator-workspace__publish-notice-title">{t('limitTitle')}</p>
+          <p className="creator-workspace__publish-notice-text">{t('limitBody')}</p>
+        </div>
+      ) : null}
 
       {publishError ? (
         <p className="studio-form__error" role="alert">

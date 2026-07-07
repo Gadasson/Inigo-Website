@@ -2,6 +2,7 @@
 
 import type { ComponentType } from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import MyGuidedSessions from './MyGuidedSessions';
 
@@ -68,9 +69,9 @@ function ResourceIcon({ className }: IconProps) {
 
 type CreationOption = {
   id: string;
-  title: string;
-  description: string;
-  action?: string;
+  titleKey: string;
+  descKey: string;
+  actionKey?: string;
   available: boolean;
   Icon: ComponentType<IconProps>;
 };
@@ -78,38 +79,38 @@ type CreationOption = {
 const CREATION_OPTIONS: CreationOption[] = [
   {
     id: 'guided-session',
-    title: 'Guided Session',
-    description: 'Create a guided practice for the Inigo library.',
-    action: 'Create guided session',
+    titleKey: 'create.guidedSessionTitle',
+    descKey: 'create.guidedSessionDesc',
+    actionKey: 'create.guidedSessionAction',
     available: true,
     Icon: GuidedSessionIcon,
   },
   {
     id: 'insight',
-    title: 'Insight',
-    description: 'Share a reflection, note, or teaching.',
+    titleKey: 'create.insightTitle',
+    descKey: 'create.insightDesc',
     available: false,
     Icon: InsightIcon,
   },
   {
     id: 'practice',
-    title: 'Practice',
-    description: 'Share a simple breathing, movement, or daily exercise.',
+    titleKey: 'create.practiceTitle',
+    descKey: 'create.practiceDesc',
     available: false,
     Icon: PracticeIcon,
   },
   {
     id: 'resource',
-    title: 'Resource',
-    description: 'Share something meaningful: music, recipe, book, or ritual.',
+    titleKey: 'create.resourceTitle',
+    descKey: 'create.resourceDesc',
     available: false,
     Icon: ResourceIcon,
   },
 ];
 
-const STUDIO_TABS: { id: StudioHomeTab; label: string }[] = [
-  { id: 'create', label: 'Create' },
-  { id: 'sessions', label: 'My guided sessions' },
+const STUDIO_TABS: { id: StudioHomeTab; labelKey: string }[] = [
+  { id: 'create', labelKey: 'home.tabCreate' },
+  { id: 'sessions', labelKey: 'home.tabSessions' },
 ];
 
 function tabFromSearchParams(searchParams: ReturnType<typeof useSearchParams>): StudioHomeTab {
@@ -120,6 +121,7 @@ export default function CreatorHome() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const t = useTranslations();
   const activeTab = tabFromSearchParams(searchParams);
 
   const setActiveTab = (tab: StudioHomeTab) => {
@@ -143,16 +145,14 @@ export default function CreatorHome() {
         >
           {activeTab === 'create' ? (
             <>
-              <p className="studio-workspace__greeting">Welcome back</p>
-              <h1 className="studio-workspace__title">What would you like to create today?</h1>
-              <p className="studio-workspace__lede">
-                Pass something meaningful forward through Inigo.
-              </p>
+              <p className="studio-workspace__greeting">{t('home.greeting')}</p>
+              <h1 className="studio-workspace__title">{t('home.createTitle')}</h1>
+              <p className="studio-workspace__lede">{t('home.createLede')}</p>
             </>
           ) : (
             <>
-              <h1 className="studio-workspace__title">Your guided sessions</h1>
-              <p className="studio-workspace__lede">Pick up where you left off.</p>
+              <h1 className="studio-workspace__title">{t('home.sessionsTitle')}</h1>
+              <p className="studio-workspace__lede">{t('home.sessionsLede')}</p>
             </>
           )}
         </header>
@@ -168,7 +168,7 @@ export default function CreatorHome() {
               aria-current={activeTab === tab.id ? 'page' : undefined}
               onClick={() => setActiveTab(tab.id)}
             >
-              {tab.label}
+              {t(tab.labelKey)}
             </button>
           ))}
         </nav>
@@ -189,12 +189,12 @@ export default function CreatorHome() {
                         </div>
                         <div className="studio-card__body">
                           <div className="studio-card__heading-row">
-                            <h3 className="studio-card__title">{option.title}</h3>
+                            <h3 className="studio-card__title">{t(option.titleKey)}</h3>
                           </div>
-                          <p className="studio-card__desc">{option.description}</p>
-                          {option.action ? (
+                          <p className="studio-card__desc">{t(option.descKey)}</p>
+                          {option.actionKey ? (
                             <span className="studio-card__cta">
-                              {option.action}
+                              {t(option.actionKey)}
                               <span className="studio-card__cta-arrow" aria-hidden>
                                 →
                               </span>
@@ -210,10 +210,10 @@ export default function CreatorHome() {
                       </div>
                       <div className="studio-card__body">
                         <div className="studio-card__heading-row">
-                          <h3 className="studio-card__title">{option.title}</h3>
-                          <span className="studio-card__badge">Soon</span>
+                          <h3 className="studio-card__title">{t(option.titleKey)}</h3>
+                          <span className="studio-card__badge">{t('create.soon')}</span>
                         </div>
-                        <p className="studio-card__desc">{option.description}</p>
+                        <p className="studio-card__desc">{t(option.descKey)}</p>
                       </div>
                     </article>
                   )}

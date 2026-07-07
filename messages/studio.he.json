@@ -1,0 +1,87 @@
+{
+  "language": {
+    "en": "English",
+    "he": "עברית",
+    "switch": "החלפת שפה"
+  },
+  "shell": {
+    "product": "סטודיו",
+    "logOut": "התנתקות"
+  },
+  "gate": {
+    "loading": "טוען…",
+    "redirectingToSignIn": "מעביר להתחברות…",
+    "redirecting": "מעביר…",
+    "checkingAccess": "בודק הרשאות…"
+  },
+  "signIn": {
+    "title": "סטודיו",
+    "subtitle": "התחברו עם חשבון איניגו כדי להמשיך.",
+    "google": "המשך עם Google",
+    "googleBusy": "מתחבר…"
+  },
+  "access": {
+    "deniedTitle": "הכניסה לסטודיו היוצרים בהזמנה בלבד",
+    "deniedBody": "הסטודיו ליוצרים זמין כרגע בהזמנה בלבד. אם לדעתכם מגיעה לכם גישה, פנו לצוות איניגו.",
+    "errorTitle": "לא הצלחנו לאמת את ההרשאות שלכם",
+    "errorBody": "משהו השתבש בבדיקת ההרשאות. נסו שוב בעוד רגע.",
+    "signedInAs": "מחוברים בתור",
+    "tryAgain": "נסו שוב",
+    "signOut": "התנתקות",
+    "signInDifferent": "התחברות עם חשבון אחר"
+  },
+  "backend": {
+    "checking": "בודק חיבור לשרת…",
+    "connected": "השרת מחובר"
+  },
+  "home": {
+    "greeting": "שמחים שחזרתם",
+    "createTitle": "צרו חוויות מודרכות שעוזרות לאנשים לתרגל.",
+    "createLede": "העבירו הלאה משהו בעל משמעות דרך איניגו.",
+    "sessionsTitle": "הסשנים המודרכים שלכם",
+    "sessionsLede": "המשיכו מהמקום שבו עצרתם.",
+    "tabCreate": "יצירה",
+    "tabSessions": "הסשנים שלי"
+  },
+  "create": {
+    "soon": "בקרוב",
+    "guidedSessionTitle": "סשן מודרך",
+    "guidedSessionDesc": "צרו תרגול מודרך לספריית איניגו.",
+    "guidedSessionAction": "יצירת סשן מודרך",
+    "insightTitle": "תובנה",
+    "insightDesc": "שתפו הרהור, הערה או לימוד.",
+    "practiceTitle": "תרגול",
+    "practiceDesc": "שתפו תרגיל פשוט של נשימה, תנועה או הרגל יומי.",
+    "resourceTitle": "משאב",
+    "resourceDesc": "שתפו משהו בעל משמעות: מוזיקה, מתכון, ספר או טקס."
+  },
+  "sessions": {
+    "filterAll": "הכל",
+    "filterDrafts": "טיוטות",
+    "filterPublished": "פורסמו",
+    "filterArchived": "בארכיון",
+    "loading": "טוען את הסשנים שלכם…",
+    "emptyTitle": "עדיין אין כאן דבר",
+    "emptyText": "כשתיצרו סשן מודרך, הוא יופיע כאן כדי שתוכלו להמשיך מהמקום שבו עצרתם.",
+    "emptyFilteredTitle": "אין סשנים בתצוגה הזו",
+    "emptyFilteredText": "נסו מסנן אחר, או צרו משהו חדש בלשונית היצירה.",
+    "continue": "המשך",
+    "statusDraft": "טיוטה",
+    "statusPublished": "פורסם",
+    "statusArchived": "בארכיון"
+  },
+  "createForm": {
+    "back": "חזרה לסטודיו",
+    "title": "יצירת סשן מודרך",
+    "lede": "התחילו מהבסיס. תוכלו לחדד הכל בהמשך.",
+    "submit": "יצירת טיוטה",
+    "submitBusy": "יוצר…",
+    "defaultsNote": "מנחה, סביבה, מוזיקה וגישה מוגדרים כרגע לברירות מחדל רגועות — תוכלו לחדד אותם בהמשך."
+  },
+  "publish": {
+    "cooldownWithTime": "תוכלו לפרסם את הסשן הבא שלכם אחרי {time}.",
+    "cooldownNoTime": "תוכלו לפרסם את הסשן הבא שלכם בקרוב.",
+    "limitTitle": "הגעתם למגבלת הפרסום הנוכחית שלכם.",
+    "limitBody": "אפשר לארכב סשן שפורסם קיים או לפנות לאיניגו."
+  }
+}

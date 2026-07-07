@@ -1,0 +1,87 @@
+{
+  "language": {
+    "en": "English",
+    "he": "עברית",
+    "switch": "Change language"
+  },
+  "shell": {
+    "product": "Studio",
+    "logOut": "Log out"
+  },
+  "gate": {
+    "loading": "Loading…",
+    "redirectingToSignIn": "Redirecting to sign in…",
+    "redirecting": "Redirecting…",
+    "checkingAccess": "Checking access…"
+  },
+  "signIn": {
+    "title": "Studio",
+    "subtitle": "Sign in with your Inigo account to continue.",
+    "google": "Continue with Google",
+    "googleBusy": "Signing in…"
+  },
+  "access": {
+    "deniedTitle": "Creator Studio is by invitation",
+    "deniedBody": "Creator Studio is currently available by invitation. If you believe you should have access, please reach out to the Inigo team.",
+    "errorTitle": "We could not confirm your access",
+    "errorBody": "Something went wrong while checking your access. Please try again in a moment.",
+    "signedInAs": "Signed in as",
+    "tryAgain": "Try again",
+    "signOut": "Sign out",
+    "signInDifferent": "Sign in with a different account"
+  },
+  "backend": {
+    "checking": "Checking backend…",
+    "connected": "Backend connected"
+  },
+  "home": {
+    "greeting": "Welcome back",
+    "createTitle": "Create guided experiences that help people practice.",
+    "createLede": "Pass something meaningful forward through Inigo.",
+    "sessionsTitle": "Your guided sessions",
+    "sessionsLede": "Pick up where you left off.",
+    "tabCreate": "Create",
+    "tabSessions": "My guided sessions"
+  },
+  "create": {
+    "soon": "Soon",
+    "guidedSessionTitle": "Guided Session",
+    "guidedSessionDesc": "Create a guided practice for the Inigo library.",
+    "guidedSessionAction": "Create guided session",
+    "insightTitle": "Insight",
+    "insightDesc": "Share a reflection, note, or teaching.",
+    "practiceTitle": "Practice",
+    "practiceDesc": "Share a simple breathing, movement, or daily exercise.",
+    "resourceTitle": "Resource",
+    "resourceDesc": "Share something meaningful: music, recipe, book, or ritual."
+  },
+  "sessions": {
+    "filterAll": "All",
+    "filterDrafts": "Drafts",
+    "filterPublished": "Published",
+    "filterArchived": "Archived",
+    "loading": "Loading your sessions…",
+    "emptyTitle": "Nothing here yet",
+    "emptyText": "When you create a guided session, it will appear here so you can pick up where you left off.",
+    "emptyFilteredTitle": "No sessions in this view",
+    "emptyFilteredText": "Try another filter, or create something new in the Create tab.",
+    "continue": "Continue",
+    "statusDraft": "Draft",
+    "statusPublished": "Published",
+    "statusArchived": "Archived"
+  },
+  "createForm": {
+    "back": "Back to Studio",
+    "title": "Create guided session",
+    "lede": "Start with the basics. You can refine everything later.",
+    "submit": "Create draft",
+    "submitBusy": "Creating…",
+    "defaultsNote": "Instructor, environment, music, and access are set to calm defaults for now — you can refine them later."
+  },
+  "publish": {
+    "cooldownWithTime": "You can publish your next session after {time}.",
+    "cooldownNoTime": "You can publish your next session again soon.",
+    "limitTitle": "You've reached your current publishing limit.",
+    "limitBody": "You can archive an existing published session or contact Inigo."
+  }
+}

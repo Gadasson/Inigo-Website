@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { createGuidedSessionDraft } from '@/lib/api/studioGuidedSessions';
@@ -43,6 +44,7 @@ function applyTaxonomyDefaults(
 
 export default function CreateGuidedSessionForm() {
   const router = useRouter();
+  const t = useTranslations('createForm');
   const { user, getIdToken } = useAuth();
   const { taxonomy, loading: taxonomyLoading, error: taxonomyError } =
     useGuidedSessionTaxonomy();
@@ -151,14 +153,12 @@ export default function CreateGuidedSessionForm() {
   return (
     <div className="studio-form-page">
       <Link href="/studio" className="studio-form-page__back">
-        ← Back to Studio
+        ← {t('back')}
       </Link>
 
       <header className="studio-form-page__header">
-        <h1 className="studio-form-page__title">Create guided session</h1>
-        <p className="studio-form-page__lede">
-          Start with the basics. You can refine everything later.
-        </p>
+        <h1 className="studio-form-page__title">{t('title')}</h1>
+        <p className="studio-form-page__lede">{t('lede')}</p>
       </header>
 
       <form onSubmit={onSubmit} noValidate>
@@ -169,6 +169,7 @@ export default function CreateGuidedSessionForm() {
           taxonomy={taxonomy}
           taxonomyLoading={taxonomyLoading}
           taxonomyError={taxonomyError}
+          simplified
           onChange={onChange}
         />
 
@@ -184,7 +185,7 @@ export default function CreateGuidedSessionForm() {
             className="studio-form__submit"
             disabled={submitting || taxonomyLoading}
           >
-            {submitting ? 'Creating…' : 'Create draft'}
+            {submitting ? t('submitBusy') : t('submit')}
           </button>
         </div>
       </form>

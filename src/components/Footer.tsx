@@ -16,6 +16,7 @@ export default function Footer() {
             <Link href={`/${locale}/terms`}>{t('common.terms')}</Link>
             <Link href={`/${locale}/privacy`}>{t('common.privacy')}</Link>
             <Link href={`/${locale}/contact`}>{t('common.contact')}</Link>
+            <Link href="/studio">{t('common.creatorStudio')}</Link>
           </div>
           
 

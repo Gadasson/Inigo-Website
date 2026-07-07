@@ -1,14 +1,16 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useStudioAccess } from '@/contexts/StudioAccessContext';
 
 export default function StudioBackendStatus() {
   const { status } = useStudioAccess();
+  const t = useTranslations('backend');
 
   if (status.state === 'idle' || status.state === 'loading') {
     return (
       <p className="studio-backend-status studio-backend-status--loading" role="status">
-        Checking backend…
+        {t('checking')}
       </p>
     );
   }
@@ -16,7 +18,7 @@ export default function StudioBackendStatus() {
   if (status.state === 'connected') {
     return (
       <p className="studio-backend-status studio-backend-status--connected" role="status">
-        Backend connected
+        {t('connected')}
       </p>
     );
   }

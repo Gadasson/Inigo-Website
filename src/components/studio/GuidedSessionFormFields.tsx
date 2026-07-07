@@ -1,3 +1,6 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
 import type { GuidedSessionEditorForm } from '@/lib/studio/guidedSessionEditorForm';
 import type { GuidedSessionDurationMediaSource } from '@/lib/studio/guidedSessionDuration';
 import type { GuidedSessionTaxonomy } from '@/lib/studio/guidedSessionTaxonomy';
@@ -19,6 +22,12 @@ type Props = {
   taxonomyLoading: boolean;
   taxonomyError?: string | null;
   disabled?: boolean;
+  /**
+   * When true, only expose the fields a creator truly needs (create flow).
+   * Advanced/system fields stay in form state with their defaults and are
+   * still sent in the POST payload — they are just hidden from the UI.
+   */
+  simplified?: boolean;
   onChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => void;
@@ -50,8 +59,10 @@ export default function GuidedSessionFormFields({
   taxonomyLoading,
   taxonomyError = null,
   disabled = false,
+  simplified = false,
   onChange,
 }: Props) {
+  const t = useTranslations('createForm');
   const practices = withCurrentTaxonomyOption(taxonomy?.practices ?? [], form.practice);
   const practiceFocuses = getFocusOptionsForPractice(taxonomy, form.practice);
   const focuses = withCurrentTaxonomyOption(practiceFocuses, form.focus);
@@ -61,166 +72,220 @@ export default function GuidedSessionFormFields({
     !form.practice.trim() ||
     practiceFocuses.length === 0;
 
+  const titleField = (
+    <div className="studio-form__field">
+      <StudioFieldLabel htmlFor="title">Title</StudioFieldLabel>
+      <input
+        id="title"
+        name="title"
+        type="text"
+        value={form.title}
+        onChange={onChange}
+        disabled={disabled}
+        autoComplete="off"
+        placeholder="Morning breath"
+      />
+    </div>
+  );
+
+  const descriptionField = (
+    <div className="studio-form__field">
+      <StudioFieldLabel htmlFor="description" hintKey="description">
+        Description
+      </StudioFieldLabel>
+      <textarea
+        id="description"
+        name="description"
+        rows={4}
+        value={form.description}
+        onChange={onChange}
+        disabled={disabled}
+        placeholder="What will someone feel or learn in this session?"
+      />
+    </div>
+  );
+
+  const durationField = (
+    <GuidedSessionDurationField
+      durationMm={form.durationMm}
+      durationSs={form.durationSs}
+      isFromMedia={durationFromMedia}
+      mediaSource={durationMediaSource}
+      disabled={disabled}
+      onChange={onChange}
+    />
+  );
+
+  const languageField = (
+    <div className="studio-form__field">
+      <StudioFieldLabel htmlFor="language">Language</StudioFieldLabel>
+      <select
+        id="language"
+        name="language"
+        value={form.language}
+        onChange={onChange}
+        disabled={disabled}
+      >
+        {GUIDED_SESSION_LANGUAGES.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+
+  const voiceField = (
+    <div className="studio-form__field">
+      <StudioFieldLabel htmlFor="soundGender" hintKey="voice">
+        Voice
+      </StudioFieldLabel>
+      <select
+        id="soundGender"
+        name="soundGender"
+        value={form.soundGender}
+        onChange={onChange}
+        disabled={disabled}
+      >
+        {GUIDED_SESSION_SOUND_GENDERS.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+
+  const difficultyField = (
+    <div className="studio-form__field">
+      <StudioFieldLabel htmlFor="difficulty" hintKey="difficulty">
+        Difficulty
+      </StudioFieldLabel>
+      <select
+        id="difficulty"
+        name="difficulty"
+        value={form.difficulty}
+        onChange={onChange}
+        disabled={disabled}
+      >
+        {GUIDED_SESSION_DIFFICULTIES.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+
+  const practiceField = (
+    <div className="studio-form__field">
+      <StudioFieldLabel htmlFor="practice" hintKey="practice">
+        Practice
+      </StudioFieldLabel>
+      <select
+        id="practice"
+        name="practice"
+        value={form.practice}
+        onChange={onChange}
+        disabled={taxonomySelectDisabled(disabled, taxonomyLoading, practices.length)}
+      >
+        {!form.practice ? (
+          <option value="">
+            {taxonomyLoading ? 'Loading practices…' : 'Select practice'}
+          </option>
+        ) : null}
+        {practices.map((opt) => (
+          <option key={opt.code} value={opt.code}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+
+  const focusField = (
+    <div className="studio-form__field">
+      <StudioFieldLabel htmlFor="focus" hintKey="focus">
+        Focus
+      </StudioFieldLabel>
+      <select
+        id="focus"
+        name="focus"
+        value={form.focus}
+        onChange={onChange}
+        disabled={focusSelectDisabled}
+      >
+        {!form.focus ? (
+          <option value="">
+            {!form.practice.trim()
+              ? 'Select a practice first'
+              : taxonomyLoading
+                ? 'Loading focus options…'
+                : practiceFocuses.length === 0
+                  ? 'No focus options'
+                  : 'Select focus'}
+          </option>
+        ) : null}
+        {focuses.map((opt) => (
+          <option key={opt.code} value={opt.code}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+
+  const taxonomyErrorBlock = taxonomyError ? (
+    <p className="studio-form__error" role="alert">
+      {taxonomyError}
+    </p>
+  ) : null;
+
+  if (simplified) {
+    return (
+      <div className="studio-form">
+        {titleField}
+        {descriptionField}
+
+        <div className="studio-form__row">
+          {practiceField}
+          {focusField}
+        </div>
+        {taxonomyErrorBlock}
+
+        <div className="studio-form__row">
+          {voiceField}
+          {languageField}
+        </div>
+
+        {durationField}
+
+        <p className="studio-form__section-note">{t('defaultsNote')}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="studio-form">
-      <div className="studio-form__field">
-        <StudioFieldLabel htmlFor="title">Title</StudioFieldLabel>
-        <input
-          id="title"
-          name="title"
-          type="text"
-          value={form.title}
-          onChange={onChange}
-          disabled={disabled}
-          autoComplete="off"
-          placeholder="Morning breath"
-        />
-      </div>
+      {titleField}
+      {descriptionField}
 
-      <div className="studio-form__field">
-        <StudioFieldLabel htmlFor="description" hintKey="description">
-          Description
-        </StudioFieldLabel>
-        <textarea
-          id="description"
-          name="description"
-          rows={4}
-          value={form.description}
-          onChange={onChange}
-          disabled={disabled}
-          placeholder="What will someone feel or learn in this session?"
-        />
+      <div className="studio-form__row">
+        {durationField}
+        {languageField}
       </div>
 
       <div className="studio-form__row">
-        <GuidedSessionDurationField
-          durationMm={form.durationMm}
-          durationSs={form.durationSs}
-          isFromMedia={durationFromMedia}
-          mediaSource={durationMediaSource}
-          disabled={disabled}
-          onChange={onChange}
-        />
-
-        <div className="studio-form__field">
-          <StudioFieldLabel htmlFor="language">Language</StudioFieldLabel>
-          <select
-            id="language"
-            name="language"
-            value={form.language}
-            onChange={onChange}
-            disabled={disabled}
-          >
-            {GUIDED_SESSION_LANGUAGES.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        {voiceField}
+        {difficultyField}
       </div>
 
       <div className="studio-form__row">
-        <div className="studio-form__field">
-          <StudioFieldLabel htmlFor="soundGender" hintKey="voice">
-            Voice
-          </StudioFieldLabel>
-          <select
-            id="soundGender"
-            name="soundGender"
-            value={form.soundGender}
-            onChange={onChange}
-            disabled={disabled}
-          >
-            {GUIDED_SESSION_SOUND_GENDERS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="studio-form__field">
-          <StudioFieldLabel htmlFor="difficulty" hintKey="difficulty">
-            Difficulty
-          </StudioFieldLabel>
-          <select
-            id="difficulty"
-            name="difficulty"
-            value={form.difficulty}
-            onChange={onChange}
-            disabled={disabled}
-          >
-            {GUIDED_SESSION_DIFFICULTIES.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        {practiceField}
+        {focusField}
       </div>
 
-      <div className="studio-form__row">
-        <div className="studio-form__field">
-          <StudioFieldLabel htmlFor="practice" hintKey="practice">
-            Practice
-          </StudioFieldLabel>
-          <select
-            id="practice"
-            name="practice"
-            value={form.practice}
-            onChange={onChange}
-            disabled={taxonomySelectDisabled(disabled, taxonomyLoading, practices.length)}
-          >
-            {!form.practice ? (
-              <option value="">
-                {taxonomyLoading ? 'Loading practices…' : 'Select practice'}
-              </option>
-            ) : null}
-            {practices.map((opt) => (
-              <option key={opt.code} value={opt.code}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="studio-form__field">
-          <StudioFieldLabel htmlFor="focus" hintKey="focus">
-            Focus
-          </StudioFieldLabel>
-          <select
-            id="focus"
-            name="focus"
-            value={form.focus}
-            onChange={onChange}
-            disabled={focusSelectDisabled}
-          >
-            {!form.focus ? (
-              <option value="">
-                {!form.practice.trim()
-                  ? 'Select a practice first'
-                  : taxonomyLoading
-                    ? 'Loading focus options…'
-                    : practiceFocuses.length === 0
-                      ? 'No focus options'
-                      : 'Select focus'}
-              </option>
-            ) : null}
-            {focuses.map((opt) => (
-              <option key={opt.code} value={opt.code}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      {taxonomyError ? (
-        <p className="studio-form__error" role="alert">
-          {taxonomyError}
-        </p>
-      ) : null}
+      {taxonomyErrorBlock}
 
       <div className="studio-form__field">
         <StudioFieldLabel htmlFor="instructor" hintKey="instructor">

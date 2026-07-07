@@ -2,12 +2,15 @@
 
 import { Suspense } from 'react';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import CreatorHome from './CreatorHome';
 import StudioBackendStatus from './StudioBackendStatus';
+import StudioLanguageToggle from './StudioLanguageToggle';
 
 export default function StudioShell() {
   const { user, signOut } = useAuth();
+  const t = useTranslations();
 
   return (
     <div className="studio-shell">
@@ -22,15 +25,16 @@ export default function StudioShell() {
               priority
             />
             <span className="studio-shell__brand-name">Inigo</span>
-            <span className="studio-shell__product">Studio</span>
+            <span className="studio-shell__product">{t('shell.product')}</span>
           </div>
 
           <div className="studio-shell__user">
+            <StudioLanguageToggle />
             {user?.email ? (
               <span className="studio-shell__email">{user.email}</span>
             ) : null}
             <button type="button" className="studio-shell__logout" onClick={() => signOut()}>
-              Log out
+              {t('shell.logOut')}
             </button>
           </div>
         </div>
@@ -41,7 +45,7 @@ export default function StudioShell() {
           <main className="studio-workspace">
             <div className="studio-workspace__container">
               <p className="studio-session-list__status" role="status">
-                Loading…
+                {t('gate.loading')}
               </p>
             </div>
           </main>
