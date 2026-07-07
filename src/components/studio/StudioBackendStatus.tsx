@@ -1,9 +1,9 @@
 'use client';
 
-import { useStudioBackendStatus } from '@/hooks/useStudioBackendStatus';
+import { useStudioAccess } from '@/contexts/StudioAccessContext';
 
 export default function StudioBackendStatus() {
-  const status = useStudioBackendStatus();
+  const { status } = useStudioAccess();
 
   if (status.state === 'idle' || status.state === 'loading') {
     return (

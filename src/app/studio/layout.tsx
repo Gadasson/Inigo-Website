@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { StudioAccessProvider } from '@/contexts/StudioAccessContext';
 import StudioGate from '@/components/studio/StudioGate';
 import './studio.css';
 
@@ -16,7 +17,9 @@ export default function StudioLayout({ children }: { children: React.ReactNode }
   return (
     <div className="studio-root">
       <AuthProvider>
-        <StudioGate>{children}</StudioGate>
+        <StudioAccessProvider>
+          <StudioGate>{children}</StudioGate>
+        </StudioAccessProvider>
       </AuthProvider>
     </div>
   );

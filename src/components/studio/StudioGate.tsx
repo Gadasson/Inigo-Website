@@ -3,12 +3,23 @@
 import { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useStudioAccess } from '@/contexts/StudioAccessContext';
+import StudioAccessNotice from '@/components/studio/StudioAccessNotice';
 
 const LOGIN_PATH = '/studio/login';
 const STUDIO_PATH = '/studio';
 
+function StudioLoading({ label }: { label: string }) {
+  return (
+    <div className="studio-loading" role="status" aria-live="polite">
+      <span className="studio-loading__text">{label}</span>
+    </div>
+  );
+}
+
 export default function StudioGate({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
+  const { status, retry } = useStudioAccess();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -28,27 +39,34 @@ export default function StudioGate({ children }: { children: React.ReactNode }) 
   }, [user, loading, isLoginRoute, router]);
 
   if (loading) {
-    return (
-      <div className="studio-loading" role="status" aria-live="polite">
-        <span className="studio-loading__text">Loading…</span>
-      </div>
-    );
+    return <StudioLoading label="Loading…" />;
   }
 
   if (!user && !isLoginRoute) {
-    return (
-      <div className="studio-loading" role="status" aria-live="polite">
-        <span className="studio-loading__text">Redirecting to sign in…</span>
-      </div>
-    );
+    return <StudioLoading label="Redirecting to sign in…" />;
   }
 
   if (user && isLoginRoute) {
-    return (
-      <div className="studio-loading" role="status" aria-live="polite">
-        <span className="studio-loading__text">Redirecting…</span>
-      </div>
-    );
+    return <StudioLoading label="Redirecting…" />;
+  }
+
+  // Login route (signed out): render sign-in without an access check.
+  if (isLoginRoute) {
+    return <>{children}</>;
+  }
+
+  // Authenticated Studio routes: gate on the bootstrap/access signal so the
+  // workspace never renders (or flashes) before access is known.
+  if (status.state === 'idle' || status.state === 'loading') {
+    return <StudioLoading label="Checking access…" />;
+  }
+
+  if (status.state === 'denied') {
+    return <StudioAccessNotice variant="denied" message={status.message} />;
+  }
+
+  if (status.state === 'offline' || status.state === 'error') {
+    return <StudioAccessNotice variant="error" message={status.message} onRetry={retry} />;
   }
 
   return <>{children}</>;
