@@ -28,7 +28,8 @@
   background: var(--soft-green, #e8f5e9);
 }
 
-.gss__media img {
+.gss__media img,
+.gss__media .loading-remote-image__img {
   width: 100%;
   height: 100%;
   object-fit: cover;

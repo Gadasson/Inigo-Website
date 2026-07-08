@@ -10,6 +10,7 @@ import {
   type GuidedSessionPreviewResult,
 } from '@/lib/guidedSessionPreview';
 import { getPublicSiteUrl } from '@/lib/publicSiteUrl';
+import GuidedSessionShareCover from '@/components/guided-session/GuidedSessionShareCover';
 import '../guided-session-share.css';
 
 const FALLBACK_OG_PATH = '/static/share/session.jpg';
@@ -163,8 +164,7 @@ export default async function GuidedSessionSharePage({
         {preview.kind === 'ok' && (
           <div className="gss__media" aria-hidden={!showCover}>
             {showCover && coverSrc ? (
-              // eslint-disable-next-line @next/next/no-img-element -- remote session art from API; unknown hostnames
-              <img src={coverSrc} alt="" width={1200} height={750} decoding="async" />
+              <GuidedSessionShareCover src={coverSrc} />
             ) : (
               <div className="gss__empty-media" aria-hidden>
                 <span>🌿</span>

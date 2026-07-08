@@ -6668,3 +6668,48 @@ main.subpage-quiet .btn-final-store__label {
     min-width: 11rem;
   }
 }
+
+/* --- Remote image loading (Studio + share pages) --- */
+
+.loading-remote-image {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.loading-remote-image__placeholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(var(--inigo-accent-rgb), 0.08);
+}
+
+.loading-remote-image__spinner {
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 2px solid rgba(var(--inigo-accent-rgb), 0.18);
+  border-top-color: rgba(var(--inigo-accent-rgb), 0.72);
+  border-radius: 50%;
+  animation: loading-remote-image-spin 0.75s linear infinite;
+}
+
+.loading-remote-image__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.28s ease;
+}
+
+.loading-remote-image__img--loaded {
+  opacity: 1;
+}
+
+@keyframes loading-remote-image-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

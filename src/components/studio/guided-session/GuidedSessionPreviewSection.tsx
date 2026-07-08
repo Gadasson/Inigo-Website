@@ -1,5 +1,6 @@
 'use client';
 
+import LoadingRemoteImage from '@/components/LoadingRemoteImage';
 import type { StudioGuidedSession } from '@/lib/api/studioGuidedSessions';
 import type { GuidedSessionEditorForm } from '@/lib/studio/guidedSessionEditorForm';
 import {
@@ -88,8 +89,10 @@ export default function GuidedSessionPreviewSection({ session, form }: Props) {
       <article className="guided-session-preview" aria-label={t('cardAria')}>
         <div className="guided-session-preview__cover">
           {coverUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={coverUrl} alt="" className="guided-session-preview__cover-img" />
+            <LoadingRemoteImage
+              src={coverUrl}
+              className="guided-session-preview__cover-img"
+            />
           ) : (
             <div className="guided-session-preview__cover-placeholder" aria-hidden>
               <span>Inigo</span>

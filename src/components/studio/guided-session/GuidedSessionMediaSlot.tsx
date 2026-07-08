@@ -27,6 +27,7 @@ import { detachGuidedSessionMedia } from '@/lib/api/studioGuidedSessions';
 import { parseStudioApiError } from '@/lib/studio/parseStudioApiError';
 import type { StudioGuidedSession } from '@/lib/api/studioGuidedSessions';
 import StudioConfirmDialog from '@/components/studio/StudioConfirmDialog';
+import LoadingRemoteImage from '@/components/LoadingRemoteImage';
 import { useTranslations } from 'next-intl';
 
 type Props = {
@@ -308,11 +309,10 @@ export default function GuidedSessionMediaSlot({
         )}
 
         {slot.role === 'thumbnail' && attachedUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <LoadingRemoteImage
             src={attachedUrl}
-            alt=""
             className="creator-workspace__media-thumb"
+            wrapperClassName="creator-workspace__media-thumb-wrap"
           />
         ) : null}
 

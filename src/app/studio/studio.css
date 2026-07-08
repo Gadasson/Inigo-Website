@@ -1357,6 +1357,7 @@
 }
 
 .guided-session-preview__cover {
+  position: relative;
   aspect-ratio: 16 / 9;
   background: rgba(var(--inigo-accent-rgb), 0.1);
 }
@@ -1816,14 +1817,23 @@
   color: #8a8a82;
 }
 
-.creator-workspace__media-thumb {
-  display: block;
+.creator-workspace__media-thumb-wrap {
   margin-top: 0.75rem;
   width: 5.5rem;
   height: 5.5rem;
-  object-fit: cover;
   border-radius: 0.5rem;
+  overflow: hidden;
   border: 1px solid rgba(var(--inigo-accent-rgb), 0.14);
+}
+
+.creator-workspace__media-thumb {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0;
+  border: none;
+  margin: 0;
 }
 
 .creator-workspace__media-error {
