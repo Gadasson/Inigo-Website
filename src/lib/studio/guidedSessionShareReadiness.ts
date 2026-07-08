@@ -1,6 +1,5 @@
 export {
   buildGuidedSessionWorkspaceReadiness,
-  workspaceReadinessLabel,
   type WorkspaceReadiness,
   type WorkspaceReadinessItem,
   type WorkspaceReadinessItemKind,

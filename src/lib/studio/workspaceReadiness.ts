@@ -16,7 +16,6 @@ export type WorkspaceReadinessItemKind = 'required' | 'recommended' | 'informati
 
 export type WorkspaceReadinessItem = {
   id: string;
-  label: string;
   state: WorkspaceReadinessItemState;
   kind: WorkspaceReadinessItemKind;
 };
@@ -69,19 +68,16 @@ export function buildGuidedSessionWorkspaceReadiness(
   const items: WorkspaceReadinessItem[] = [
     {
       id: 'details',
-      label: 'Details',
       state: detailsComplete ? 'complete' : 'waiting',
       kind: 'required',
     },
     {
       id: 'primary-media',
-      label: 'Audio or video',
       state: hasPrimaryMedia ? 'complete' : 'waiting',
       kind: 'required',
     },
     {
       id: 'cover',
-      label: 'Cover image',
       state: hasCover ? 'complete' : 'recommended',
       kind: 'recommended',
     },
@@ -90,15 +86,3 @@ export function buildGuidedSessionWorkspaceReadiness(
   return partitionReadiness(items);
 }
 
-export function workspaceReadinessLabel(state: WorkspaceReadinessItemState): string {
-  switch (state) {
-    case 'complete':
-      return 'Complete';
-    case 'waiting':
-      return 'Waiting';
-    case 'recommended':
-      return 'Recommended';
-    case 'coming':
-      return 'Coming next';
-  }
-}

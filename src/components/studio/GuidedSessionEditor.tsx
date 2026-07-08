@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   getGuidedSession,
@@ -11,7 +12,6 @@ import {
 } from '@/lib/api/studioGuidedSessions';
 import { StudioApiError } from '@/lib/api/studioApiClient';
 import { parseStudioApiError } from '@/lib/studio/parseStudioApiError';
-import { guidedSessionStatusLabel } from '@/lib/studio/guidedSessionStatus';
 import {
   buildGuidedSessionPatch,
   sessionToEditorForm,
@@ -21,7 +21,7 @@ import {
   parseCreatorWorkspaceSection,
   type CreatorWorkspaceSection,
 } from '@/lib/studio/creatorWorkspaceSections';
-import { formatSessionDate, sessionTimestampLabel } from '@/lib/studio/formatSessionDate';
+import { formatSessionDate } from '@/lib/studio/formatSessionDate';
 import { buildGuidedSessionWorkspaceReadiness } from '@/lib/studio/workspaceReadiness';
 import {
   guidedSessionDurationDisplayLabel,
@@ -39,13 +39,24 @@ const GuidedSessionWorkspaceTabs = dynamic(
   () => import('@/components/studio/guided-session/GuidedSessionWorkspaceTabs'),
   {
     ssr: false,
-    loading: () => (
-      <p className="studio-form-page__status" role="status">
-        Loading…
-      </p>
-    ),
+    loading: () => <GuidedSessionEditorLoading />,
   },
 );
+
+function GuidedSessionEditorLoading() {
+  const t = useTranslations('editor');
+  return (
+    <p className="studio-form-page__status" role="status">
+      {t('loading')}
+    </p>
+  );
+}
+
+const STATUS_LABEL_KEYS: Record<string, string> = {
+  draft: 'draft',
+  available: 'available',
+  archived: 'archived',
+};
 
 const LAZY_WORKSPACE_SECTIONS = new Set(['media', 'preview', 'share']);
 
@@ -57,20 +68,15 @@ type SaveState = 'idle' | 'saving' | 'saved' | 'error';
 
 const AUTOSAVE_MS = 700;
 
-function applySessionTimestamps(
-  data: StudioGuidedSession,
-  setLastUpdatedLabel: (value: string | null) => void,
-  setUpdatedAtDisplay: (value: string | null) => void,
-) {
-  setLastUpdatedLabel(sessionTimestampLabel(data));
-  setUpdatedAtDisplay(formatSessionDate(data.updated_at ?? data.created_at));
-}
-
 export default function GuidedSessionEditor({ sessionId }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { getIdToken } = useAuth();
+  const locale = useLocale();
+  const t = useTranslations('editor');
+  const ts = useTranslations('status');
+  const tSessions = useTranslations('sessions');
   const { taxonomy, loading: taxonomyLoading, error: taxonomyError } =
     useGuidedSessionTaxonomy();
   const [session, setSession] = useState<StudioGuidedSession | null>(null);
@@ -78,8 +84,6 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
   const [baseline, setBaseline] = useState<GuidedSessionEditorForm | null>(null);
   const baselineRef = useRef<GuidedSessionEditorForm | null>(null);
   const [status, setStatus] = useState<string>('draft');
-  const [lastUpdatedLabel, setLastUpdatedLabel] = useState<string | null>(null);
-  const [updatedAtDisplay, setUpdatedAtDisplay] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [saveState, setSaveState] = useState<SaveState>('idle');
@@ -107,7 +111,6 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
   const onSessionUpdated = useCallback<OnGuidedSessionMediaUpdated>((updated, meta) => {
     setSession(updated);
     setStatus(updated.status);
-    applySessionTimestamps(updated, setLastUpdatedLabel, setUpdatedAtDisplay);
 
     if (meta?.durationDetected) {
       const nextForm = sessionToEditorForm(updated);
@@ -141,7 +144,6 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
     setForm(nextForm);
     setBaseline(nextForm);
     baselineRef.current = nextForm;
-    applySessionTimestamps(updated, setLastUpdatedLabel, setUpdatedAtDisplay);
     setSaveState('idle');
     setSaveError(null);
   }, []);
@@ -168,7 +170,6 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
         const initial = sessionToEditorForm(data);
         setSession(data);
         setStatus(data.status);
-        applySessionTimestamps(data, setLastUpdatedLabel, setUpdatedAtDisplay);
         setForm(initial);
         setBaseline(initial);
         baselineRef.current = initial;
@@ -236,11 +237,10 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
         setBaseline(nextBaseline);
         setSession(updated);
         setStatus(updated.status);
-        applySessionTimestamps(updated, setLastUpdatedLabel, setUpdatedAtDisplay);
         setSaveState('saved');
       } catch (err) {
         if (err instanceof StudioApiError && (err.status === 403 || err.status === 404)) {
-          setSaveError('You do not have access to edit this session.');
+          setSaveError(t('noAccessEdit'));
         } else {
           setSaveError(parseStudioApiError(err));
         }
@@ -251,13 +251,29 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
     return () => window.clearTimeout(timer);
   }, [form, baseline, isReady, isEditable, sessionId, getIdToken]);
 
+  const statusLabel = (value: string) =>
+    STATUS_LABEL_KEYS[value] ? ts(STATUS_LABEL_KEYS[value]) : value;
+
+  const sessionTimestampDisplay = useMemo(() => {
+    if (!session) return null;
+    const formatted = formatSessionDate(session.updated_at ?? session.created_at, locale);
+    if (!formatted) return null;
+    return session.updated_at
+      ? tSessions('updated', { date: formatted })
+      : tSessions('created', { date: formatted });
+  }, [session, locale, tSessions]);
+
+  const updatedAtDisplay = useMemo(
+    () => formatSessionDate(session?.updated_at ?? session?.created_at, locale),
+    [session, locale],
+  );
+
   const lastSavedLabel = useMemo(() => {
-    if (saveState === 'saving') return 'Saving…';
-    if (saveState === 'saved') return 'Saved';
-    if (saveState === 'error') return 'Save failed';
-    if (lastUpdatedLabel) return lastUpdatedLabel;
-    return null;
-  }, [saveState, lastUpdatedLabel]);
+    if (saveState === 'saving') return t('saving');
+    if (saveState === 'saved') return t('saved');
+    if (saveState === 'error') return t('saveFailed');
+    return sessionTimestampDisplay;
+  }, [saveState, sessionTimestampDisplay, t]);
 
   const workspaceReadiness = useMemo(() => {
     if (!session || !form) return null;
@@ -267,7 +283,7 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
   if (loading) {
     return (
       <p className="studio-form-page__status" role="status">
-        Loading session…
+        {t('loadingSession')}
       </p>
     );
   }
@@ -292,7 +308,7 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
     <CreatorWorkspace
       title={form.title}
       status={status}
-      statusLabel={guidedSessionStatusLabel(status)}
+      statusLabel={statusLabel(status)}
       lastSavedLabel={lastSavedLabel}
       saveState={saveState}
       activeSection={activeSection}
@@ -305,7 +321,7 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
           durationLabel={durationLabel}
           durationFromMedia={durationFromMedia}
           durationMediaSource={durationMediaSource}
-          statusLabel={guidedSessionStatusLabel(status)}
+          statusLabel={statusLabel(status)}
           lastUpdated={updatedAtDisplay}
           creator={form.instructor}
         />
@@ -314,16 +330,12 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
       {activeSection === 'content' ? (
         <section className="creator-workspace__section" aria-labelledby="workspace-content-heading">
           <h2 id="workspace-content-heading" className="visually-hidden">
-            Content
+            {t('contentAria')}
           </h2>
           {!isEditable ? (
-            <p className="creator-workspace__section-lede">
-              Shared and archived sessions are read-only in Studio V1.
-            </p>
+            <p className="creator-workspace__section-lede">{t('contentReadonly')}</p>
           ) : (
-            <p className="creator-workspace__section-lede">
-              Changes are saved automatically.
-            </p>
+            <p className="creator-workspace__section-lede">{t('contentAutosaved')}</p>
           )}
           {saveError ? (
             <p className="studio-form__error" role="alert">

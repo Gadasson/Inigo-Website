@@ -1,5 +1,7 @@
+'use client';
+
 import type { GuidedSessionDurationMediaSource } from '@/lib/studio/guidedSessionDuration';
-import { guidedSessionDurationDetectedMessage } from '@/lib/studio/guidedSessionDuration';
+import { useTranslations } from 'next-intl';
 
 type Props = {
   title: string;
@@ -22,46 +24,47 @@ export default function WorkspaceOverview({
   lastUpdated,
   creator,
 }: Props) {
+  const t = useTranslations('overview');
+  const td = useTranslations('duration');
+
   return (
     <section className="creator-workspace__section" aria-labelledby="workspace-overview-heading">
       <h2 id="workspace-overview-heading" className="creator-workspace__section-title">
-        Overview
+        {t('title')}
       </h2>
-      <p className="creator-workspace__section-lede">
-        A quick read on what you are creating — details live in Content.
-      </p>
+      <p className="creator-workspace__section-lede">{t('lede')}</p>
 
       <dl className="creator-workspace__overview">
         <div className="creator-workspace__overview-item">
-          <dt>Title</dt>
-          <dd>{title.trim() || 'Untitled'}</dd>
+          <dt>{t('fieldTitle')}</dt>
+          <dd>{title.trim() || t('untitled')}</dd>
         </div>
         <div className="creator-workspace__overview-item">
-          <dt>Description</dt>
-          <dd>{description.trim() || 'No description yet.'}</dd>
+          <dt>{t('fieldDescription')}</dt>
+          <dd>{description.trim() || t('noDescription')}</dd>
         </div>
         <div className="creator-workspace__overview-item">
-          <dt>Duration</dt>
+          <dt>{t('fieldDuration')}</dt>
           <dd>
             {durationLabel}
             {durationFromMedia && durationMediaSource ? (
               <span className="creator-workspace__overview-duration-note">
-                {guidedSessionDurationDetectedMessage(durationMediaSource)}
+                {durationMediaSource === 'audio' ? td('detectedAudio') : td('detectedVideo')}
               </span>
             ) : null}
           </dd>
         </div>
         <div className="creator-workspace__overview-item">
-          <dt>Status</dt>
+          <dt>{t('fieldStatus')}</dt>
           <dd>{statusLabel}</dd>
         </div>
         <div className="creator-workspace__overview-item">
-          <dt>Last updated</dt>
-          <dd>{lastUpdated ?? '—'}</dd>
+          <dt>{t('fieldLastUpdated')}</dt>
+          <dd>{lastUpdated ?? t('empty')}</dd>
         </div>
         <div className="creator-workspace__overview-item">
-          <dt>Creator</dt>
-          <dd>{creator.trim() || '—'}</dd>
+          <dt>{t('fieldCreator')}</dt>
+          <dd>{creator.trim() || t('empty')}</dd>
         </div>
       </dl>
     </section>

@@ -1,9 +1,9 @@
+'use client';
+
 import type { ReactNode } from 'react';
+import { useTranslations } from 'next-intl';
 import StudioFieldHint from '@/components/studio/StudioFieldHint';
-import {
-  GUIDED_SESSION_FIELD_HINTS,
-  type GuidedSessionFieldHintKey,
-} from '@/lib/studio/guidedSessionFieldHints';
+import type { GuidedSessionFieldHintKey } from '@/lib/studio/guidedSessionFieldHints';
 
 type Props = {
   htmlFor: string;
@@ -12,7 +12,8 @@ type Props = {
 };
 
 export default function StudioFieldLabel({ htmlFor, hintKey, children }: Props) {
-  const hint = hintKey ? GUIDED_SESSION_FIELD_HINTS[hintKey] : undefined;
+  const t = useTranslations('hints');
+  const hint = hintKey ? t(hintKey) : undefined;
   const hintId = hint ? `${htmlFor}-hint` : undefined;
 
   return (

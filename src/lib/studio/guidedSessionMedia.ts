@@ -152,33 +152,39 @@ function isAllowedAudioFile(file: File): boolean {
   return ALLOWED_AUDIO_MIME_TYPES.has(mime);
 }
 
+export type MediaValidationError =
+  | { code: 'empty' }
+  | { code: 'tooLarge'; maxMb: number }
+  | { code: 'audioFormat' }
+  | { code: 'imageFile' }
+  | { code: 'videoFile' };
+
 export function validateGuidedSessionMediaFile(
   file: File,
   role: GuidedSessionMediaRole,
-): string | null {
+): MediaValidationError | null {
   if (!file || file.size === 0) {
-    return 'Choose a file to upload.';
+    return { code: 'empty' };
   }
 
   const maxBytes = MAX_FILE_BYTES[role];
   if (file.size > maxBytes) {
-    const maxMb = Math.round(maxBytes / (1024 * 1024));
-    return `This file is too large. Please choose one under ${maxMb} MB.`;
+    return { code: 'tooLarge', maxMb: Math.round(maxBytes / (1024 * 1024)) };
   }
 
   if (role === 'audio') {
     if (!isAllowedAudioFile(file)) {
-      return 'Please upload an MP3 or M4A audio file.';
+      return { code: 'audioFormat' };
     }
     return null;
   }
 
   if (role === 'thumbnail' && !file.type.startsWith('image/')) {
-    return 'Please choose an image file.';
+    return { code: 'imageFile' };
   }
 
   if (role === 'video' && !file.type.startsWith('video/')) {
-    return 'Please choose a video file.';
+    return { code: 'videoFile' };
   }
 
   return null;

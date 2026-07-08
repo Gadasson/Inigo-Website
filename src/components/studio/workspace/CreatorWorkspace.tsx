@@ -2,6 +2,7 @@
 
 import type { ReactNode } from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import {
   CREATOR_WORKSPACE_SECTIONS,
   type CreatorWorkspaceSection,
@@ -30,15 +31,21 @@ export default function CreatorWorkspace({
   backHref = '/studio?tab=sessions',
   children,
 }: Props) {
+  const t = useTranslations('editor');
+  const tt = useTranslations('tabs');
+
   return (
     <div className="creator-workspace">
       <Link href={backHref} className="creator-workspace__back">
-        ← Back to Studio
+        <span className="studio-back-arrow" aria-hidden>
+          ←
+        </span>{' '}
+        {t('back')}
       </Link>
 
       <header className="creator-workspace__header">
         <div className="creator-workspace__title-row">
-          <h1 className="creator-workspace__title">{title || 'Untitled'}</h1>
+          <h1 className="creator-workspace__title">{title || t('untitled')}</h1>
           <span
             className={`studio-editor__status-badge studio-editor__status-badge--${status}`}
           >
@@ -58,7 +65,7 @@ export default function CreatorWorkspace({
         ) : null}
       </header>
 
-      <nav className="creator-workspace__tabs" aria-label="Workspace sections">
+      <nav className="creator-workspace__tabs" aria-label={t('tabsAria')}>
         {CREATOR_WORKSPACE_SECTIONS.map((section) => (
           <button
             key={section.id}
@@ -69,7 +76,7 @@ export default function CreatorWorkspace({
             aria-current={activeSection === section.id ? 'page' : undefined}
             onClick={() => onSectionChange(section.id)}
           >
-            {section.label}
+            {tt(section.id)}
           </button>
         ))}
       </nav>

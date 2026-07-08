@@ -8,7 +8,7 @@ import {
   validateGuidedSessionMediaFile,
 } from '@/lib/studio/guidedSessionMedia';
 import {
-  formatMediaUploadError,
+  getMediaUploadErrorCode,
   getPendingMediaAttach,
   MediaUploadError,
 } from '@/lib/studio/guidedSessionMediaErrors';
@@ -20,6 +20,7 @@ import type { MediaUploadResult } from '@/lib/studio/guidedSessionMediaUpload';
 import { isFirebaseStorageConfigured } from '@/lib/firebase/config';
 import { useAuth } from '@/contexts/AuthContext';
 import type { StudioGuidedSession } from '@/lib/api/studioGuidedSessions';
+import { useTranslations } from 'next-intl';
 
 type Props = {
   slot: GuidedSessionMediaSlotConfig;
@@ -29,6 +30,30 @@ type Props = {
 };
 
 type SlotPhase = 'idle' | 'uploading' | 'attach_pending' | 'retrying_attach' | 'error';
+
+const SLOT_LABEL_KEYS: Record<string, string> = {
+  audio: 'slotAudio',
+  cover: 'slotCover',
+  video: 'slotVideo',
+};
+
+const SLOT_HINT_KEYS: Record<string, string> = {
+  audio: 'hintAudio',
+  cover: 'hintCover',
+  video: 'hintVideo',
+};
+
+const SLOT_FORMATS_KEYS: Record<string, string> = {
+  audio: 'formatsAudio',
+  cover: 'formatsCover',
+  video: 'formatsVideo',
+};
+
+const SLOT_MAX_SIZE: Record<string, string> = {
+  audio: '50 MB',
+  cover: '10 MB',
+  video: '500 MB',
+};
 
 function applyMediaUploadResult(
   result: MediaUploadResult,
@@ -48,6 +73,9 @@ export default function GuidedSessionMediaSlot({
   onSessionUpdated,
 }: Props) {
   const { getIdToken } = useAuth();
+  const t = useTranslations('media');
+  const tv = useTranslations('mediaValidation');
+  const te = useTranslations('mediaError');
   const inputRef = useRef<HTMLInputElement>(null);
   const [phase, setPhase] = useState<SlotPhase>('idle');
   const [uploadPercent, setUploadPercent] = useState(0);
@@ -64,33 +92,34 @@ export default function GuidedSessionMediaSlot({
     pendingAttach?.originalFileName ||
     null;
 
+  const slotLabel = t(SLOT_LABEL_KEYS[slot.id] ?? slot.id);
+  const slotHint = t(SLOT_HINT_KEYS[slot.id] ?? 'hintAudio');
+  const slotFormats = t(SLOT_FORMATS_KEYS[slot.id] ?? 'formatsAudio');
+  const slotMaxSize = t('maxSize', { size: SLOT_MAX_SIZE[slot.id] ?? '' });
+
+  const formatValidationError = (validationError: ReturnType<typeof validateGuidedSessionMediaFile>) => {
+    if (!validationError) return null;
+    if (validationError.code === 'tooLarge') {
+      return tv('tooLarge', { maxMb: validationError.maxMb });
+    }
+    return tv(validationError.code);
+  };
+
+  const formatUploadError = (err: unknown) => te(getMediaUploadErrorCode(err));
+
   const statusLabel = (() => {
-    if (phase === 'uploading') {
-      return `Uploading… ${uploadPercent}%`;
-    }
-    if (phase === 'retrying_attach') {
-      return 'Retrying attach…';
-    }
-    if (phase === 'attach_pending') {
-      return 'Attach failed';
-    }
-    if (phase === 'error') {
-      return 'Upload failed';
-    }
-    if (isAttached) {
-      return '✓ Uploaded';
-    }
-    return 'Not added yet';
+    if (phase === 'uploading') return t('statusUploading', { percent: uploadPercent });
+    if (phase === 'retrying_attach') return t('statusRetrying');
+    if (phase === 'attach_pending') return t('statusAttachFailed');
+    if (phase === 'error') return t('statusUploadFailed');
+    if (isAttached) return t('statusUploaded');
+    return t('statusNotAdded');
   })();
 
   const buttonLabel = (() => {
-    if (phase === 'uploading') {
-      return `Uploading… ${uploadPercent}%`;
-    }
-    if (phase === 'retrying_attach') {
-      return 'Retrying attach…';
-    }
-    return isAttached || hasPendingAttach ? 'Replace' : 'Choose file';
+    if (phase === 'uploading') return t('buttonUploading', { percent: uploadPercent });
+    if (phase === 'retrying_attach') return t('buttonRetrying');
+    return isAttached || hasPendingAttach ? t('buttonReplace') : t('buttonChoose');
   })();
 
   const clearPendingAttach = () => {
@@ -129,7 +158,7 @@ export default function GuidedSessionMediaSlot({
       const nextPending = getPendingMediaAttach(err) ?? pendingAttach;
       setPendingAttach(nextPending);
       setPhase('attach_pending');
-      setError(formatMediaUploadError(err));
+      setError(formatUploadError(err));
     }
   };
 
@@ -144,14 +173,14 @@ export default function GuidedSessionMediaSlot({
     const validationError = validateGuidedSessionMediaFile(file, slot.role);
     if (validationError) {
       setPhase('idle');
-      setError(validationError);
+      setError(formatValidationError(validationError));
       setUploadPercent(0);
       return;
     }
 
     if (!isFirebaseStorageConfigured()) {
       setPhase('idle');
-      setError(formatMediaUploadError(new MediaUploadError('config', '', null)));
+      setError(formatUploadError(new MediaUploadError('config', '', null)));
       setUploadPercent(0);
       return;
     }
@@ -185,7 +214,7 @@ export default function GuidedSessionMediaSlot({
         setPhase('error');
       }
       setUploadPercent(0);
-      setError(formatMediaUploadError(err));
+      setError(formatUploadError(err));
     }
   };
 
@@ -205,7 +234,7 @@ export default function GuidedSessionMediaSlot({
     >
       <div className="creator-workspace__media-slot-main">
         <div className="creator-workspace__media-slot-heading">
-          <span className="creator-workspace__slot-label">{slot.label}</span>
+          <span className="creator-workspace__slot-label">{slotLabel}</span>
           <span
             className={`creator-workspace__media-status creator-workspace__media-status--${
               phase === 'idle' && isAttached ? 'attached' : slotModifier
@@ -217,18 +246,17 @@ export default function GuidedSessionMediaSlot({
         </div>
 
         <p className="creator-workspace__media-format-guide">
-          <span>{slot.formatGuidance.formats}</span>
-          <span>{slot.formatGuidance.maxSize}</span>
+          <span>{slotFormats}</span>
+          <span>{slotMaxSize}</span>
         </p>
 
         {displayFileName ? (
           <p className="creator-workspace__media-filename">{displayFileName}</p>
         ) : (
-          <p className="creator-workspace__media-hint">{slot.emptyHint}</p>
+          <p className="creator-workspace__media-hint">{slotHint}</p>
         )}
 
         {slot.role === 'thumbnail' && attachedUrl ? (
-          // Firebase download URLs are dynamic user uploads — next/image not used here.
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={attachedUrl}
@@ -244,7 +272,7 @@ export default function GuidedSessionMediaSlot({
             preload="metadata"
             src={attachedUrl}
           >
-            Your browser does not support audio playback.
+            {t('audioUnsupported')}
           </audio>
         ) : null}
 
@@ -262,7 +290,7 @@ export default function GuidedSessionMediaSlot({
               disabled={disabled || isBusy}
               onClick={() => void onRetryAttach()}
             >
-              Retry attach
+              {t('retryAttach')}
             </button>
             <button
               type="button"
@@ -270,7 +298,7 @@ export default function GuidedSessionMediaSlot({
               disabled={disabled || isBusy}
               onClick={onDiscardPending}
             >
-              Discard uploaded file
+              {t('discard')}
             </button>
           </div>
         ) : null}

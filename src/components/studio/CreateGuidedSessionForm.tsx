@@ -45,6 +45,7 @@ function applyTaxonomyDefaults(
 export default function CreateGuidedSessionForm() {
   const router = useRouter();
   const t = useTranslations('createForm');
+  const tv = useTranslations('validation');
   const { user, getIdToken } = useAuth();
   const { taxonomy, loading: taxonomyLoading, error: taxonomyError } =
     useGuidedSessionTaxonomy();
@@ -89,16 +90,16 @@ export default function CreateGuidedSessionForm() {
   };
 
   const validate = (): string | null => {
-    if (form.title.trim().length < 2) return 'Please add a title.';
-    if (form.description.trim().length < 10) return 'Description should be at least a few words.';
+    if (form.title.trim().length < 2) return tv('title');
+    if (form.description.trim().length < 10) return tv('description');
     if (!isValidEstimatedDurationMmSs(form.durationMm, form.durationSs)) {
-      return 'Duration must be between 00:01 and 180:00.';
+      return tv('duration');
     }
-    if (!form.practice.trim()) return 'Please select a practice.';
-    if (!form.focus.trim()) return 'Please select a focus.';
-    if (form.instructor.trim().length < 1) return 'Please add an instructor name.';
-    if (form.environment.trim().length < 1) return 'Please add an environment.';
-    if (form.backgroundMusic.trim().length < 1) return 'Please add background music.';
+    if (!form.practice.trim()) return tv('practice');
+    if (!form.focus.trim()) return tv('focus');
+    if (form.instructor.trim().length < 1) return tv('instructor');
+    if (form.environment.trim().length < 1) return tv('environment');
+    if (form.backgroundMusic.trim().length < 1) return tv('backgroundMusic');
     return null;
   };
 
@@ -153,7 +154,10 @@ export default function CreateGuidedSessionForm() {
   return (
     <div className="studio-form-page">
       <Link href="/studio" className="studio-form-page__back">
-        ← {t('back')}
+        <span className="studio-back-arrow" aria-hidden>
+          ←
+        </span>{' '}
+        {t('back')}
       </Link>
 
       <header className="studio-form-page__header">

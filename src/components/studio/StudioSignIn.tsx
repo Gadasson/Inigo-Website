@@ -18,8 +18,7 @@ export default function StudioSignIn() {
     try {
       await signInWithGoogle();
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : 'Sign in failed. Please try again.';
+      const message = err instanceof Error ? err.message : t('errorFailed');
       setError(message);
     } finally {
       setSubmitting(false);

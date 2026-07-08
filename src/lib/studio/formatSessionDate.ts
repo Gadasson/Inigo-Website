@@ -1,10 +1,11 @@
-export function formatSessionDate(iso: string | undefined): string | null {
+export function formatSessionDate(iso: string | undefined, locale?: string): string | null {
   if (!iso) return null;
 
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return null;
 
-  return new Intl.DateTimeFormat(undefined, {
+  const intlLocale = locale === 'he' ? 'he-IL' : 'en-US';
+  return new Intl.DateTimeFormat(intlLocale, {
     month: 'short',
     day: 'numeric',
     year: 'numeric',

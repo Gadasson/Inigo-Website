@@ -2,14 +2,12 @@
 
 import type { GuidedSessionDurationMediaSource } from '@/lib/studio/guidedSessionDuration';
 import {
-  guidedSessionDurationDetectedMessage,
-} from '@/lib/studio/guidedSessionDuration';
-import {
   formatDurationClock,
   formatMmSsInput,
   mmSsPartsToTotalSeconds,
   padMmSsPart,
 } from '@/lib/studio/formatDuration';
+import { useTranslations } from 'next-intl';
 import StudioFieldLabel from '@/components/studio/StudioFieldLabel';
 
 type Props = {
@@ -31,18 +29,20 @@ export default function GuidedSessionDurationField({
   onChange,
   onBlur,
 }: Props) {
+  const t = useTranslations('duration');
+
   if (isFromMedia && mediaSource) {
     const totalSeconds = mmSsPartsToTotalSeconds(durationMm, durationSs);
     const display = totalSeconds > 0 ? formatDurationClock(totalSeconds) : '—';
 
     return (
       <div className="studio-form__field studio-form__field--duration">
-        <StudioFieldLabel htmlFor="duration-display">Duration</StudioFieldLabel>
+        <StudioFieldLabel htmlFor="duration-display">{t('label')}</StudioFieldLabel>
         <p id="duration-display" className="studio-form__duration-readonly">
           {display}
         </p>
         <p className="studio-form__duration-detected" role="status">
-          {guidedSessionDurationDetectedMessage(mediaSource)}
+          {mediaSource === 'audio' ? t('detectedAudio') : t('detectedVideo')}
         </p>
       </div>
     );
@@ -50,7 +50,7 @@ export default function GuidedSessionDurationField({
 
   return (
     <div className="studio-form__field studio-form__field--duration">
-      <StudioFieldLabel htmlFor="durationMm">Estimated duration</StudioFieldLabel>
+      <StudioFieldLabel htmlFor="durationMm">{t('estimated')}</StudioFieldLabel>
       <div className="studio-form__duration-input" role="group" aria-labelledby="durationMm">
         <input
           id="durationMm"
@@ -70,7 +70,7 @@ export default function GuidedSessionDurationField({
             onChange(e);
           }}
           disabled={disabled}
-          aria-label="Minutes"
+          aria-label={t('minutesAria')}
         />
         <span className="studio-form__duration-sep" aria-hidden>
           :
@@ -93,12 +93,10 @@ export default function GuidedSessionDurationField({
             onChange(e);
           }}
           disabled={disabled}
-          aria-label="Seconds"
+          aria-label={t('secondsAria')}
         />
       </div>
-      <p className="studio-form__duration-helper">
-        This will be updated automatically after you upload audio or video.
-      </p>
+      <p className="studio-form__duration-helper">{t('helper')}</p>
     </div>
   );
 }

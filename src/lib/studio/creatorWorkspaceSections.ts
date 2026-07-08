@@ -1,11 +1,10 @@
 /** Generic Creator Workspace sections — content-type agnostic except `content`. */
 export const CREATOR_WORKSPACE_SECTIONS = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'content', label: 'Content' },
-  { id: 'media', label: 'Media' },
-  { id: 'preview', label: 'Preview' },
-  // `share` id kept for URL/query stability; labelled "Publish" per Studio V1 publish flow.
-  { id: 'share', label: 'Publish' },
+  { id: 'overview' },
+  { id: 'content' },
+  { id: 'media' },
+  { id: 'preview' },
+  { id: 'share' },
 ] as const;
 
 export type CreatorWorkspaceSection = (typeof CREATOR_WORKSPACE_SECTIONS)[number]['id'];

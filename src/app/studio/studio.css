@@ -16,7 +16,7 @@
 /* globals.css sets marketing section padding (6rem) — reset inside Studio */
 .studio-root section {
   padding: 0;
-  text-align: left;
+  text-align: start;
 }
 
 .studio-loading {
@@ -221,9 +221,9 @@
 }
 
 .studio-shell__header-inner {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
   max-width: var(--studio-container);
   margin: 0 auto;
@@ -231,7 +231,16 @@
   width: 100%;
 }
 
+.studio-shell__brand {
+  justify-self: start;
+}
+
+.studio-shell__lang {
+  justify-self: center;
+}
+
 .studio-shell__user {
+  justify-self: end;
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -285,7 +294,7 @@
 .studio-workspace__intro::before {
   content: '';
   position: absolute;
-  left: -1.5rem;
+  inset-inline-start: -1.5rem;
   top: -0.75rem;
   width: 14rem;
   height: 7rem;
@@ -412,7 +421,7 @@
   border-radius: 0.875rem;
   border: 1px solid rgba(var(--inigo-accent-rgb), 0.1);
   background: rgba(255, 255, 255, 0.72);
-  text-align: left;
+  text-align: start;
   transition:
     transform 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94),
     box-shadow 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94),
@@ -585,7 +594,7 @@
 
 .studio-card__cta-arrow {
   display: inline-block;
-  margin-left: 0.125rem;
+  margin-inline-start: 0.125rem;
   transition: transform 0.2s ease;
 }
 
@@ -809,7 +818,7 @@
   display: inline-block;
   width: 0.3125rem;
   height: 0.3125rem;
-  margin-right: 0.3125rem;
+  margin-inline-end: 0.3125rem;
   border-radius: 50%;
   background: var(--color-action-muted);
   vertical-align: middle;
@@ -857,13 +866,27 @@
 
 @media (max-width: 480px) {
   .studio-shell__header-inner {
-    flex-direction: column;
-    align-items: flex-start;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    row-gap: 0.75rem;
+  }
+
+  .studio-shell__brand {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .studio-shell__lang {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: center;
   }
 
   .studio-shell__user {
-    width: 100%;
-    justify-content: space-between;
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    width: auto;
   }
 
   .studio-workspace__container {
@@ -1707,7 +1730,7 @@
   font-size: 0.75rem;
   font-weight: 400;
   line-height: 1.45;
-  text-align: left;
+  text-align: start;
   pointer-events: none;
   opacity: 0;
   transform: translateX(-50%) translateY(0.25rem);
@@ -1983,7 +2006,13 @@
   color: var(--color-text-body);
 }
 
-/* ---- RTL (Hebrew) — scoped to the Studio subtree via dir="rtl" ---- */
+/* ---- RTL (Hebrew) — scoped to the Studio subtree via dir="rtl" ----
+ * Most layout uses flexbox + logical properties, which mirror automatically
+ * under dir="rtl". The rules below fix the cases that use physical values,
+ * decorative positioning, directional arrow glyphs, or content that must
+ * stay left-to-right (e.g. the mm:ss duration value). */
+
+/* Shell brand divider moves to the trailing side. */
 [dir='rtl'].studio-root .studio-shell__product {
   padding-left: 0;
   margin-left: 0;
@@ -1993,13 +2022,39 @@
   border-right: 1px solid var(--color-border-on-light-faint);
 }
 
+/* Decorative hero glow mirrors to the trailing side with flipped focal point. */
 [dir='rtl'].studio-root .studio-workspace__intro::before {
-  left: auto;
-  right: -1.5rem;
+  background: radial-gradient(
+    ellipse at 70% 40%,
+    rgba(var(--inigo-accent-rgb), 0.14) 0%,
+    transparent 72%
+  );
 }
 
-[dir='rtl'].studio-root .studio-form-page__back,
-[dir='rtl'].studio-root .creator-workspace__back {
-  /* arrow glyphs are authored LTR; keep them visually leading in RTL */
-  direction: rtl;
+/* Directional arrow glyphs are authored for LTR — mirror them in RTL. */
+[dir='rtl'].studio-root .studio-back-arrow,
+[dir='rtl'].studio-root .studio-card__cta-arrow,
+[dir='rtl'].studio-root .studio-session-item__open {
+  display: inline-block;
+  transform: scaleX(-1);
+}
+
+[dir='rtl'].studio-root .studio-card--active:hover .studio-card__cta-arrow {
+  transform: scaleX(-1) translateX(3px);
+}
+
+[dir='rtl'].studio-root .studio-session-item:hover .studio-session-item__open {
+  transform: scaleX(-1) translateX(2px);
+}
+
+/* The duration is a time value — keep mm:ss reading left-to-right. */
+[dir='rtl'].studio-root .studio-form__duration-input {
+  direction: ltr;
+  justify-content: flex-end;
+}
+
+/* Inline audio/video players keep native (LTR) control layout. */
+[dir='rtl'].studio-root .creator-workspace__media-audio,
+[dir='rtl'].studio-root .guided-session-preview__audio {
+  direction: ltr;
 }

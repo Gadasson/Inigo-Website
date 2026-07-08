@@ -28,8 +28,11 @@ export default function StudioShell() {
             <span className="studio-shell__product">{t('shell.product')}</span>
           </div>
 
-          <div className="studio-shell__user">
+          <div className="studio-shell__lang">
             <StudioLanguageToggle />
+          </div>
+
+          <div className="studio-shell__user">
             {user?.email ? (
               <span className="studio-shell__email">{user.email}</span>
             ) : null}

@@ -9,8 +9,15 @@ export type MediaUploadFailureKind =
   | 'auth'
   | 'config';
 
-export const ATTACH_PENDING_ERROR_MESSAGE =
-  'Upload completed, but attaching it to the session failed.';
+export type MediaUploadErrorCode =
+  | 'config'
+  | 'auth'
+  | 'firebase'
+  | 'attachPending'
+  | 'attach'
+  | 'network'
+  | 'noPermission'
+  | 'generic';
 
 export class MediaUploadError extends Error {
   readonly kind: MediaUploadFailureKind;
@@ -46,63 +53,29 @@ function isFirebaseStorageError(error: unknown): boolean {
   return typeof code === 'string' && code.startsWith('storage/');
 }
 
-/** Maps upload failures to creator-friendly copy. Never exposes raw technical errors. */
-export function formatMediaUploadError(error: unknown): string {
+/** Maps upload failures to a translation key under `mediaError.*`. */
+export function getMediaUploadErrorCode(error: unknown): MediaUploadErrorCode {
   if (error instanceof MediaUploadError) {
-    if (error.kind === 'validation') {
-      return error.message;
-    }
-    if (error.kind === 'config') {
-      return 'File uploads are not configured yet. Contact your Studio admin.';
-    }
-    if (error.kind === 'auth') {
-      return 'Your session expired. Please sign in again and try again.';
-    }
-    if (error.kind === 'firebase') {
-      return 'Upload failed.\nPlease try again.';
-    }
+    if (error.kind === 'config') return 'config';
+    if (error.kind === 'auth') return 'auth';
+    if (error.kind === 'firebase') return 'firebase';
     if (error.kind === 'attach') {
-      if (error.pendingAttach) {
-        return ATTACH_PENDING_ERROR_MESSAGE;
-      }
-      return (
-        'The media uploaded successfully, but could not be attached to this session.\n\n' +
-        'Please try again.'
-      );
+      return error.pendingAttach ? 'attachPending' : 'attach';
     }
-    if (error.kind === 'network') {
-      return 'Could not connect. Check your connection and try again.';
-    }
+    if (error.kind === 'network') return 'network';
   }
 
   if (error instanceof StudioApiError) {
-    if (error.status === 401) {
-      return 'Your session expired. Please sign in again and try again.';
-    }
-    if (error.status === 403) {
-      return 'You do not have permission to upload media for this session.';
-    }
-    if (error.status >= 500) {
-      return (
-        'The media uploaded successfully, but could not be attached to this session.\n\n' +
-        'Please try again.'
-      );
-    }
-    return (
-      'The media uploaded successfully, but could not be attached to this session.\n\n' +
-      'Please try again.'
-    );
+    if (error.status === 401) return 'auth';
+    if (error.status === 403) return 'noPermission';
+    if (error.status >= 500) return 'attach';
+    return 'attach';
   }
 
-  if (isNetworkError(error)) {
-    return 'Could not connect. Check your connection and try again.';
-  }
+  if (isNetworkError(error)) return 'network';
+  if (isFirebaseStorageError(error)) return 'firebase';
 
-  if (isFirebaseStorageError(error)) {
-    return 'Upload failed.\nPlease try again.';
-  }
-
-  return 'Upload failed.\nPlease try again.';
+  return 'generic';
 }
 
 /** Returns pending attach payload when Firebase succeeded but attach-media failed. */

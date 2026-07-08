@@ -22,15 +22,34 @@ type Props = {
   taxonomyLoading: boolean;
   taxonomyError?: string | null;
   disabled?: boolean;
-  /**
-   * When true, only expose the fields a creator truly needs (create flow).
-   * Advanced/system fields stay in form state with their defaults and are
-   * still sent in the POST payload — they are just hidden from the UI.
-   */
   simplified?: boolean;
   onChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => void;
+};
+
+const LANGUAGE_LABEL_KEYS: Record<string, string> = {
+  en: 'languageEn',
+  he: 'languageHe',
+};
+
+const VOICE_LABEL_KEYS: Record<string, string> = {
+  male: 'voiceMale',
+  female: 'voiceFemale',
+  neutral: 'voiceNeutral',
+};
+
+const DIFFICULTY_LABEL_KEYS: Record<string, string> = {
+  beginner: 'difficultyBeginner',
+  intermediate: 'difficultyIntermediate',
+  advanced: 'difficultyAdvanced',
+};
+
+const ACCESS_LABEL_KEYS: Record<string, string> = {
+  free: 'accessFree',
+  plus: 'accessPlus',
+  premium: 'accessPremium',
+  pro: 'accessPro',
 };
 
 function taxonomySelectDisabled(
@@ -63,6 +82,9 @@ export default function GuidedSessionFormFields({
   onChange,
 }: Props) {
   const t = useTranslations('createForm');
+  const tf = useTranslations('fields');
+  const to = useTranslations('options');
+
   const practices = withCurrentTaxonomyOption(taxonomy?.practices ?? [], form.practice);
   const practiceFocuses = getFocusOptionsForPractice(taxonomy, form.practice);
   const focuses = withCurrentTaxonomyOption(practiceFocuses, form.focus);
@@ -74,7 +96,7 @@ export default function GuidedSessionFormFields({
 
   const titleField = (
     <div className="studio-form__field">
-      <StudioFieldLabel htmlFor="title">Title</StudioFieldLabel>
+      <StudioFieldLabel htmlFor="title">{tf('title')}</StudioFieldLabel>
       <input
         id="title"
         name="title"
@@ -83,7 +105,7 @@ export default function GuidedSessionFormFields({
         onChange={onChange}
         disabled={disabled}
         autoComplete="off"
-        placeholder="Morning breath"
+        placeholder={tf('titlePlaceholder')}
       />
     </div>
   );
@@ -91,7 +113,7 @@ export default function GuidedSessionFormFields({
   const descriptionField = (
     <div className="studio-form__field">
       <StudioFieldLabel htmlFor="description" hintKey="description">
-        Description
+        {tf('description')}
       </StudioFieldLabel>
       <textarea
         id="description"
@@ -100,7 +122,7 @@ export default function GuidedSessionFormFields({
         value={form.description}
         onChange={onChange}
         disabled={disabled}
-        placeholder="What will someone feel or learn in this session?"
+        placeholder={tf('descriptionPlaceholder')}
       />
     </div>
   );
@@ -118,7 +140,7 @@ export default function GuidedSessionFormFields({
 
   const languageField = (
     <div className="studio-form__field">
-      <StudioFieldLabel htmlFor="language">Language</StudioFieldLabel>
+      <StudioFieldLabel htmlFor="language">{tf('language')}</StudioFieldLabel>
       <select
         id="language"
         name="language"
@@ -128,7 +150,7 @@ export default function GuidedSessionFormFields({
       >
         {GUIDED_SESSION_LANGUAGES.map((opt) => (
           <option key={opt.value} value={opt.value}>
-            {opt.label}
+            {to(LANGUAGE_LABEL_KEYS[opt.value] ?? opt.value)}
           </option>
         ))}
       </select>
@@ -138,7 +160,7 @@ export default function GuidedSessionFormFields({
   const voiceField = (
     <div className="studio-form__field">
       <StudioFieldLabel htmlFor="soundGender" hintKey="voice">
-        Voice
+        {tf('voice')}
       </StudioFieldLabel>
       <select
         id="soundGender"
@@ -149,7 +171,7 @@ export default function GuidedSessionFormFields({
       >
         {GUIDED_SESSION_SOUND_GENDERS.map((opt) => (
           <option key={opt.value} value={opt.value}>
-            {opt.label}
+            {to(VOICE_LABEL_KEYS[opt.value] ?? opt.value)}
           </option>
         ))}
       </select>
@@ -159,7 +181,7 @@ export default function GuidedSessionFormFields({
   const difficultyField = (
     <div className="studio-form__field">
       <StudioFieldLabel htmlFor="difficulty" hintKey="difficulty">
-        Difficulty
+        {tf('difficulty')}
       </StudioFieldLabel>
       <select
         id="difficulty"
@@ -170,7 +192,7 @@ export default function GuidedSessionFormFields({
       >
         {GUIDED_SESSION_DIFFICULTIES.map((opt) => (
           <option key={opt.value} value={opt.value}>
-            {opt.label}
+            {to(DIFFICULTY_LABEL_KEYS[opt.value] ?? opt.value)}
           </option>
         ))}
       </select>
@@ -180,7 +202,7 @@ export default function GuidedSessionFormFields({
   const practiceField = (
     <div className="studio-form__field">
       <StudioFieldLabel htmlFor="practice" hintKey="practice">
-        Practice
+        {tf('practice')}
       </StudioFieldLabel>
       <select
         id="practice"
@@ -191,7 +213,7 @@ export default function GuidedSessionFormFields({
       >
         {!form.practice ? (
           <option value="">
-            {taxonomyLoading ? 'Loading practices…' : 'Select practice'}
+            {taxonomyLoading ? tf('loadingPractices') : tf('selectPractice')}
           </option>
         ) : null}
         {practices.map((opt) => (
@@ -206,7 +228,7 @@ export default function GuidedSessionFormFields({
   const focusField = (
     <div className="studio-form__field">
       <StudioFieldLabel htmlFor="focus" hintKey="focus">
-        Focus
+        {tf('focus')}
       </StudioFieldLabel>
       <select
         id="focus"
@@ -218,12 +240,12 @@ export default function GuidedSessionFormFields({
         {!form.focus ? (
           <option value="">
             {!form.practice.trim()
-              ? 'Select a practice first'
+              ? tf('selectPracticeFirst')
               : taxonomyLoading
-                ? 'Loading focus options…'
+                ? tf('loadingFocus')
                 : practiceFocuses.length === 0
-                  ? 'No focus options'
-                  : 'Select focus'}
+                  ? tf('noFocus')
+                  : tf('selectFocus')}
           </option>
         ) : null}
         {focuses.map((opt) => (
@@ -289,7 +311,7 @@ export default function GuidedSessionFormFields({
 
       <div className="studio-form__field">
         <StudioFieldLabel htmlFor="instructor" hintKey="instructor">
-          Instructor
+          {tf('instructor')}
         </StudioFieldLabel>
         <input
           id="instructor"
@@ -305,7 +327,7 @@ export default function GuidedSessionFormFields({
       <div className="studio-form__row">
         <div className="studio-form__field">
           <StudioFieldLabel htmlFor="environment" hintKey="environment">
-            Environment
+            {tf('environment')}
           </StudioFieldLabel>
           <input
             id="environment"
@@ -315,13 +337,13 @@ export default function GuidedSessionFormFields({
             onChange={onChange}
             disabled={disabled}
             autoComplete="off"
-            placeholder="indoor"
+            placeholder={tf('environmentPlaceholder')}
           />
         </div>
 
         <div className="studio-form__field">
           <StudioFieldLabel htmlFor="backgroundMusic" hintKey="backgroundMusic">
-            Background music
+            {tf('backgroundMusic')}
           </StudioFieldLabel>
           <input
             id="backgroundMusic"
@@ -331,14 +353,14 @@ export default function GuidedSessionFormFields({
             onChange={onChange}
             disabled={disabled}
             autoComplete="off"
-            placeholder="ambient"
+            placeholder={tf('backgroundMusicPlaceholder')}
           />
         </div>
       </div>
 
       <div className="studio-form__field">
         <StudioFieldLabel htmlFor="backgroundMusicCreator" hintKey="backgroundMusicCreator">
-          Background music creator
+          {tf('backgroundMusicCreator')}
         </StudioFieldLabel>
         <input
           id="backgroundMusicCreator"
@@ -348,13 +370,13 @@ export default function GuidedSessionFormFields({
           onChange={onChange}
           disabled={disabled}
           autoComplete="off"
-          placeholder="Optional"
+          placeholder={tf('backgroundMusicCreatorPlaceholder')}
         />
       </div>
 
       <div className="studio-form__field">
         <StudioFieldLabel htmlFor="accessTier" hintKey="accessTier">
-          Access tier
+          {tf('accessTier')}
         </StudioFieldLabel>
         <select
           id="accessTier"
@@ -365,7 +387,7 @@ export default function GuidedSessionFormFields({
         >
           {GUIDED_SESSION_ACCESS_TIERS.map((opt) => (
             <option key={opt.value} value={opt.value}>
-              {opt.label}
+              {to(ACCESS_LABEL_KEYS[opt.value] ?? opt.value)}
             </option>
           ))}
         </select>
@@ -373,7 +395,7 @@ export default function GuidedSessionFormFields({
 
       <div className="studio-form__field">
         <StudioFieldLabel htmlFor="tagsText" hintKey="tags">
-          Tags
+          {tf('tags')}
         </StudioFieldLabel>
         <input
           id="tagsText"
@@ -383,7 +405,7 @@ export default function GuidedSessionFormFields({
           onChange={onChange}
           disabled={disabled}
           autoComplete="off"
-          placeholder="calm, morning, breath"
+          placeholder={tf('tagsPlaceholder')}
         />
       </div>
     </div>

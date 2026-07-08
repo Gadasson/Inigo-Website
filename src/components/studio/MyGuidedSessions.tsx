@@ -2,14 +2,14 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   listGuidedSessions,
   type StudioGuidedSession,
 } from '@/lib/api/studioGuidedSessions';
 import { parseStudioApiError } from '@/lib/studio/parseStudioApiError';
-import { sessionTimestampLabel } from '@/lib/studio/formatSessionDate';
+import { formatSessionDate } from '@/lib/studio/formatSessionDate';
 import {
   GUIDED_SESSION_STATUS_FILTERS,
   guidedSessionStatusLabel,
@@ -37,6 +37,7 @@ const STATUS_LABEL_KEYS: Record<string, string> = {
 
 export default function MyGuidedSessions({ active = true }: Props) {
   const { user, getIdToken } = useAuth();
+  const locale = useLocale();
   const t = useTranslations('sessions');
   const statusLabel = (status: string): string => {
     const key = STATUS_LABEL_KEYS[status];
@@ -153,7 +154,12 @@ export default function MyGuidedSessions({ active = true }: Props) {
         <ul className="studio-session-list">
           {filteredSessions.map((session) => {
             const isDraft = session.status === 'draft';
-            const timestamp = sessionTimestampLabel(session);
+            const formatted = formatSessionDate(session.updated_at ?? session.created_at, locale);
+            const timestamp = formatted
+              ? session.updated_at
+                ? t('updated', { date: formatted })
+                : t('created', { date: formatted })
+              : null;
 
             return (
               <li key={session.id}>
