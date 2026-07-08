@@ -59,17 +59,6 @@ export const GUIDED_SESSION_MEDIA_SLOTS: GuidedSessionMediaSlotConfig[] = [
     },
   },
   {
-    id: 'cover',
-    role: 'thumbnail',
-    label: 'Cover image',
-    accept: 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp',
-    emptyHint: 'Add a cover image before publishing.',
-    formatGuidance: {
-      formats: 'JPEG, PNG or WebP',
-      maxSize: 'Maximum size: 10 MB',
-    },
-  },
-  {
     id: 'video',
     role: 'video',
     label: 'Video',
@@ -78,6 +67,17 @@ export const GUIDED_SESSION_MEDIA_SLOTS: GuidedSessionMediaSlotConfig[] = [
     formatGuidance: {
       formats: 'MP4 recommended',
       maxSize: 'Maximum size: 500 MB',
+    },
+  },
+  {
+    id: 'cover',
+    role: 'thumbnail',
+    label: 'Cover image',
+    accept: 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp',
+    emptyHint: 'Add a cover image before publishing.',
+    formatGuidance: {
+      formats: 'JPEG, PNG or WebP',
+      maxSize: 'Maximum size: 10 MB',
     },
   },
 ];

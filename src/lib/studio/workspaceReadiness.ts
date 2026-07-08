@@ -142,6 +142,7 @@ export const CREATION_NAV_SEQUENCE: CreatorWorkspaceSection[] = [
   'overview',
   'content',
   'media',
+  'preview',
   'share',
 ];
 
@@ -168,8 +169,6 @@ export function isDetailsStepComplete(readiness: WorkspaceReadiness): boolean {
 export function getPreviousCreationSection(
   current: CreatorWorkspaceSection,
 ): CreatorWorkspaceSection | null {
-  if (current === 'preview') return 'media';
-
   const index = CREATION_NAV_SEQUENCE.indexOf(current);
   if (index <= 0) return null;
   return CREATION_NAV_SEQUENCE[index - 1];
@@ -178,8 +177,6 @@ export function getPreviousCreationSection(
 export function getForwardCreationSection(
   current: CreatorWorkspaceSection,
 ): CreatorWorkspaceSection | null {
-  if (current === 'preview') return 'share';
-
   const index = CREATION_NAV_SEQUENCE.indexOf(current);
   if (index === -1 || index >= CREATION_NAV_SEQUENCE.length - 1) return null;
   return CREATION_NAV_SEQUENCE[index + 1];

@@ -18,7 +18,8 @@ import { getPublicSiteUrl } from '@/lib/publicSiteUrl';
  *     "title": string,                    // required for a rich preview
  *     "short_description"?: string,
  *     "description"?: string,             // fallback if short_description missing
- *     "cover_image_url"?: string,       // absolute https preferred
+ *     "cover_image_url"?: string,       // raw thumbnail for in-page display (may include Firebase token=)
+ *     "image_url"?: string,             // sanitized OG-safe image (fallback when cover is signed)
  *     "duration_seconds"?: number,      // or "duration_display"?: string
  *     "instructor"?: string,            // or "instructor_name"
  *     "language"?: string,

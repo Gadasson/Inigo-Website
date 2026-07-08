@@ -2,6 +2,7 @@
 
 import { useEffect, useId } from 'react';
 import { createPortal } from 'react-dom';
+import { useStudioLocale } from '@/contexts/StudioIntlContext';
 
 type Props = {
   open: boolean;
@@ -27,6 +28,8 @@ export default function StudioConfirmDialog({
   onConfirm,
 }: Props) {
   const titleId = useId();
+  const { locale } = useStudioLocale();
+  const dir = locale === 'he' ? 'rtl' : 'ltr';
 
   useEffect(() => {
     if (!open) return;
@@ -58,6 +61,8 @@ export default function StudioConfirmDialog({
   return createPortal(
     <div
       className="studio-confirm-dialog__backdrop"
+      dir={dir}
+      lang={locale}
       onClick={confirmBusy ? undefined : onCancel}
     >
       <div
@@ -72,22 +77,45 @@ export default function StudioConfirmDialog({
         </h3>
         <p className="studio-confirm-dialog__text">{message}</p>
         <div className="studio-confirm-dialog__actions">
-          <button
-            type="button"
-            className="studio-confirm-dialog__btn studio-confirm-dialog__btn--secondary"
-            disabled={confirmBusy}
-            onClick={onCancel}
-          >
-            {cancelLabel}
-          </button>
-          <button
-            type="button"
-            className="studio-form__submit studio-confirm-dialog__btn"
-            disabled={confirmBusy}
-            onClick={onConfirm}
-          >
-            {confirmBusy && confirmBusyLabel ? confirmBusyLabel : confirmLabel}
-          </button>
+          {dir === 'rtl' ? (
+            <>
+              <button
+                type="button"
+                className="studio-form__submit studio-confirm-dialog__btn"
+                disabled={confirmBusy}
+                onClick={onConfirm}
+              >
+                {confirmBusy && confirmBusyLabel ? confirmBusyLabel : confirmLabel}
+              </button>
+              <button
+                type="button"
+                className="studio-confirm-dialog__btn studio-confirm-dialog__btn--secondary"
+                disabled={confirmBusy}
+                onClick={onCancel}
+              >
+                {cancelLabel}
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                className="studio-confirm-dialog__btn studio-confirm-dialog__btn--secondary"
+                disabled={confirmBusy}
+                onClick={onCancel}
+              >
+                {cancelLabel}
+              </button>
+              <button
+                type="button"
+                className="studio-form__submit studio-confirm-dialog__btn"
+                disabled={confirmBusy}
+                onClick={onConfirm}
+              >
+                {confirmBusy && confirmBusyLabel ? confirmBusyLabel : confirmLabel}
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>,

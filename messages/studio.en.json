@@ -96,7 +96,7 @@
     "publish": "Publish",
     "completeFirst": "Complete required items first",
     "confirmTitle": "Publish this session?",
-    "confirmText": "This session will appear in the Inigo library. In Studio V1, published sessions are read-only and can no longer be edited — but you can still view and share the published session page.",
+    "confirmText": "Your session will go live in Inigo. After publishing, you can't change the content — you can still view and share the session page.",
     "cancel": "Cancel",
     "publishing": "Publishing…",
     "noAccess": "You do not have access to publish this session.",
