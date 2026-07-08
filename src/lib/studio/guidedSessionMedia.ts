@@ -158,7 +158,8 @@ export type MediaValidationError =
   | { code: 'audioFormat' }
   | { code: 'imageFile' }
   | { code: 'videoFile' }
-  | { code: 'exclusivePrimaryMedia' };
+  | { code: 'exclusivePrimaryMedia' }
+  | { code: 'removeOtherPrimaryFirst' };
 
 export function validateGuidedSessionMediaFile(
   file: File,
@@ -220,19 +221,17 @@ export function hasValidGuidedSessionPrimaryMedia(session: StudioGuidedSession):
 export function validateGuidedSessionMediaAttach(
   session: StudioGuidedSession,
   role: GuidedSessionMediaRole,
+  isReplacingSameRole: boolean,
 ): MediaValidationError | null {
-  if (hasGuidedSessionPrimaryMediaConflict(session)) {
-    return { code: 'exclusivePrimaryMedia' };
+  if (isReplacingSameRole || role === 'thumbnail') {
+    return null;
   }
-
   if (role === 'audio' && hasGuidedSessionVideo(session)) {
-    return { code: 'exclusivePrimaryMedia' };
+    return { code: 'removeOtherPrimaryFirst' };
   }
-
   if (role === 'video' && hasGuidedSessionAudio(session)) {
-    return { code: 'exclusivePrimaryMedia' };
+    return { code: 'removeOtherPrimaryFirst' };
   }
-
   return null;
 }
 
@@ -241,11 +240,16 @@ export function isGuidedSessionMediaSlotBlocked(
   role: GuidedSessionMediaRole,
   isAttached: boolean,
 ): boolean {
-  if (role === 'thumbnail') return false;
-  if (hasGuidedSessionPrimaryMediaConflict(session)) return true;
-  if (role === 'audio' && hasGuidedSessionVideo(session) && !isAttached) return true;
-  if (role === 'video' && hasGuidedSessionAudio(session) && !isAttached) return true;
+  if (role === 'thumbnail' || isAttached) return false;
+  if (role === 'audio' && hasGuidedSessionVideo(session)) return true;
+  if (role === 'video' && hasGuidedSessionAudio(session)) return true;
   return false;
+}
+
+export function primaryMediaBlockedHintKey(role: GuidedSessionMediaRole): string {
+  if (role === 'audio') return 'hintAudioBlocked';
+  if (role === 'video') return 'hintVideoBlocked';
+  return 'hintAudio';
 }
 
 export function hasGuidedSessionPrimaryMedia(session: StudioGuidedSession): boolean {

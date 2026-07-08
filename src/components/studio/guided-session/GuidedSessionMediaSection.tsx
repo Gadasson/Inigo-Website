@@ -25,6 +25,7 @@ export default function GuidedSessionMediaSection({
         {t('title')}
       </h2>
       <p className="creator-workspace__section-lede">{t('lede')}</p>
+      <p className="creator-workspace__section-note">{t('uploadFlowNote')}</p>
 
       {hasGuidedSessionPrimaryMediaConflict(session) ? (
         <p className="studio-form__error" role="alert">

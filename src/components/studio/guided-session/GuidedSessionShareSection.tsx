@@ -17,6 +17,7 @@ import {
 } from '@/lib/studio/parsePublishControlError';
 import type { WorkspaceReadiness } from '@/lib/studio/workspaceReadiness';
 import WorkspaceReadinessChecklist from '@/components/studio/workspace/WorkspaceReadinessChecklist';
+import StudioConfirmDialog from '@/components/studio/StudioConfirmDialog';
 
 type Props = {
   sessionId: number;
@@ -205,38 +206,17 @@ export default function GuidedSessionShareSection({
       ) : null}
 
       {confirmOpen ? (
-        <div className="creator-workspace__dialog-backdrop" onClick={onCancelConfirm}>
-          <div
-            className="creator-workspace__dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="publish-confirm-title"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 id="publish-confirm-title" className="creator-workspace__dialog-title">
-              {t('confirmTitle')}
-            </h3>
-            <p className="creator-workspace__dialog-text">{t('confirmText')}</p>
-            <div className="creator-workspace__dialog-actions">
-              <button
-                type="button"
-                className="creator-workspace__dialog-btn creator-workspace__dialog-btn--secondary"
-                disabled={publishing}
-                onClick={onCancelConfirm}
-              >
-                {t('cancel')}
-              </button>
-              <button
-                type="button"
-                className="studio-form__submit creator-workspace__dialog-btn"
-                disabled={publishing}
-                onClick={() => void onConfirmPublish()}
-              >
-                {publishing ? t('publishing') : t('publish')}
-              </button>
-            </div>
-          </div>
-        </div>
+        <StudioConfirmDialog
+          open={confirmOpen}
+          title={t('confirmTitle')}
+          message={t('confirmText')}
+          cancelLabel={t('cancel')}
+          confirmLabel={t('publish')}
+          confirmBusy={publishing}
+          confirmBusyLabel={t('publishing')}
+          onCancel={onCancelConfirm}
+          onConfirm={() => void onConfirmPublish()}
+        />
       ) : null}
     </section>
   );

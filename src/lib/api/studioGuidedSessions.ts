@@ -177,6 +177,20 @@ export async function attachGuidedSessionMedia(
   );
 }
 
+export async function detachGuidedSessionMedia(
+  id: number,
+  mediaRole: AttachGuidedSessionMediaPayload['media_role'],
+  token: string | null,
+): Promise<StudioGuidedSession> {
+  return withToken(token, (authToken) =>
+    studioFetch<StudioGuidedSession>(`${BASE}/${id}/detach-media/`, {
+      method: 'POST',
+      body: { media_role: mediaRole },
+      token: authToken,
+    }),
+  );
+}
+
 export async function publishGuidedSession(
   id: number,
   token: string | null,

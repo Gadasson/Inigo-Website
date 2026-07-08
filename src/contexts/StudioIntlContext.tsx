@@ -24,6 +24,8 @@ export const STUDIO_LOCALES: StudioLocale[] = ['en', 'he'];
 
 const STORAGE_KEY = 'inigo-studio-locale';
 const DEFAULT_LOCALE: StudioLocale = 'en';
+/** Fixed timezone so SSR and client date formatting stay in sync. */
+const STUDIO_TIME_ZONE = 'Asia/Jerusalem';
 
 const MESSAGES: Record<StudioLocale, Record<string, unknown>> = {
   en: enMessages,
@@ -80,7 +82,7 @@ export function StudioIntlProvider({ children }: { children: ReactNode }) {
 
   return (
     <StudioLocaleContext.Provider value={value}>
-      <NextIntlClientProvider locale={locale} messages={MESSAGES[locale]}>
+      <NextIntlClientProvider locale={locale} messages={MESSAGES[locale]} timeZone={STUDIO_TIME_ZONE}>
         <div className="studio-root" dir={dir} lang={locale}>
           {children}
         </div>

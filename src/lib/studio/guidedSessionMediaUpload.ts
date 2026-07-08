@@ -185,7 +185,7 @@ export async function uploadGuidedSessionMedia(
 ): Promise<MediaUploadResult> {
   const { session, role, file, getIdToken, onProgress } = options;
 
-  const attachError = validateGuidedSessionMediaAttach(session, role);
+  const attachError = validateGuidedSessionMediaAttach(session, role, false);
   if (attachError) {
     throw new MediaUploadError('validation', attachError.code, null);
   }

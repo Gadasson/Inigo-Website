@@ -19,6 +19,11 @@ type StudioFetchOptions = {
   signal?: AbortSignal;
 };
 
+function isHtmlErrorBody(body: string): boolean {
+  const trimmed = body.trim().toLowerCase();
+  return trimmed.startsWith('<!doctype') || trimmed.startsWith('<html');
+}
+
 function parseApiErrorMessage(body: unknown, status: number): string {
   if (typeof body === 'object' && body !== null) {
     const record = body as Record<string, unknown>;
@@ -39,7 +44,15 @@ function parseApiErrorMessage(body: unknown, status: number): string {
     }
     if (fieldParts.length > 0) return fieldParts.join(' ');
   }
-  if (typeof body === 'string' && body.trim()) return body.trim();
+  if (typeof body === 'string' && body.trim()) {
+    if (isHtmlErrorBody(body)) {
+      if (status === 404) {
+        return 'API endpoint not found. Restart the Django backend so it loads the latest Studio routes.';
+      }
+      return `Request failed with status ${status}`;
+    }
+    return body.trim();
+  }
   return `Request failed with status ${status}`;
 }
 

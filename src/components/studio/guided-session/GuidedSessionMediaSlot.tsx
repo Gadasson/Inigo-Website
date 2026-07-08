@@ -7,6 +7,7 @@ import {
   guidedSessionMediaUrl,
   hasGuidedSessionPrimaryMediaConflict,
   isGuidedSessionMediaSlotBlocked,
+  primaryMediaBlockedHintKey,
   validateGuidedSessionMediaAttach,
   validateGuidedSessionMediaFile,
 } from '@/lib/studio/guidedSessionMedia';
@@ -22,7 +23,10 @@ import type {
 import type { MediaUploadResult } from '@/lib/studio/guidedSessionMediaUpload';
 import { isFirebaseStorageConfigured } from '@/lib/firebase/config';
 import { useAuth } from '@/contexts/AuthContext';
+import { detachGuidedSessionMedia } from '@/lib/api/studioGuidedSessions';
+import { parseStudioApiError } from '@/lib/studio/parseStudioApiError';
 import type { StudioGuidedSession } from '@/lib/api/studioGuidedSessions';
+import StudioConfirmDialog from '@/components/studio/StudioConfirmDialog';
 import { useTranslations } from 'next-intl';
 
 type Props = {
@@ -32,7 +36,7 @@ type Props = {
   onSessionUpdated: OnGuidedSessionMediaUpdated;
 };
 
-type SlotPhase = 'idle' | 'uploading' | 'attach_pending' | 'retrying_attach' | 'error';
+type SlotPhase = 'idle' | 'uploading' | 'removing' | 'attach_pending' | 'retrying_attach' | 'error';
 
 const SLOT_LABEL_KEYS: Record<string, string> = {
   audio: 'slotAudio',
@@ -84,6 +88,7 @@ export default function GuidedSessionMediaSlot({
   const [uploadPercent, setUploadPercent] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [pendingAttach, setPendingAttach] = useState<PendingMediaAttach | null>(null);
+  const [removeConfirmOpen, setRemoveConfirmOpen] = useState(false);
 
   const attachedUrl = guidedSessionMediaUrl(session, slot.role);
   const attachedName = guidedSessionMediaFileName(session, slot.role);
@@ -104,7 +109,7 @@ export default function GuidedSessionMediaSlot({
       return t('hintPrimaryConflict');
     }
     if (isBlocked) {
-      return slot.role === 'audio' ? t('hintAudioBlocked') : t('hintVideoBlocked');
+      return t(primaryMediaBlockedHintKey(slot.role));
     }
     return t(SLOT_HINT_KEYS[slot.id] ?? 'hintAudio');
   })();
@@ -123,6 +128,7 @@ export default function GuidedSessionMediaSlot({
 
   const statusLabel = (() => {
     if (phase === 'uploading') return t('statusUploading', { percent: uploadPercent });
+    if (phase === 'removing') return t('statusRemoving');
     if (phase === 'retrying_attach') return t('statusRetrying');
     if (phase === 'attach_pending') return t('statusAttachFailed');
     if (phase === 'error') return t('statusUploadFailed');
@@ -132,6 +138,7 @@ export default function GuidedSessionMediaSlot({
 
   const buttonLabel = (() => {
     if (phase === 'uploading') return t('buttonUploading', { percent: uploadPercent });
+    if (phase === 'removing') return t('buttonRemoving');
     if (phase === 'retrying_attach') return t('buttonRetrying');
     return isAttached || hasPendingAttach ? t('buttonReplace') : t('buttonChoose');
   })();
@@ -149,6 +156,26 @@ export default function GuidedSessionMediaSlot({
     setPhase('idle');
     setError(null);
     setUploadPercent(0);
+  };
+
+  const onRemoveAttached = async () => {
+    if (!isAttached || disabled) return;
+
+    setPhase('removing');
+    setError(null);
+
+    try {
+      const token = await getIdToken();
+      const updated = await detachGuidedSessionMedia(session.id, slot.role, token);
+      onSessionUpdated(updated);
+      clearPendingAttach();
+      setRemoveConfirmOpen(false);
+      setPhase('idle');
+      setUploadPercent(0);
+    } catch (err) {
+      setPhase('error');
+      setError(parseStudioApiError(err));
+    }
   };
 
   const onRetryAttach = async () => {
@@ -184,7 +211,7 @@ export default function GuidedSessionMediaSlot({
 
     clearPendingAttach();
 
-    const attachError = validateGuidedSessionMediaAttach(session, slot.role);
+    const attachError = validateGuidedSessionMediaAttach(session, slot.role, isAttached);
     if (attachError) {
       setPhase('idle');
       setError(formatValidationError(attachError));
@@ -240,13 +267,15 @@ export default function GuidedSessionMediaSlot({
     }
   };
 
-  const isBusy = phase === 'uploading' || phase === 'retrying_attach';
+  const isBusy = phase === 'uploading' || phase === 'removing' || phase === 'retrying_attach';
   const slotModifier =
     phase === 'attach_pending'
       ? 'attach-pending'
-      : phase === 'retrying_attach'
+      : phase === 'retrying_attach' || phase === 'uploading'
         ? 'uploading'
-        : phase;
+        : phase === 'removing'
+          ? 'removing'
+          : phase;
 
   return (
     <li
@@ -335,6 +364,16 @@ export default function GuidedSessionMediaSlot({
           disabled={isInteractionDisabled || isBusy}
           onChange={onFileChange}
         />
+        {isAttached ? (
+          <button
+            type="button"
+            className="creator-workspace__media-btn creator-workspace__media-btn--ghost"
+            disabled={disabled || isBusy}
+            onClick={() => setRemoveConfirmOpen(true)}
+          >
+            {t('buttonRemove')}
+          </button>
+        ) : null}
         <button
           type="button"
           className="creator-workspace__media-btn"
@@ -344,6 +383,20 @@ export default function GuidedSessionMediaSlot({
           {buttonLabel}
         </button>
       </div>
+
+      <StudioConfirmDialog
+        open={removeConfirmOpen}
+        title={t('confirmRemoveTitle', { type: slotLabel })}
+        message={t('confirmRemoveBody')}
+        cancelLabel={t('cancel')}
+        confirmLabel={t('buttonRemove')}
+        confirmBusy={phase === 'removing'}
+        confirmBusyLabel={t('buttonRemoving')}
+        onCancel={() => {
+          if (phase !== 'removing') setRemoveConfirmOpen(false);
+        }}
+        onConfirm={() => void onRemoveAttached()}
+      />
     </li>
   );
 }

@@ -98,7 +98,7 @@ export default async function LocaleLayout({
   }
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
+    <NextIntlClientProvider locale={locale} messages={messages} timeZone="Asia/Jerusalem">
       <LocaleHtmlAttributes />
       <WorldStateProvider>
         <ScrollOnNavigate />

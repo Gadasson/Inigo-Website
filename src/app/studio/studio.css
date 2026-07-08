@@ -1235,6 +1235,13 @@
   color: #666660;
 }
 
+.creator-workspace__section-note {
+  margin: -0.75rem 0 1.25rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: #8a8a82;
+}
+
 .creator-workspace__overview {
   margin: 0;
   display: flex;
@@ -1550,6 +1557,76 @@
   background: rgba(26, 26, 26, 0.32);
 }
 
+.studio-confirm-dialog__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: rgba(26, 26, 26, 0.38);
+}
+
+.studio-confirm-dialog {
+  width: 100%;
+  max-width: 22rem;
+  padding: 1.375rem 1.5rem;
+  border-radius: 0.875rem;
+  border: 1px solid rgba(var(--inigo-accent-rgb), 0.16);
+  background: #f8f7f3;
+  box-shadow: 0 16px 40px rgba(15, 15, 15, 0.18);
+}
+
+.studio-confirm-dialog__title {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--inigo-charcoal);
+}
+
+.studio-confirm-dialog__text {
+  margin: 0.625rem 0 0;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: #52524a;
+}
+
+.studio-confirm-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+  margin-top: 1.375rem;
+}
+
+.studio-confirm-dialog__btn {
+  padding: 0.5625rem 1rem;
+  font-size: 0.875rem;
+}
+
+.studio-confirm-dialog__btn--secondary {
+  border: 1px solid rgba(var(--inigo-accent-rgb), 0.22);
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--inigo-charcoal);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.studio-confirm-dialog__btn--secondary:hover:not(:disabled) {
+  border-color: rgba(var(--inigo-accent-rgb), 0.4);
+  color: var(--color-action-primary);
+}
+
+.studio-confirm-dialog__btn--secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .creator-workspace__dialog {
   width: 100%;
   max-width: 22rem;
@@ -1760,6 +1837,10 @@
 
 .creator-workspace__media-slot-actions {
   flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
 }
 
 .creator-workspace__media-input {

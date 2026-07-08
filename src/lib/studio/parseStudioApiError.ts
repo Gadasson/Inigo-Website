@@ -8,6 +8,9 @@ export function parseStudioApiError(error: unknown): string {
     if (error.status === 403) {
       return error.message || 'You do not have permission to perform this action.';
     }
+    if (error.status === 404) {
+      return error.message || 'This session or resource was not found.';
+    }
     if (error.status >= 500) {
       return 'The backend is unavailable right now. Please try again shortly.';
     }
