@@ -1,9 +1,11 @@
 import type { StudioGuidedSession } from '@/lib/api/studioGuidedSessions';
 import type { GuidedSessionEditorForm } from '@/lib/studio/guidedSessionEditorForm';
+import type { CreatorWorkspaceSection } from './creatorWorkspaceSections';
 import { isValidEstimatedDurationMmSs } from '@/lib/studio/formatDuration';
 import {
   hasGuidedSessionCover,
-  hasGuidedSessionPrimaryMedia,
+  hasGuidedSessionPrimaryMediaConflict,
+  hasValidGuidedSessionPrimaryMedia,
 } from '@/lib/studio/guidedSessionMedia';
 
 export type WorkspaceReadinessItemState =
@@ -62,7 +64,7 @@ export function buildGuidedSessionWorkspaceReadiness(
   form: GuidedSessionEditorForm,
 ): WorkspaceReadiness {
   const detailsComplete = isGuidedSessionDetailsComplete(form);
-  const hasPrimaryMedia = hasGuidedSessionPrimaryMedia(session);
+  const hasPrimaryMedia = hasValidGuidedSessionPrimaryMedia(session);
   const hasCover = hasGuidedSessionCover(session);
 
   const items: WorkspaceReadinessItem[] = [
@@ -78,11 +80,121 @@ export function buildGuidedSessionWorkspaceReadiness(
     },
     {
       id: 'cover',
-      state: hasCover ? 'complete' : 'recommended',
-      kind: 'recommended',
+      state: hasCover ? 'complete' : 'waiting',
+      kind: 'required',
     },
   ];
 
   return partitionReadiness(items);
+}
+
+export type CreationProgressStep = {
+  id: string;
+  section: CreatorWorkspaceSection;
+  readinessId: string;
+};
+
+export const CREATION_PROGRESS_STEPS: CreationProgressStep[] = [
+  { id: 'details', section: 'content', readinessId: 'details' },
+  { id: 'media', section: 'media', readinessId: 'primary-media' },
+  { id: 'publish', section: 'share', readinessId: 'publish' },
+];
+
+export function sectionForReadinessItem(readinessId: string): CreatorWorkspaceSection | null {
+  switch (readinessId) {
+    case 'details':
+      return 'content';
+    case 'primary-media':
+    case 'cover':
+      return 'media';
+    default:
+      return null;
+  }
+}
+
+export function getReadinessItemById(
+  readiness: WorkspaceReadiness,
+  id: string,
+): WorkspaceReadinessItem | undefined {
+  return readiness.items.find((item) => item.id === id);
+}
+
+export function getCreationStepState(
+  readiness: WorkspaceReadiness,
+  step: CreationProgressStep,
+): WorkspaceReadinessItemState {
+  if (step.readinessId === 'publish') {
+    return readiness.publishable ? 'complete' : 'waiting';
+  }
+  if (step.id === 'media') {
+    const primary = getReadinessItemById(readiness, 'primary-media');
+    const cover = getReadinessItemById(readiness, 'cover');
+    if (primary?.state === 'complete' && cover?.state === 'complete') {
+      return 'complete';
+    }
+    return 'waiting';
+  }
+  const item = getReadinessItemById(readiness, step.readinessId);
+  return item?.state ?? 'waiting';
+}
+
+export const CREATION_NAV_SEQUENCE: CreatorWorkspaceSection[] = [
+  'overview',
+  'content',
+  'media',
+  'share',
+];
+
+export function getNextCreationSection(readiness: WorkspaceReadiness): CreatorWorkspaceSection | null {
+  const details = getReadinessItemById(readiness, 'details');
+  if (details?.state !== 'complete') return 'content';
+  const primary = getReadinessItemById(readiness, 'primary-media');
+  const cover = getReadinessItemById(readiness, 'cover');
+  if (primary?.state !== 'complete' || cover?.state !== 'complete') return 'media';
+  return 'share';
+}
+
+export function isMediaStepComplete(readiness: WorkspaceReadiness): boolean {
+  return (
+    getReadinessItemById(readiness, 'primary-media')?.state === 'complete' &&
+    getReadinessItemById(readiness, 'cover')?.state === 'complete'
+  );
+}
+
+export function isDetailsStepComplete(readiness: WorkspaceReadiness): boolean {
+  return getReadinessItemById(readiness, 'details')?.state === 'complete';
+}
+
+export function getPreviousCreationSection(
+  current: CreatorWorkspaceSection,
+): CreatorWorkspaceSection | null {
+  if (current === 'preview') return 'media';
+
+  const index = CREATION_NAV_SEQUENCE.indexOf(current);
+  if (index <= 0) return null;
+  return CREATION_NAV_SEQUENCE[index - 1];
+}
+
+export function getForwardCreationSection(
+  current: CreatorWorkspaceSection,
+): CreatorWorkspaceSection | null {
+  if (current === 'preview') return 'share';
+
+  const index = CREATION_NAV_SEQUENCE.indexOf(current);
+  if (index === -1 || index >= CREATION_NAV_SEQUENCE.length - 1) return null;
+  return CREATION_NAV_SEQUENCE[index + 1];
+}
+
+export function creationSectionLabelKey(section: CreatorWorkspaceSection): string {
+  switch (section) {
+    case 'content':
+      return 'stepDetails';
+    case 'media':
+      return 'stepMedia';
+    case 'share':
+      return 'stepPublish';
+    default:
+      return section;
+  }
 }
 

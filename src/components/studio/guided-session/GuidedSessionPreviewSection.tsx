@@ -11,6 +11,7 @@ import {
   guidedSessionMediaUrl,
   hasGuidedSessionCover,
   hasGuidedSessionPrimaryMedia,
+  hasGuidedSessionPrimaryMediaConflict,
 } from '@/lib/studio/guidedSessionMedia';
 import { useTranslations } from 'next-intl';
 
@@ -71,7 +72,7 @@ export default function GuidedSessionPreviewSection({ session, form }: Props) {
   const mediaStateLabel = (() => {
     const hasAudio = Boolean(guidedSessionMediaUrl(session, 'audio'));
     const hasVideo = Boolean(guidedSessionMediaUrl(session, 'video'));
-    if (hasAudio && hasVideo) return t('mediaAudioVideo');
+    if (hasAudio && hasVideo) return t('mediaConflict');
     if (hasAudio) return t('mediaAudio');
     if (hasVideo) return t('mediaVideo');
     return t('mediaNone');
@@ -124,8 +125,12 @@ export default function GuidedSessionPreviewSection({ session, form }: Props) {
         </div>
       </article>
 
-      {!hasGuidedSessionPrimaryMedia(session) ? (
+      {!hasGuidedSessionPrimaryMedia(session) && !hasGuidedSessionPrimaryMediaConflict(session) ? (
         <p className="guided-session-preview__note">{t('notePrimary')}</p>
+      ) : null}
+
+      {hasGuidedSessionPrimaryMediaConflict(session) ? (
+        <p className="guided-session-preview__note">{t('notePrimaryConflict')}</p>
       ) : null}
 
       {!hasGuidedSessionCover(session) ? (

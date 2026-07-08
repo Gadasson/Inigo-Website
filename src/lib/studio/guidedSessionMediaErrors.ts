@@ -17,6 +17,7 @@ export type MediaUploadErrorCode =
   | 'attach'
   | 'network'
   | 'noPermission'
+  | 'exclusivePrimaryMedia'
   | 'generic';
 
 export class MediaUploadError extends Error {
@@ -56,6 +57,9 @@ function isFirebaseStorageError(error: unknown): boolean {
 /** Maps upload failures to a translation key under `mediaError.*`. */
 export function getMediaUploadErrorCode(error: unknown): MediaUploadErrorCode {
   if (error instanceof MediaUploadError) {
+    if (error.kind === 'validation' && error.causeError === 'exclusivePrimaryMedia') {
+      return 'exclusivePrimaryMedia';
+    }
     if (error.kind === 'config') return 'config';
     if (error.kind === 'auth') return 'auth';
     if (error.kind === 'firebase') return 'firebase';

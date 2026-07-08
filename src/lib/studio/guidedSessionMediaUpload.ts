@@ -13,6 +13,7 @@ import {
   buildGuidedSessionFileMetadata,
   buildGuidedSessionStoragePath,
   fileExtension,
+  validateGuidedSessionMediaAttach,
   type GuidedSessionMediaRole,
 } from '@/lib/studio/guidedSessionMedia';
 import { MediaUploadError } from '@/lib/studio/guidedSessionMediaErrors';
@@ -183,6 +184,12 @@ export async function uploadGuidedSessionMedia(
   options: UploadGuidedSessionMediaOptions,
 ): Promise<MediaUploadResult> {
   const { session, role, file, getIdToken, onProgress } = options;
+
+  const attachError = validateGuidedSessionMediaAttach(session, role);
+  if (attachError) {
+    throw new MediaUploadError('validation', attachError.code, null);
+  }
+
   const ext = fileExtension(file.name);
   const storagePath = buildGuidedSessionStoragePath(session.session_id, role, ext);
   const fileMetadata = buildGuidedSessionFileMetadata(file);

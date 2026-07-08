@@ -6,7 +6,6 @@ import type { GuidedSessionDurationMediaSource } from '@/lib/studio/guidedSessio
 import type { GuidedSessionTaxonomy } from '@/lib/studio/guidedSessionTaxonomy';
 import { getFocusOptionsForPractice } from '@/lib/studio/guidedSessionTaxonomy';
 import {
-  GUIDED_SESSION_ACCESS_TIERS,
   GUIDED_SESSION_DIFFICULTIES,
   GUIDED_SESSION_LANGUAGES,
   GUIDED_SESSION_SOUND_GENDERS,
@@ -43,13 +42,6 @@ const DIFFICULTY_LABEL_KEYS: Record<string, string> = {
   beginner: 'difficultyBeginner',
   intermediate: 'difficultyIntermediate',
   advanced: 'difficultyAdvanced',
-};
-
-const ACCESS_LABEL_KEYS: Record<string, string> = {
-  free: 'accessFree',
-  plus: 'accessPlus',
-  premium: 'accessPremium',
-  pro: 'accessPro',
 };
 
 function taxonomySelectDisabled(
@@ -372,25 +364,6 @@ export default function GuidedSessionFormFields({
           autoComplete="off"
           placeholder={tf('backgroundMusicCreatorPlaceholder')}
         />
-      </div>
-
-      <div className="studio-form__field">
-        <StudioFieldLabel htmlFor="accessTier" hintKey="accessTier">
-          {tf('accessTier')}
-        </StudioFieldLabel>
-        <select
-          id="accessTier"
-          name="accessTier"
-          value={form.accessTier}
-          onChange={onChange}
-          disabled={disabled}
-        >
-          {GUIDED_SESSION_ACCESS_TIERS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {to(ACCESS_LABEL_KEYS[opt.value] ?? opt.value)}
-            </option>
-          ))}
-        </select>
       </div>
 
       <div className="studio-form__field">

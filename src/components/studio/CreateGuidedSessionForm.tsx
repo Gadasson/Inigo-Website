@@ -15,6 +15,7 @@ import {
   type GuidedSessionEditorForm,
 } from '@/lib/studio/guidedSessionEditorForm';
 import { buildGuidedSessionTaxonomyPayload, applyPracticeSelectionToForm } from '@/lib/studio/guidedSessionTaxonomy';
+import { GUIDED_SESSION_CREATE_DEFAULTS } from '@/lib/studio/guidedSessionOptions';
 import { useGuidedSessionTaxonomy } from '@/hooks/useGuidedSessionTaxonomy';
 import GuidedSessionFormFields from '@/components/studio/GuidedSessionFormFields';
 
@@ -54,6 +55,9 @@ export default function CreateGuidedSessionForm() {
   );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [createdSession, setCreatedSession] = useState<{ id: number; title: string } | null>(
+    null,
+  );
 
   useEffect(() => {
     if (!user) return;
@@ -136,20 +140,54 @@ export default function CreateGuidedSessionForm() {
           background_music_creator: musicCreator || undefined,
           language: form.language,
           sound_gender: form.soundGender,
-          access_tier: form.accessTier,
+          access_tier: GUIDED_SESSION_CREATE_DEFAULTS.access_tier,
           tags: parseTagsText(form.tagsText),
           sub_category_codes: taxonomyPayload.sub_category_codes,
         },
         token,
       );
 
-      router.push(`/studio/guided-sessions/${draft.id}`);
+      setCreatedSession({ id: draft.id, title: draft.title.trim() || form.title.trim() });
     } catch (err) {
       setError(parseStudioApiError(err));
     } finally {
       setSubmitting(false);
     }
   };
+
+  if (createdSession) {
+    return (
+      <div className="studio-form-page">
+        <header className="studio-form-page__header">
+          <h1 className="studio-form-page__title">{t('successTitle')}</h1>
+          <p className="studio-form-page__lede">{t('successBody', { title: createdSession.title })}</p>
+        </header>
+
+        <div className="studio-create-success">
+          <div className="studio-create-success__actions">
+            <button
+              type="button"
+              className="studio-form__submit"
+              onClick={() =>
+                router.push(
+                  `/studio/guided-sessions/${createdSession.id}?section=media&welcome=1`,
+                )
+              }
+            >
+              {t('continueSetup')}
+            </button>
+            <button
+              type="button"
+              className="studio-create-success__secondary"
+              onClick={() => router.push('/studio?tab=sessions')}
+            >
+              {t('backToStudio')}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="studio-form-page">

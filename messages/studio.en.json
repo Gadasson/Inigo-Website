@@ -79,7 +79,11 @@
     "lede": "Start with the basics. You can refine everything later.",
     "submit": "Create draft",
     "submitBusy": "Creating…",
-    "defaultsNote": "Instructor, environment, music, and access are set to calm defaults for now — you can refine them later."
+    "defaultsNote": "Instructor, environment, and music are set to calm defaults for now — you can refine them later.",
+    "successTitle": "Draft created",
+    "successBody": "\"{title}\" is saved as a draft. Continue setup now, or come back later from Studio.",
+    "continueSetup": "Continue setup",
+    "backToStudio": "Back to Studio"
   },
   "publish": {
     "cooldownWithTime": "You can publish your next session after {time}.",
@@ -116,7 +120,11 @@
     "tabsAria": "Workspace sections",
     "contentAria": "Content",
     "contentReadonly": "Shared and archived sessions are read-only in Studio V1.",
-    "contentAutosaved": "Changes are saved automatically."
+    "contentAutosaved": "Changes are saved automatically.",
+    "continueToMedia": "Continue to Media",
+    "continueToPublish": "Continue to Publish",
+    "welcomeHint": "Add your audio next — it is required before you can publish.",
+    "dismissWelcome": "Dismiss"
   },
   "tabs": {
     "overview": "Overview",
@@ -133,6 +141,7 @@
   "overview": {
     "title": "Overview",
     "lede": "A quick read on what you are creating — details live in Content.",
+    "draftIncompleteLede": "Complete the steps below to publish.",
     "fieldTitle": "Title",
     "fieldDescription": "Description",
     "fieldDuration": "Duration",
@@ -208,14 +217,18 @@
   },
   "media": {
     "title": "Media",
-    "lede": "Add the audio, cover image, or video people will experience in the app.",
+    "lede": "Add either audio or video, plus a required cover image.",
     "readonly": "Media can only be changed while this session is a draft.",
     "slotAudio": "Audio",
     "slotCover": "Cover image",
     "slotVideo": "Video",
     "hintAudio": "Add the guided audio for this session.",
-    "hintCover": "Optional, but helps people recognize your session.",
-    "hintVideo": "Use video instead of audio, or add both.",
+    "hintCover": "Required before publishing. Helps people recognize your session.",
+    "hintVideo": "Add video instead of audio.",
+    "hintAudioBlocked": "Video is already added. Only one of audio or video is allowed.",
+    "hintVideoBlocked": "Audio is already added. Only one of audio or video is allowed.",
+    "hintPrimaryConflict": "Both audio and video are attached. Remove one before continuing.",
+    "primaryConflict": "This session has both audio and video. Keep only one before publishing.",
     "formatsAudio": "MP3 or M4A",
     "formatsCover": "JPEG, PNG or WebP",
     "formatsVideo": "MP4 recommended",
@@ -242,6 +255,7 @@
     "attach": "The media uploaded successfully, but could not be attached to this session. Please try again.",
     "network": "Could not connect. Check your connection and try again.",
     "noPermission": "You do not have permission to upload media for this session.",
+    "exclusivePrimaryMedia": "Only one of audio or video is allowed for each session.",
     "generic": "Upload failed. Please try again."
   },
   "mediaValidation": {
@@ -249,7 +263,8 @@
     "tooLarge": "This file is too large. Please choose one under {maxMb} MB.",
     "audioFormat": "Please upload an MP3 or M4A audio file.",
     "imageFile": "Please choose an image file.",
-    "videoFile": "Please choose a video file."
+    "videoFile": "Please choose a video file.",
+    "exclusivePrimaryMedia": "Only one of audio or video is allowed for each session."
   },
   "preview": {
     "title": "Preview",
@@ -260,18 +275,31 @@
     "mediaAudioVideo": "Audio and video attached",
     "mediaAudio": "Audio attached",
     "mediaVideo": "Video attached",
+    "mediaConflict": "Audio and video attached — keep only one",
     "mediaNone": "Add audio or video in Media",
     "notePrimary": "Add audio or video in Media to complete the experience preview.",
-    "noteCover": "A cover image is optional but helps this session stand out in the library."
+    "notePrimaryConflict": "Remove either audio or video in Media — only one is allowed.",
+    "noteCover": "A cover image is required before you can publish this session."
   },
   "readiness": {
     "itemDetails": "Details",
-    "itemPrimaryMedia": "Audio or video",
+    "itemPrimaryMedia": "Audio or video (one only)",
     "itemCover": "Cover image",
     "stateComplete": "Complete",
     "stateWaiting": "Waiting",
     "stateRecommended": "Recommended",
     "stateComing": "Coming next"
+  },
+  "creationProgress": {
+    "aria": "Setup progress",
+    "stepDetails": "Details",
+    "stepMedia": "Media",
+    "stepPublish": "Publish"
+  },
+  "creationNav": {
+    "aria": "Setup navigation",
+    "backToStep": "Back to {step}",
+    "continueToStep": "Continue to {step}"
   },
   "validation": {
     "title": "Please add a title.",

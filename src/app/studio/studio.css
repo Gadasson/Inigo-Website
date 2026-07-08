@@ -909,6 +909,7 @@
 .studio-workspace__container--creator {
   max-width: 42rem;
   padding-top: 1.5rem;
+  padding-bottom: 2.5rem;
 }
 
 /* --- Creator Workspace (content-type agnostic shell) --- */
@@ -992,6 +993,231 @@
 
 .creator-workspace__panel {
   min-height: 12rem;
+  padding-bottom: 0.25rem;
+}
+
+.creator-workspace__section {
+  margin: 0;
+}
+
+.creator-workspace__creation-progress {
+  margin: 0 0 1.25rem;
+}
+
+.creator-workspace__creation-steps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.creator-workspace__creation-step {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.creator-workspace__creation-connector {
+  flex: 1 1 1.5rem;
+  min-width: 0.75rem;
+  height: 1px;
+  margin-inline: 0.375rem;
+  background: rgba(var(--inigo-accent-rgb), 0.22);
+}
+
+.creator-workspace__creation-step-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4375rem;
+  margin: 0;
+  padding: 0.375rem 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: none;
+  color: #666660;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.creator-workspace__creation-step-btn:hover {
+  color: var(--inigo-charcoal);
+}
+
+.creator-workspace__creation-step-marker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.375rem;
+  height: 1.375rem;
+  border-radius: 50%;
+  border: 1px solid rgba(var(--inigo-accent-rgb), 0.28);
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.creator-workspace__creation-step-btn--complete .creator-workspace__creation-step-marker {
+  border-color: rgba(var(--inigo-accent-rgb), 0.45);
+  background: rgba(var(--inigo-accent-rgb), 0.12);
+  color: var(--color-action-primary);
+}
+
+.creator-workspace__creation-step-btn--next {
+  color: var(--inigo-charcoal);
+  font-weight: 600;
+}
+
+.creator-workspace__creation-step-btn--next .creator-workspace__creation-step-marker {
+  border-color: var(--color-action-primary);
+  background: var(--color-action-primary);
+  color: var(--color-surface-elevated);
+}
+
+.creator-workspace__creation-step-btn--active {
+  border-color: rgba(var(--inigo-accent-rgb), 0.2);
+  background: rgba(var(--inigo-accent-rgb), 0.06);
+  color: var(--inigo-charcoal);
+}
+
+.creator-workspace__welcome {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  padding: 0.875rem 1rem;
+  border-radius: 0.625rem;
+  border: 1px solid rgba(var(--inigo-accent-rgb), 0.22);
+  background: rgba(var(--inigo-accent-rgb), 0.06);
+}
+
+.creator-workspace__welcome-text {
+  margin: 0;
+  flex: 1 1 12rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--inigo-charcoal);
+}
+
+.creator-workspace__welcome-dismiss {
+  margin: 0;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid rgba(var(--inigo-accent-rgb), 0.28);
+  border-radius: 0.375rem;
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--inigo-charcoal);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.creator-workspace__welcome-dismiss:hover {
+  background: #fff;
+  border-color: rgba(var(--inigo-accent-rgb), 0.4);
+}
+
+.creator-workspace__next-step {
+  margin-top: 1.5rem;
+  padding-top: 0.25rem;
+}
+
+.creator-workspace__creation-nav {
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  padding-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
+  border-top: 1px solid rgba(var(--inigo-accent-rgb), 0.14);
+}
+
+.creator-workspace__creation-nav-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+}
+
+.creator-workspace__creation-nav-spacer {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.creator-workspace__creation-nav-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0.6875rem 1rem;
+  border: 1px solid rgba(var(--inigo-accent-rgb), 0.28);
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--inigo-charcoal);
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.creator-workspace__creation-nav-back:hover {
+  background: #fff;
+  border-color: rgba(var(--inigo-accent-rgb), 0.4);
+}
+
+.creator-workspace__creation-nav-forward {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-inline-start: auto;
+}
+
+.studio-create-success {
+  padding: 1.5rem;
+  border-radius: 0.875rem;
+  border: 1px solid rgba(var(--inigo-accent-rgb), 0.22);
+  background: linear-gradient(
+    152deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(var(--inigo-accent-rgb), 0.08) 100%
+  );
+  box-shadow: 0 4px 20px rgba(var(--inigo-accent-rgb), 0.1);
+}
+
+.studio-create-success__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.studio-create-success__secondary {
+  margin: 0;
+  padding: 0.6875rem 1.25rem;
+  border: 1px solid rgba(var(--inigo-accent-rgb), 0.28);
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--inigo-charcoal);
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.studio-create-success__secondary:hover {
+  background: #fff;
+  border-color: rgba(var(--inigo-accent-rgb), 0.4);
 }
 
 .creator-workspace__section-title {
@@ -1198,6 +1424,7 @@
 
 .creator-workspace__share-actions {
   margin-top: 1.25rem;
+  margin-bottom: 0.25rem;
 }
 
 .creator-workspace__publish-notice {
@@ -2035,6 +2262,11 @@
 [dir='rtl'].studio-root .studio-back-arrow,
 [dir='rtl'].studio-root .studio-card__cta-arrow,
 [dir='rtl'].studio-root .studio-session-item__open {
+  display: inline-block;
+  transform: scaleX(-1);
+}
+
+[dir='rtl'].studio-root .creator-workspace__creation-nav-forward .studio-card__cta-arrow {
   display: inline-block;
   transform: scaleX(-1);
 }

@@ -5,6 +5,9 @@ import {
   type GuidedSessionMediaSlotConfig,
   guidedSessionMediaFileName,
   guidedSessionMediaUrl,
+  hasGuidedSessionPrimaryMediaConflict,
+  isGuidedSessionMediaSlotBlocked,
+  validateGuidedSessionMediaAttach,
   validateGuidedSessionMediaFile,
 } from '@/lib/studio/guidedSessionMedia';
 import {
@@ -86,6 +89,9 @@ export default function GuidedSessionMediaSlot({
   const attachedName = guidedSessionMediaFileName(session, slot.role);
   const isAttached = Boolean(attachedUrl);
   const hasPendingAttach = pendingAttach !== null;
+  const hasConflict = hasGuidedSessionPrimaryMediaConflict(session);
+  const isBlocked = isGuidedSessionMediaSlotBlocked(session, slot.role, isAttached);
+  const isInteractionDisabled = disabled || isBlocked;
 
   const displayFileName =
     (isAttached && attachedName) ||
@@ -93,7 +99,15 @@ export default function GuidedSessionMediaSlot({
     null;
 
   const slotLabel = t(SLOT_LABEL_KEYS[slot.id] ?? slot.id);
-  const slotHint = t(SLOT_HINT_KEYS[slot.id] ?? 'hintAudio');
+  const slotHint = (() => {
+    if (hasConflict && (slot.role === 'audio' || slot.role === 'video')) {
+      return t('hintPrimaryConflict');
+    }
+    if (isBlocked) {
+      return slot.role === 'audio' ? t('hintAudioBlocked') : t('hintVideoBlocked');
+    }
+    return t(SLOT_HINT_KEYS[slot.id] ?? 'hintAudio');
+  })();
   const slotFormats = t(SLOT_FORMATS_KEYS[slot.id] ?? 'formatsAudio');
   const slotMaxSize = t('maxSize', { size: SLOT_MAX_SIZE[slot.id] ?? '' });
 
@@ -169,6 +183,14 @@ export default function GuidedSessionMediaSlot({
     if (!file || disabled) return;
 
     clearPendingAttach();
+
+    const attachError = validateGuidedSessionMediaAttach(session, slot.role);
+    if (attachError) {
+      setPhase('idle');
+      setError(formatValidationError(attachError));
+      setUploadPercent(0);
+      return;
+    }
 
     const validationError = validateGuidedSessionMediaFile(file, slot.role);
     if (validationError) {
@@ -310,13 +332,13 @@ export default function GuidedSessionMediaSlot({
           type="file"
           accept={slot.accept}
           className="creator-workspace__media-input"
-          disabled={disabled || isBusy}
+          disabled={isInteractionDisabled || isBusy}
           onChange={onFileChange}
         />
         <button
           type="button"
           className="creator-workspace__media-btn"
-          disabled={disabled || isBusy}
+          disabled={isInteractionDisabled || isBusy}
           onClick={onChooseFile}
         >
           {buttonLabel}

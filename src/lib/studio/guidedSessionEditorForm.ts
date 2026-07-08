@@ -145,7 +145,6 @@ export function buildGuidedSessionPatch(
   if (form.backgroundMusicCreator.trim() !== baseline.backgroundMusicCreator.trim()) {
     patch.background_music_creator = form.backgroundMusicCreator.trim();
   }
-  if (form.accessTier !== baseline.accessTier) patch.access_tier = form.accessTier;
 
   const nextTags = parseTagsText(form.tagsText);
   const baseTags = parseTagsText(baseline.tagsText);

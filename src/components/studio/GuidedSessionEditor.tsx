@@ -89,6 +89,7 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
   const [saveState, setSaveState] = useState<SaveState>('idle');
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isReady, setIsReady] = useState(false);
+  const [welcomeVisible, setWelcomeVisible] = useState(false);
 
   const activeSection = parseCreatorWorkspaceSection(searchParams.get('section'));
 
@@ -97,6 +98,7 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
   const setActiveSection = useCallback(
     (section: CreatorWorkspaceSection) => {
       const params = new URLSearchParams(searchParams.toString());
+      params.delete('welcome');
       if (section === 'overview') {
         params.delete('section');
       } else {
@@ -107,6 +109,17 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
     },
     [pathname, router, searchParams],
   );
+
+  const dismissWelcome = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem(`studio-welcome-dismissed-${sessionId}`, '1');
+    }
+    setWelcomeVisible(false);
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('welcome');
+    const query = params.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  }, [pathname, router, searchParams, sessionId]);
 
   const onSessionUpdated = useCallback<OnGuidedSessionMediaUpdated>((updated, meta) => {
     setSession(updated);
@@ -191,6 +204,16 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
       cancelled = true;
     };
   }, [sessionId, getIdToken]);
+
+  useEffect(() => {
+    if (searchParams.get('welcome') !== '1') {
+      setWelcomeVisible(false);
+      return;
+    }
+    if (typeof window === 'undefined') return;
+    const dismissed = sessionStorage.getItem(`studio-welcome-dismissed-${sessionId}`);
+    setWelcomeVisible(!dismissed);
+  }, [searchParams, sessionId]);
 
   const onFieldChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -313,6 +336,9 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
       saveState={saveState}
       activeSection={activeSection}
       onSectionChange={setActiveSection}
+      readiness={status === 'draft' ? workspaceReadiness : null}
+      welcomeMessage={welcomeVisible && isEditable ? t('welcomeHint') : null}
+      onDismissWelcome={dismissWelcome}
     >
       {activeSection === 'overview' ? (
         <WorkspaceOverview
@@ -324,6 +350,7 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
           statusLabel={statusLabel(status)}
           lastUpdated={updatedAtDisplay}
           creator={form.instructor}
+          draftIncomplete={isEditable && workspaceReadiness ? !workspaceReadiness.publishable : false}
         />
       ) : null}
 

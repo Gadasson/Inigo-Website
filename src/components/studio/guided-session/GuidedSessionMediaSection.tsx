@@ -1,7 +1,7 @@
 'use client';
 
 import type { StudioGuidedSession } from '@/lib/api/studioGuidedSessions';
-import { GUIDED_SESSION_MEDIA_SLOTS } from '@/lib/studio/guidedSessionMedia';
+import { GUIDED_SESSION_MEDIA_SLOTS, hasGuidedSessionPrimaryMediaConflict } from '@/lib/studio/guidedSessionMedia';
 import type { OnGuidedSessionMediaUpdated } from '@/lib/studio/guidedSessionMediaTypes';
 import GuidedSessionMediaSlot from '@/components/studio/guided-session/GuidedSessionMediaSlot';
 import { useTranslations } from 'next-intl';
@@ -25,6 +25,12 @@ export default function GuidedSessionMediaSection({
         {t('title')}
       </h2>
       <p className="creator-workspace__section-lede">{t('lede')}</p>
+
+      {hasGuidedSessionPrimaryMediaConflict(session) ? (
+        <p className="studio-form__error" role="alert">
+          {t('primaryConflict')}
+        </p>
+      ) : null}
 
       {!isEditable ? (
         <p className="creator-workspace__media-readonly" role="status">

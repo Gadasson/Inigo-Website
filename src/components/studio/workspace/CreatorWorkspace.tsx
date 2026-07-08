@@ -7,6 +7,9 @@ import {
   CREATOR_WORKSPACE_SECTIONS,
   type CreatorWorkspaceSection,
 } from '@/lib/studio/creatorWorkspaceSections';
+import type { WorkspaceReadiness } from '@/lib/studio/workspaceReadiness';
+import WorkspaceCreationProgress from '@/components/studio/workspace/WorkspaceCreationProgress';
+import WorkspaceCreationNav from '@/components/studio/workspace/WorkspaceCreationNav';
 
 type Props = {
   title: string;
@@ -17,6 +20,9 @@ type Props = {
   activeSection: CreatorWorkspaceSection;
   onSectionChange: (section: CreatorWorkspaceSection) => void;
   backHref?: string;
+  readiness?: WorkspaceReadiness | null;
+  welcomeMessage?: string | null;
+  onDismissWelcome?: () => void;
   children: ReactNode;
 };
 
@@ -29,6 +35,9 @@ export default function CreatorWorkspace({
   activeSection,
   onSectionChange,
   backHref = '/studio?tab=sessions',
+  readiness = null,
+  welcomeMessage = null,
+  onDismissWelcome,
   children,
 }: Props) {
   const t = useTranslations('editor');
@@ -81,7 +90,37 @@ export default function CreatorWorkspace({
         ))}
       </nav>
 
-      <div className="creator-workspace__panel">{children}</div>
+      {status === 'draft' && readiness ? (
+        <WorkspaceCreationProgress
+          readiness={readiness}
+          activeSection={activeSection}
+          onSectionChange={onSectionChange}
+        />
+      ) : null}
+
+      <div className="creator-workspace__panel">
+        {welcomeMessage ? (
+          <div className="creator-workspace__welcome" role="status">
+            <p className="creator-workspace__welcome-text">{welcomeMessage}</p>
+            {onDismissWelcome ? (
+              <button
+                type="button"
+                className="creator-workspace__welcome-dismiss"
+                onClick={onDismissWelcome}
+              >
+                {t('dismissWelcome')}
+              </button>
+            ) : null}
+          </div>
+        ) : null}
+        {children}
+        {status === 'draft' && readiness ? (
+          <WorkspaceCreationNav
+            activeSection={activeSection}
+            onSectionChange={onSectionChange}
+          />
+        ) : null}
+      </div>
     </div>
   );
 }

@@ -12,6 +12,7 @@ type Props = {
   statusLabel: string;
   lastUpdated: string | null;
   creator: string;
+  draftIncomplete?: boolean;
 };
 
 export default function WorkspaceOverview({
@@ -23,6 +24,7 @@ export default function WorkspaceOverview({
   statusLabel,
   lastUpdated,
   creator,
+  draftIncomplete = false,
 }: Props) {
   const t = useTranslations('overview');
   const td = useTranslations('duration');
@@ -32,7 +34,9 @@ export default function WorkspaceOverview({
       <h2 id="workspace-overview-heading" className="creator-workspace__section-title">
         {t('title')}
       </h2>
-      <p className="creator-workspace__section-lede">{t('lede')}</p>
+      <p className="creator-workspace__section-lede">
+        {draftIncomplete ? t('draftIncompleteLede') : t('lede')}
+      </p>
 
       <dl className="creator-workspace__overview">
         <div className="creator-workspace__overview-item">

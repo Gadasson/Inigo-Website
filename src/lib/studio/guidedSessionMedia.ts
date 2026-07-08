@@ -63,7 +63,7 @@ export const GUIDED_SESSION_MEDIA_SLOTS: GuidedSessionMediaSlotConfig[] = [
     role: 'thumbnail',
     label: 'Cover image',
     accept: 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp',
-    emptyHint: 'Optional, but helps people recognize your session.',
+    emptyHint: 'Add a cover image before publishing.',
     formatGuidance: {
       formats: 'JPEG, PNG or WebP',
       maxSize: 'Maximum size: 10 MB',
@@ -74,7 +74,7 @@ export const GUIDED_SESSION_MEDIA_SLOTS: GuidedSessionMediaSlotConfig[] = [
     role: 'video',
     label: 'Video',
     accept: 'video/*,.mp4',
-    emptyHint: 'Use video instead of audio, or add both.',
+    emptyHint: 'Add video instead of audio.',
     formatGuidance: {
       formats: 'MP4 recommended',
       maxSize: 'Maximum size: 500 MB',
@@ -157,7 +157,8 @@ export type MediaValidationError =
   | { code: 'tooLarge'; maxMb: number }
   | { code: 'audioFormat' }
   | { code: 'imageFile' }
-  | { code: 'videoFile' };
+  | { code: 'videoFile' }
+  | { code: 'exclusivePrimaryMedia' };
 
 export function validateGuidedSessionMediaFile(
   file: File,
@@ -198,8 +199,57 @@ export function buildGuidedSessionFileMetadata(file: File): Record<string, unkno
   };
 }
 
+export function hasGuidedSessionAudio(session: StudioGuidedSession): boolean {
+  return Boolean(guidedSessionMediaUrl(session, 'audio'));
+}
+
+export function hasGuidedSessionVideo(session: StudioGuidedSession): boolean {
+  return Boolean(guidedSessionMediaUrl(session, 'video'));
+}
+
+export function hasGuidedSessionPrimaryMediaConflict(session: StudioGuidedSession): boolean {
+  return hasGuidedSessionAudio(session) && hasGuidedSessionVideo(session);
+}
+
+export function hasValidGuidedSessionPrimaryMedia(session: StudioGuidedSession): boolean {
+  const hasAudio = hasGuidedSessionAudio(session);
+  const hasVideo = hasGuidedSessionVideo(session);
+  return (hasAudio && !hasVideo) || (!hasAudio && hasVideo);
+}
+
+export function validateGuidedSessionMediaAttach(
+  session: StudioGuidedSession,
+  role: GuidedSessionMediaRole,
+): MediaValidationError | null {
+  if (hasGuidedSessionPrimaryMediaConflict(session)) {
+    return { code: 'exclusivePrimaryMedia' };
+  }
+
+  if (role === 'audio' && hasGuidedSessionVideo(session)) {
+    return { code: 'exclusivePrimaryMedia' };
+  }
+
+  if (role === 'video' && hasGuidedSessionAudio(session)) {
+    return { code: 'exclusivePrimaryMedia' };
+  }
+
+  return null;
+}
+
+export function isGuidedSessionMediaSlotBlocked(
+  session: StudioGuidedSession,
+  role: GuidedSessionMediaRole,
+  isAttached: boolean,
+): boolean {
+  if (role === 'thumbnail') return false;
+  if (hasGuidedSessionPrimaryMediaConflict(session)) return true;
+  if (role === 'audio' && hasGuidedSessionVideo(session) && !isAttached) return true;
+  if (role === 'video' && hasGuidedSessionAudio(session) && !isAttached) return true;
+  return false;
+}
+
 export function hasGuidedSessionPrimaryMedia(session: StudioGuidedSession): boolean {
-  return Boolean(guidedSessionMediaUrl(session, 'audio') || guidedSessionMediaUrl(session, 'video'));
+  return hasValidGuidedSessionPrimaryMedia(session);
 }
 
 export function hasGuidedSessionCover(session: StudioGuidedSession): boolean {
