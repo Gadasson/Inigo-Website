@@ -53,6 +53,7 @@ export default function GuidedSessionWorkspaceTabs({
         sessionId={sessionId}
         sessionSlug={session.session_id}
         status={status}
+        isAvailable={session.is_available ?? false}
         readiness={readiness}
         onSessionPublished={onSessionPublished}
       />

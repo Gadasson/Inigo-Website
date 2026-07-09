@@ -23,6 +23,7 @@ type Props = {
   sessionId: number;
   sessionSlug: string;
   status: string;
+  isAvailable: boolean;
   readiness: WorkspaceReadiness;
   onSessionPublished: (session: StudioGuidedSession) => void;
 };
@@ -35,6 +36,7 @@ export default function GuidedSessionShareSection({
   sessionId,
   sessionSlug,
   status,
+  isAvailable,
   readiness,
   onSessionPublished,
 }: Props) {
@@ -49,7 +51,8 @@ export default function GuidedSessionShareSection({
   const [copied, setCopied] = useState(false);
 
   const isDraft = status === 'draft';
-  const isPublished = status === 'available';
+  const isSubmitted = status === 'available' && !isAvailable;
+  const isLive = status === 'available' && isAvailable;
   const { publishable } = readiness;
 
   const slug = publishedSlug ?? sessionSlug;
@@ -109,7 +112,7 @@ export default function GuidedSessionShareSection({
     }
   };
 
-  if (isPublished) {
+  if (isLive) {
     return (
       <section className="creator-workspace__section" aria-labelledby="workspace-publish-heading">
         <h2 id="workspace-publish-heading" className="creator-workspace__section-title">
@@ -150,6 +153,27 @@ export default function GuidedSessionShareSection({
               </Link>
             </div>
           )}
+        </div>
+      </section>
+    );
+  }
+
+  if (isSubmitted) {
+    return (
+      <section className="creator-workspace__section" aria-labelledby="workspace-publish-heading">
+        <h2 id="workspace-publish-heading" className="creator-workspace__section-title">
+          {t('submittedTitle')}
+        </h2>
+
+        <div className="creator-workspace__published" role="status">
+          <p className="creator-workspace__published-title">{t('submittedHeading')}</p>
+          <p className="creator-workspace__published-text">{t('submittedText')}</p>
+
+          <div className="creator-workspace__published-actions">
+            <Link href="/studio?tab=sessions" className="creator-workspace__published-btn">
+              {t('backToSessions')}
+            </Link>
+          </div>
         </div>
       </section>
     );
