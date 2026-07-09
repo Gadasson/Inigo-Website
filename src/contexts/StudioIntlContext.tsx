@@ -44,20 +44,52 @@ function isStudioLocale(value: unknown): value is StudioLocale {
   return value === 'en' || value === 'he';
 }
 
+/** Match next-intl / Accept-Language: Hebrew browsers → he, otherwise en. */
+function detectBrowserStudioLocale(): StudioLocale {
+  if (typeof navigator === 'undefined') {
+    return DEFAULT_LOCALE;
+  }
+
+  const languages = navigator.languages?.length
+    ? navigator.languages
+    : [navigator.language];
+
+  for (const language of languages) {
+    const code = language.toLowerCase().split('-')[0];
+    if (code === 'he' || code === 'iw') {
+      return 'he';
+    }
+  }
+
+  return DEFAULT_LOCALE;
+}
+
+function readPersistedStudioLocale(): StudioLocale | null {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (isStudioLocale(stored)) {
+      return stored;
+    }
+
+    // Honor marketing-site language when the user already chose one there.
+    const siteLocale = localStorage.getItem('inigo-locale');
+    if (isStudioLocale(siteLocale)) {
+      return siteLocale;
+    }
+  } catch {
+    /* localStorage unavailable */
+  }
+
+  return null;
+}
+
 export function StudioIntlProvider({ children }: { children: ReactNode }) {
   // Deterministic on server + first client render to avoid hydration mismatch;
-  // the stored preference is applied in an effect right after mount.
+  // locale is resolved from storage or browser language right after mount.
   const [locale, setLocaleState] = useState<StudioLocale>(DEFAULT_LOCALE);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (isStudioLocale(stored)) {
-        setLocaleState(stored);
-      }
-    } catch {
-      /* localStorage unavailable — keep default */
-    }
+    setLocaleState(readPersistedStudioLocale() ?? detectBrowserStudioLocale());
   }, []);
 
   const setLocale = useCallback((next: StudioLocale) => {
