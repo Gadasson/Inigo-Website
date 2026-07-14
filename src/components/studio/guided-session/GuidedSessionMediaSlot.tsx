@@ -57,6 +57,12 @@ const SLOT_FORMATS_KEYS: Record<string, string> = {
   video: 'formatsVideo',
 };
 
+const SLOT_RECOMMENDED_KEYS: Record<string, string> = {
+  audio: 'recommendedAudio',
+  cover: 'recommendedCover',
+  video: 'recommendedVideo',
+};
+
 const SLOT_MAX_SIZE: Record<string, string> = {
   audio: '50 MB',
   cover: '10 MB',
@@ -116,6 +122,7 @@ export default function GuidedSessionMediaSlot({
   })();
   const slotFormats = t(SLOT_FORMATS_KEYS[slot.id] ?? 'formatsAudio');
   const slotMaxSize = t('maxSize', { size: SLOT_MAX_SIZE[slot.id] ?? '' });
+  const slotRecommended = t(SLOT_RECOMMENDED_KEYS[slot.id] ?? 'recommendedAudio');
 
   const formatValidationError = (validationError: ReturnType<typeof validateGuidedSessionMediaFile>) => {
     if (!validationError) return null;
@@ -300,6 +307,7 @@ export default function GuidedSessionMediaSlot({
         <p className="creator-workspace__media-format-guide">
           <span>{slotFormats}</span>
           <span>{slotMaxSize}</span>
+          <span>{slotRecommended}</span>
         </p>
 
         {displayFileName ? (
