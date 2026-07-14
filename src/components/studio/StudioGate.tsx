@@ -64,7 +64,13 @@ export default function StudioGate({ children }: { children: React.ReactNode }) 
   }
 
   if (status.state === 'denied') {
-    return <StudioAccessNotice variant="denied" message={status.message} />;
+    return (
+      <StudioAccessNotice
+        variant="denied"
+        message={status.message}
+        onRetry={retry}
+      />
+    );
   }
 
   if (status.state === 'offline' || status.state === 'error') {

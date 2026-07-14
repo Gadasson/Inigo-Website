@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 
 type Props =
-  | { variant: 'denied'; message?: string }
+  | { variant: 'denied'; message?: string; onRetry: () => void }
   | { variant: 'error'; message?: string; onRetry: () => void };
 
 /**
@@ -48,15 +48,13 @@ export default function StudioAccessNotice(props: Props) {
         ) : null}
 
         <div className="studio-access__actions">
-          {props.variant === 'error' ? (
-            <button
-              type="button"
-              className="studio-access__btn studio-access__btn--primary"
-              onClick={props.onRetry}
-            >
-              {t('tryAgain')}
-            </button>
-          ) : null}
+          <button
+            type="button"
+            className="studio-access__btn studio-access__btn--primary"
+            onClick={props.onRetry}
+          >
+            {t('tryAgain')}
+          </button>
 
           <button
             type="button"
