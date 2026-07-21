@@ -21,6 +21,21 @@ export type CreateGuidedSessionDraftPayload = {
   sub_category_codes: string[];
 };
 
+/** Creator-facing video optimization state from the Studio session API. */
+export type VideoOptimizationDisplayStatus =
+  | 'optimizing'
+  | 'ready'
+  | 'failed'
+  | null;
+
+/** Raw pipeline status (detail/list may also expose this). */
+export type VideoOptimizationStatus =
+  | 'pending'
+  | 'processing'
+  | 'ready'
+  | 'failed'
+  | null;
+
 export type StudioGuidedSession = {
   id: number;
   session_id: string;
@@ -47,6 +62,12 @@ export type StudioGuidedSession = {
   video_url?: string | null;
   has_audio?: boolean;
   has_video?: boolean;
+  /** Raw worker status; prefer display_status in UI. */
+  video_optimization_status?: VideoOptimizationStatus;
+  /** pending/processing → optimizing; null = legacy / not in pipeline. */
+  video_optimization_display_status?: VideoOptimizationDisplayStatus;
+  /** Present on detail responses when optimization failed. */
+  video_optimization_error?: string;
   file_metadata?: Record<string, Record<string, unknown>>;
   created_at?: string;
   updated_at?: string;
@@ -186,6 +207,19 @@ export async function detachGuidedSessionMedia(
     studioFetch<StudioGuidedSession>(`${BASE}/${id}/detach-media/`, {
       method: 'POST',
       body: { media_role: mediaRole },
+      token: authToken,
+    }),
+  );
+}
+
+/** Re-queue a failed video optimization (empty body). Returns updated session detail. */
+export async function retryGuidedSessionVideoOptimization(
+  id: number,
+  token: string | null,
+): Promise<StudioGuidedSession> {
+  return withToken(token, (authToken) =>
+    studioFetch<StudioGuidedSession>(`${BASE}/${id}/retry-video-optimization/`, {
+      method: 'POST',
       token: authToken,
     }),
   );

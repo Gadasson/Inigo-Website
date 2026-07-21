@@ -3,9 +3,11 @@
 import { useRef, useState } from 'react';
 import {
   type GuidedSessionMediaSlotConfig,
+  getVideoOptimizationDisplayStatus,
   guidedSessionMediaFileName,
   guidedSessionMediaUrl,
   hasGuidedSessionPrimaryMediaConflict,
+  hasGuidedSessionVideo,
   isGuidedSessionMediaSlotBlocked,
   primaryMediaBlockedHintKey,
   validateGuidedSessionMediaAttach,
@@ -23,7 +25,10 @@ import type {
 import type { MediaUploadResult } from '@/lib/studio/guidedSessionMediaUpload';
 import { isFirebaseStorageConfigured } from '@/lib/firebase/config';
 import { useAuth } from '@/contexts/AuthContext';
-import { detachGuidedSessionMedia } from '@/lib/api/studioGuidedSessions';
+import {
+  detachGuidedSessionMedia,
+  retryGuidedSessionVideoOptimization,
+} from '@/lib/api/studioGuidedSessions';
 import { parseStudioApiError } from '@/lib/studio/parseStudioApiError';
 import type { StudioGuidedSession } from '@/lib/api/studioGuidedSessions';
 import StudioConfirmDialog from '@/components/studio/StudioConfirmDialog';
@@ -37,7 +42,14 @@ type Props = {
   onSessionUpdated: OnGuidedSessionMediaUpdated;
 };
 
-type SlotPhase = 'idle' | 'uploading' | 'removing' | 'attach_pending' | 'retrying_attach' | 'error';
+type SlotPhase =
+  | 'idle'
+  | 'uploading'
+  | 'removing'
+  | 'attach_pending'
+  | 'retrying_attach'
+  | 'retrying_optimization'
+  | 'error';
 
 const SLOT_LABEL_KEYS: Record<string, string> = {
   audio: 'slotAudio',
@@ -66,7 +78,7 @@ const SLOT_RECOMMENDED_KEYS: Record<string, string> = {
 const SLOT_MAX_SIZE: Record<string, string> = {
   audio: '50 MB',
   cover: '10 MB',
-  video: '500 MB',
+  video: '2 GB',
 };
 
 function applyMediaUploadResult(
@@ -97,9 +109,12 @@ export default function GuidedSessionMediaSlot({
   const [pendingAttach, setPendingAttach] = useState<PendingMediaAttach | null>(null);
   const [removeConfirmOpen, setRemoveConfirmOpen] = useState(false);
 
+  const videoOptStatus =
+    slot.role === 'video' ? getVideoOptimizationDisplayStatus(session) : null;
   const attachedUrl = guidedSessionMediaUrl(session, slot.role);
   const attachedName = guidedSessionMediaFileName(session, slot.role);
-  const isAttached = Boolean(attachedUrl);
+  const isAttached =
+    slot.role === 'video' ? hasGuidedSessionVideo(session) : Boolean(attachedUrl);
   const hasPendingAttach = pendingAttach !== null;
   const hasConflict = hasGuidedSessionPrimaryMediaConflict(session);
   const isBlocked = isGuidedSessionMediaSlotBlocked(session, slot.role, isAttached);
@@ -121,7 +136,10 @@ export default function GuidedSessionMediaSlot({
     return t(SLOT_HINT_KEYS[slot.id] ?? 'hintAudio');
   })();
   const slotFormats = t(SLOT_FORMATS_KEYS[slot.id] ?? 'formatsAudio');
-  const slotMaxSize = t('maxSize', { size: SLOT_MAX_SIZE[slot.id] ?? '' });
+  const slotMaxSize =
+    slot.role === 'video'
+      ? t('maxUploadSize', { size: SLOT_MAX_SIZE[slot.id] ?? '' })
+      : t('maxSize', { size: SLOT_MAX_SIZE[slot.id] ?? '' });
   const slotRecommended = t(SLOT_RECOMMENDED_KEYS[slot.id] ?? 'recommendedAudio');
 
   const formatValidationError = (validationError: ReturnType<typeof validateGuidedSessionMediaFile>) => {
@@ -138,16 +156,41 @@ export default function GuidedSessionMediaSlot({
     if (phase === 'uploading') return t('statusUploading', { percent: uploadPercent });
     if (phase === 'removing') return t('statusRemoving');
     if (phase === 'retrying_attach') return t('statusRetrying');
+    if (phase === 'retrying_optimization') return t('statusRetryingOptimization');
     if (phase === 'attach_pending') return t('statusAttachFailed');
     if (phase === 'error') return t('statusUploadFailed');
+    if (slot.role === 'video') {
+      if (videoOptStatus === 'optimizing') return t('statusOptimizing');
+      if (videoOptStatus === 'failed') return t('statusOptimizeFailed');
+      if (videoOptStatus === 'ready') return t('statusVideoReady');
+    }
     if (isAttached) return t('statusUploaded');
     return t('statusNotAdded');
+  })();
+
+  const statusModifier = (() => {
+    if (phase !== 'idle') {
+      if (phase === 'attach_pending') return 'attach-pending';
+      if (phase === 'retrying_attach' || phase === 'retrying_optimization' || phase === 'uploading') {
+        return 'uploading';
+      }
+      if (phase === 'removing') return 'removing';
+      return phase;
+    }
+    if (slot.role === 'video') {
+      if (videoOptStatus === 'optimizing') return 'optimizing';
+      if (videoOptStatus === 'failed') return 'optimize-failed';
+      if (videoOptStatus === 'ready' || isAttached) return 'attached';
+    }
+    if (isAttached) return 'attached';
+    return 'idle';
   })();
 
   const buttonLabel = (() => {
     if (phase === 'uploading') return t('buttonUploading', { percent: uploadPercent });
     if (phase === 'removing') return t('buttonRemoving');
     if (phase === 'retrying_attach') return t('buttonRetrying');
+    if (phase === 'retrying_optimization') return t('buttonRetryingOptimization');
     return isAttached || hasPendingAttach ? t('buttonReplace') : t('buttonChoose');
   })();
 
@@ -208,6 +251,23 @@ export default function GuidedSessionMediaSlot({
       setPendingAttach(nextPending);
       setPhase('attach_pending');
       setError(formatUploadError(err));
+    }
+  };
+
+  const onRetryOptimization = async () => {
+    if (slot.role !== 'video' || videoOptStatus !== 'failed' || disabled) return;
+
+    setPhase('retrying_optimization');
+    setError(null);
+
+    try {
+      const token = await getIdToken();
+      const updated = await retryGuidedSessionVideoOptimization(session.id, token);
+      onSessionUpdated(updated);
+      setPhase('idle');
+    } catch (err) {
+      setPhase('error');
+      setError(parseStudioApiError(err));
     }
   };
 
@@ -275,29 +335,24 @@ export default function GuidedSessionMediaSlot({
     }
   };
 
-  const isBusy = phase === 'uploading' || phase === 'removing' || phase === 'retrying_attach';
-  const slotModifier =
-    phase === 'attach_pending'
-      ? 'attach-pending'
-      : phase === 'retrying_attach' || phase === 'uploading'
-        ? 'uploading'
-        : phase === 'removing'
-          ? 'removing'
-          : phase;
+  const isBusy =
+    phase === 'uploading' ||
+    phase === 'removing' ||
+    phase === 'retrying_attach' ||
+    phase === 'retrying_optimization';
+  const slotModifier = statusModifier === 'idle' ? null : statusModifier;
 
   return (
     <li
       className={`creator-workspace__media-slot${
         isAttached ? ' creator-workspace__media-slot--attached' : ''
-      }${slotModifier !== 'idle' ? ` creator-workspace__media-slot--${slotModifier}` : ''}`}
+      }${slotModifier ? ` creator-workspace__media-slot--${slotModifier}` : ''}`}
     >
       <div className="creator-workspace__media-slot-main">
         <div className="creator-workspace__media-slot-heading">
           <span className="creator-workspace__slot-label">{slotLabel}</span>
           <span
-            className={`creator-workspace__media-status creator-workspace__media-status--${
-              phase === 'idle' && isAttached ? 'attached' : slotModifier
-            }`}
+            className={`creator-workspace__media-status creator-workspace__media-status--${statusModifier}`}
             role="status"
           >
             {statusLabel}
@@ -310,11 +365,23 @@ export default function GuidedSessionMediaSlot({
           <span>{slotRecommended}</span>
         </p>
 
+        {slot.role === 'video' ? (
+          <p className="creator-workspace__media-optimize-note">{t('autoOptimizeNote')}</p>
+        ) : null}
+
+        {slot.role === 'video' && videoOptStatus === 'optimizing' ? (
+          <p className="creator-workspace__media-hint">{t('optimizingHint')}</p>
+        ) : null}
+
+        {slot.role === 'video' && videoOptStatus === 'failed' ? (
+          <p className="creator-workspace__media-hint">{t('optimizeFailedHint')}</p>
+        ) : null}
+
         {displayFileName ? (
           <p className="creator-workspace__media-filename">{displayFileName}</p>
-        ) : (
+        ) : videoOptStatus !== 'optimizing' && videoOptStatus !== 'failed' ? (
           <p className="creator-workspace__media-hint">{slotHint}</p>
-        )}
+        ) : null}
 
         {slot.role === 'thumbnail' && attachedUrl ? (
           <LoadingRemoteImage
@@ -358,6 +425,19 @@ export default function GuidedSessionMediaSlot({
               onClick={onDiscardPending}
             >
               {t('discard')}
+            </button>
+          </div>
+        ) : null}
+
+        {slot.role === 'video' && videoOptStatus === 'failed' && !hasPendingAttach ? (
+          <div className="creator-workspace__media-recovery">
+            <button
+              type="button"
+              className="creator-workspace__media-btn creator-workspace__media-btn--primary"
+              disabled={disabled || isBusy}
+              onClick={() => void onRetryOptimization()}
+            >
+              {t('retryOptimization')}
             </button>
           </div>
         ) : null}

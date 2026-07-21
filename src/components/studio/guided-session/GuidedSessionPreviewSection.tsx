@@ -9,10 +9,14 @@ import {
 } from '@/lib/studio/guidedSessionOptions';
 import { guidedSessionDurationDisplayLabel } from '@/lib/studio/guidedSessionDuration';
 import {
+  getVideoOptimizationDisplayStatus,
+  guidedSessionCanonicalVideoUrl,
   guidedSessionMediaUrl,
+  hasGuidedSessionAudio,
   hasGuidedSessionCover,
   hasGuidedSessionPrimaryMedia,
   hasGuidedSessionPrimaryMediaConflict,
+  hasGuidedSessionVideo,
 } from '@/lib/studio/guidedSessionMedia';
 import { useTranslations } from 'next-intl';
 
@@ -56,6 +60,9 @@ export default function GuidedSessionPreviewSection({ session, form }: Props) {
 
   const coverUrl = guidedSessionMediaUrl(session, 'thumbnail');
   const audioUrl = guidedSessionMediaUrl(session, 'audio');
+  /** Canonical optimized URL only — never the temporary `.source.` upload. */
+  const videoUrl = guidedSessionCanonicalVideoUrl(session);
+  const videoOptStatus = getVideoOptimizationDisplayStatus(session);
   const title = form.title.trim() || t('untitled');
   const description = form.description.trim() || t('descriptionPlaceholder');
 
@@ -71,10 +78,12 @@ export default function GuidedSessionPreviewSection({ session, form }: Props) {
   ].filter(Boolean);
 
   const mediaStateLabel = (() => {
-    const hasAudio = Boolean(guidedSessionMediaUrl(session, 'audio'));
-    const hasVideo = Boolean(guidedSessionMediaUrl(session, 'video'));
+    const hasAudio = hasGuidedSessionAudio(session);
+    const hasVideo = hasGuidedSessionVideo(session);
     if (hasAudio && hasVideo) return t('mediaConflict');
     if (hasAudio) return t('mediaAudio');
+    if (videoOptStatus === 'optimizing') return t('mediaVideoOptimizing');
+    if (videoOptStatus === 'failed') return t('mediaVideoFailed');
     if (hasVideo) return t('mediaVideo');
     return t('mediaNone');
   })();
@@ -125,15 +134,38 @@ export default function GuidedSessionPreviewSection({ session, form }: Props) {
               {tm('audioUnsupported')}
             </audio>
           ) : null}
+
+          {videoUrl ? (
+            <video
+              className="guided-session-preview__video"
+              controls
+              preload="metadata"
+              playsInline
+              src={videoUrl}
+            >
+              {t('videoUnsupported')}
+            </video>
+          ) : null}
         </div>
       </article>
 
-      {!hasGuidedSessionPrimaryMedia(session) && !hasGuidedSessionPrimaryMediaConflict(session) ? (
+      {!hasGuidedSessionPrimaryMedia(session) &&
+      !hasGuidedSessionPrimaryMediaConflict(session) &&
+      videoOptStatus !== 'optimizing' &&
+      videoOptStatus !== 'failed' ? (
         <p className="guided-session-preview__note">{t('notePrimary')}</p>
       ) : null}
 
       {hasGuidedSessionPrimaryMediaConflict(session) ? (
         <p className="guided-session-preview__note">{t('notePrimaryConflict')}</p>
+      ) : null}
+
+      {videoOptStatus === 'optimizing' ? (
+        <p className="guided-session-preview__note">{t('noteVideoOptimizing')}</p>
+      ) : null}
+
+      {videoOptStatus === 'failed' ? (
+        <p className="guided-session-preview__note">{t('noteVideoFailed')}</p>
       ) : null}
 
       {!hasGuidedSessionCover(session) ? (

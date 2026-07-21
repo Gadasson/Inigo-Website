@@ -30,6 +30,7 @@ import {
 } from '@/lib/studio/guidedSessionDuration';
 import type { OnGuidedSessionMediaUpdated } from '@/lib/studio/guidedSessionMediaTypes';
 import { useGuidedSessionTaxonomy } from '@/hooks/useGuidedSessionTaxonomy';
+import { useGuidedSessionVideoOptimizationPolling } from '@/hooks/useGuidedSessionVideoOptimizationPolling';
 import { applyPracticeSelectionToForm } from '@/lib/studio/guidedSessionTaxonomy';
 import GuidedSessionFormFields from '@/components/studio/GuidedSessionFormFields';
 import CreatorWorkspace from '@/components/studio/workspace/CreatorWorkspace';
@@ -149,6 +150,15 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
       });
     }
   }, []);
+
+  useGuidedSessionVideoOptimizationPolling({
+    session,
+    enabled: isEditable,
+    getIdToken,
+    onSessionUpdated: (updated) => {
+      onSessionUpdated(updated);
+    },
+  });
 
   const onSessionPublished = useCallback((updated: StudioGuidedSession) => {
     const nextForm = sessionToEditorForm(updated);
