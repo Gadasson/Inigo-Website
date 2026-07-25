@@ -349,23 +349,39 @@
     "blocks": [
       {
         "lead": "Inigo was created from a simple idea:",
-        "lines": ["Presence matters."]
+        "lines": [
+          "Presence matters."
+        ]
       },
       {
         "lead": "Most of the world moves fast.",
-        "lines": ["Noise.", "Pressure.", "Disconnection."]
+        "lines": [
+          "Noise.",
+          "Pressure.",
+          "Disconnection."
+        ]
       },
       {
         "lead": "We wanted something quieter.",
-        "lines": ["Something real.", "Something shared."]
+        "lines": [
+          "Something real.",
+          "Something shared."
+        ]
       },
       {
         "lead": "Meditation is not just personal.",
-        "lines": ["It can be felt together."]
+        "lines": [
+          "It can be felt together."
+        ]
       },
       {
         "lead": "Every moment of presence",
-        "lines": ["adds to something bigger.", "", "A shared field.", "A living state."]
+        "lines": [
+          "adds to something bigger.",
+          "",
+          "A shared field.",
+          "A living state."
+        ]
       }
     ]
   },
@@ -392,237 +408,751 @@
   },
   "privacy": {
     "title": "Privacy Policy",
-    "subtitle": "Your privacy matters to us. Here's how we protect your data.",
-    "lastUpdated": "Last updated:",
-    "lastUpdatedDate": "November 2025",
+    "subtitle": "What information we collect, why we collect it, how we use it, and the choices you have.",
+    "versionLabel": "Version:",
+    "version": "1.0",
+    "effectiveDateLabel": "Effective Date:",
+    "effectiveDate": "To be completed",
     "sections": {
-      "intro": {
-        "title": "Privacy Policy",
-        "text": "Your privacy matters to us. This policy explains how Inigo, developed and operated by Asaf Gadassi, collects, uses, and protects your information."
-      },
-      "dataCollection": {
-        "title": "Data Collection",
-        "text": "We collect only what's necessary to provide a meaningful meditation experience:",
-        "items": [
-          "Email address – for secure account creation and login (via Google or Apple Sign-In)",
-          "Device information – such as model and operating system, to ensure proper performance",
-          "Meditation sessions – duration and time, used to contribute anonymously to our collective world state",
-          "Optional reflections and photos – only if you choose to share them within the community"
-        ],
-        "note": "We do not collect sensitive personal information such as location history beyond what is required to show nearby meditation spots (if permission is granted)."
-      },
-      "dataUsage": {
-        "title": "How We Use Your Data",
-        "text": "Your data helps us:",
-        "items": [
-          "Create and maintain your account securely",
-          "Provide personalized and reliable meditation experiences",
-          "Update collective world-state metrics (anonymously)",
-          "Improve Inigo based on community feedback",
-          "Send essential updates about features or account information"
-        ],
-        "note": "We do not use your data for advertising or sell it to third parties."
-      },
-      "thirdParty": {
-        "title": "Third-Party Services",
-        "text": "Inigo uses trusted services to operate safely and efficiently:",
-        "items": [
-          "Firebase (Authentication, Storage, Analytics) – to handle login, store photos, and measure performance",
-          "Django Backend – to manage user profiles and meditation data securely on our private server"
-        ],
-        "note": "These services follow industry-standard security practices and comply with GDPR and other applicable privacy regulations."
-      },
-      "dataProtection": {
-        "title": "Data Protection",
-        "text": "We take your privacy seriously:",
-        "items": [
-          "All communication is encrypted in transit (HTTPS) and at rest",
-          "Access to data is strictly limited to necessary operations",
-          "Shared experiences are visible only according to your sharing choices",
-          "Meditation statistics are aggregated anonymously"
+      "yourPrivacy": {
+        "title": "Your Privacy",
+        "paragraphs": [
+          "Privacy is part of the practice.",
+          "When people choose to slow down, reflect, or share meaningful moments, they trust us with something personal.",
+          "We take that responsibility seriously.",
+          "This Privacy Policy explains what information we collect, why we collect it, how we use it, and the choices you have.",
+          "Our goal is simple:",
+          "Collect only what we need.",
+          "Protect what you share.",
+          "Be transparent about how everything works.",
+          "By using Inigo, you agree to this Privacy Policy."
         ]
       },
-      "rights": {
-        "title": "Your Rights",
-        "text": "You have full control over your information:",
-        "items": [
-          "Access your personal data",
-          "Update or correct inaccurate details",
-          "Delete your account and all related data",
-          "Opt out of emails or communications",
-          "Export your data in a portable format upon request"
-        ],
-        "contact": "To exercise any of these rights, please contact us at"
+      "whoWeAre": {
+        "title": "Who We Are",
+        "paragraphs": [
+          "Inigo is currently owned and operated by Asaf Gadassi.",
+          "Throughout this Policy, \"Inigo\", \"we\", \"our\", and \"us\" refer to the services provided through the Inigo website, mobile applications, Creator Studio, and related services."
+        ]
       },
-      "retention": {
+      "whatWeCollect": {
+        "title": "What We Collect",
+        "intro": "The information we collect depends on how you use Inigo.",
+        "subsections": {
+          "accountInformation": {
+            "title": "Account Information",
+            "intro": "When you create an account we may collect:",
+            "items": [
+              "your name;",
+              "email address;",
+              "profile photo;",
+              "authentication provider;",
+              "language preferences;",
+              "country or region;",
+              "account identifiers."
+            ],
+            "closingParagraphs": [
+              "If you sign in using Google or Apple, we receive only the information those providers choose to share with us and that you authorize.",
+              "We never receive your Google or Apple password."
+            ]
+          },
+          "practiceInformation": {
+            "title": "Practice Information",
+            "intro": "To help you continue your practice across devices, we may store information such as:",
+            "items": [
+              "completed sessions;",
+              "session duration;",
+              "practice history;",
+              "selected categories;",
+              "guided session progress;",
+              "reflections;",
+              "Presence Moments;",
+              "saved content;",
+              "personal preferences."
+            ]
+          },
+          "communityActivity": {
+            "title": "Community Activity",
+            "intro": "If you interact with the community, we may store:",
+            "items": [
+              "comments;",
+              "reactions;",
+              "followers and following;",
+              "invitations;",
+              "reports;",
+              "moderation actions;",
+              "other activity necessary to operate community features."
+            ]
+          },
+          "deviceInformation": {
+            "title": "Device Information",
+            "intro": "To improve reliability and security we may collect:",
+            "items": [
+              "device model;",
+              "operating system;",
+              "application version;",
+              "anonymous diagnostic information;",
+              "crash reports;",
+              "push notification token;",
+              "technical identifiers required to operate the Service."
+            ],
+            "closing": "We do not collect more device information than reasonably necessary."
+          },
+          "informationYouShare": {
+            "title": "Information You Choose to Share",
+            "paragraphs": [
+              "Some information is entirely optional.",
+              "Examples include:"
+            ],
+            "items": [
+              "profile biography;",
+              "profile image;",
+              "reflections;",
+              "Presence Moments;",
+              "guided content;",
+              "photos;",
+              "videos;",
+              "audio;",
+              "comments."
+            ],
+            "closing": "You decide whether to share this information."
+          }
+        }
+      },
+      "howWeUse": {
+        "title": "How We Use Information",
+        "paragraphs": [
+          "We use information only for purposes related to operating and improving Inigo.",
+          "Examples include:"
+        ],
+        "items": [
+          "creating your account;",
+          "authenticating your identity;",
+          "synchronizing your practice across devices;",
+          "providing guided sessions;",
+          "delivering community features;",
+          "personalizing recommendations;",
+          "improving performance;",
+          "preventing fraud and abuse;",
+          "maintaining security;",
+          "complying with legal obligations;",
+          "responding to support requests."
+        ],
+        "closing": "We do not sell your personal information."
+      },
+      "legalBasis": {
+        "title": "Legal Basis",
+        "intro": "Where applicable, we process personal information because:",
+        "items": [
+          "you requested the Service;",
+          "it is necessary to perform our agreement with you;",
+          "we have legitimate interests in operating and improving Inigo;",
+          "we are legally required to do so;",
+          "or you have provided consent where consent is required."
+        ]
+      },
+      "sharingInformation": {
+        "title": "Sharing Information",
+        "paragraphs": [
+          "We do not sell personal information.",
+          "We may share limited information only when necessary with trusted service providers that help us operate Inigo.",
+          "Examples include:"
+        ],
+        "items": [
+          "cloud hosting providers;",
+          "authentication providers;",
+          "storage providers;",
+          "analytics providers;",
+          "notification providers;",
+          "customer support tools;",
+          "payment providers if paid features become available."
+        ],
+        "closing": "These providers may process information only as necessary to perform services on our behalf."
+      },
+      "yourContent": {
+        "title": "Your Content",
+        "paragraphs": [
+          "Your content belongs to you.",
+          "When you share content inside Inigo, we process it only to provide the Service according to your chosen sharing settings.",
+          "We do not use your personal reflections or Presence Moments for advertising.",
+          "We do not sell user-generated content."
+        ]
+      },
+      "internationalTransfers": {
+        "title": "International Transfers",
+        "paragraphs": [
+          "Depending on where you live, your information may be processed in countries other than your own.",
+          "Whenever we work with service providers outside your jurisdiction, we take reasonable measures to ensure that your information receives an appropriate level of protection."
+        ]
+      },
+      "dataRetention": {
         "title": "Data Retention",
-        "text": "We keep your information only as long as needed to provide the service or as required by law. If you delete your account, all personal data will be removed within a reasonable timeframe."
+        "paragraphs": [
+          "We keep information only for as long as it is reasonably necessary.",
+          "The retention period depends on the type of information and the reason it was collected.",
+          "When information is no longer required, we delete or anonymize it where reasonably possible.",
+          "Some information may remain in backup systems for a limited period as part of standard disaster recovery procedures."
+        ]
+      },
+      "security": {
+        "title": "Security",
+        "paragraphs": [
+          "Protecting your information is important to us.",
+          "We use reasonable administrative, technical, and organizational measures designed to safeguard personal information.",
+          "However, no online service can guarantee absolute security.",
+          "We encourage you to protect your own account by using secure devices and keeping your login credentials confidential."
+        ]
+      },
+      "yourRights": {
+        "title": "Your Rights",
+        "paragraphs": [
+          "Depending on where you live, you may have legal rights regarding your personal information.",
+          "These rights may include the ability to:"
+        ],
+        "items": [
+          "access the personal information we hold about you;",
+          "correct inaccurate information;",
+          "update incomplete information;",
+          "request deletion of your information;",
+          "request a copy of your data where required by law;",
+          "object to certain types of processing;",
+          "withdraw consent where processing is based on consent."
+        ],
+        "closingParagraphs": [
+          "If you would like to exercise any of these rights, please contact us using the details provided below.",
+          "We may need to verify your identity before responding to certain requests in order to protect your privacy and security."
+        ]
+      },
+      "deletingAccount": {
+        "title": "Deleting Your Account",
+        "paragraphs": [
+          "You may delete your Inigo account at any time.",
+          "When your account is deleted:"
+        ],
+        "items": [
+          "your profile will no longer be visible;",
+          "active personal information associated with your account will be removed within a reasonable period;",
+          "community content may be anonymized where appropriate to preserve conversation integrity;",
+          "backup copies may temporarily remain as part of standard disaster recovery processes."
+        ],
+        "closing": "Certain information may be retained where required by law or where reasonably necessary to resolve disputes, enforce our agreements, prevent fraud, or protect the security of the Service."
+      },
+      "dataPortability": {
+        "title": "Data Portability",
+        "paragraphs": [
+          "Where required by applicable law, you may request a copy of certain personal information that you have provided to Inigo.",
+          "When technically feasible, we will provide this information in a commonly used electronic format."
+        ]
+      },
+      "cookies": {
+        "title": "Cookies and Similar Technologies",
+        "intro": "Our website may use cookies and similar technologies to:",
+        "items": [
+          "keep you signed in;",
+          "remember your preferences;",
+          "improve performance;",
+          "understand how the website is used;",
+          "maintain security."
+        ],
+        "closing": "Where required by law, you will be given appropriate choices regarding non-essential cookies."
+      },
+      "analytics": {
+        "title": "Analytics",
+        "paragraphs": [
+          "We use analytics primarily to understand how Inigo is performing and how we can improve it.",
+          "Whenever possible, we prefer aggregated or anonymized information over personally identifiable information.",
+          "Analytics are never used to sell your information or build advertising profiles."
+        ]
+      },
+      "artificialIntelligence": {
+        "title": "Artificial Intelligence",
+        "paragraphs": [
+          "As Inigo evolves, some features may use artificial intelligence or machine learning technologies.",
+          "If AI is used to personalize recommendations, organize content, generate summaries, or support your practice, it will be used only to improve your experience within the Service.",
+          "We do not use your private reflections or personal practice history to train public artificial intelligence models without your explicit permission."
+        ]
+      },
+      "pushNotifications": {
+        "title": "Push Notifications",
+        "intro": "If you enable notifications, we may send you updates about:",
+        "items": [
+          "your practice;",
+          "community activity;",
+          "invitations;",
+          "important account information;",
+          "security alerts."
+        ],
+        "closing": "You can manage notification preferences within the application or through your device settings."
       },
       "children": {
         "title": "Children's Privacy",
-        "text": "Inigo is intended for users aged 16 and older. We do not knowingly collect information from children under 16. If you believe a child has used the app, please contact us for prompt deletion of their data."
+        "paragraphs": [
+          "Inigo is not intended for children under the minimum age required to use the Service.",
+          "We do not knowingly collect personal information from children who are not legally permitted to use Inigo.",
+          "If we become aware that such information has been collected, we will take reasonable steps to remove it."
+        ]
+      },
+      "securityIncidents": {
+        "title": "Security Incidents",
+        "paragraphs": [
+          "If we become aware of a security incident affecting personal information, we will investigate the matter promptly.",
+          "Where required by applicable law, affected users and relevant authorities will be notified within the legally required timeframes."
+        ]
+      },
+      "internationalUsers": {
+        "title": "International Users",
+        "paragraphs": [
+          "If you access Inigo from outside Israel, you understand that your information may be processed in countries where our service providers operate.",
+          "Whenever personal information is transferred internationally, we take reasonable steps to ensure appropriate safeguards are in place."
+        ]
       },
       "changes": {
-        "title": "Changes to This Policy",
-        "text": "This Privacy Policy may be updated as Inigo evolves. When changes occur, we'll update the \"Last Updated\" date and, where appropriate, notify users in-app. Your continued use of Inigo means you accept the revised policy."
+        "title": "Changes to this Privacy Policy",
+        "paragraphs": [
+          "As Inigo evolves, this Privacy Policy may also evolve.",
+          "Whenever material changes are made, we will publish a new version together with its effective date.",
+          "Where required by law or where changes materially affect your rights, we may ask you to review and accept the updated Privacy Policy before continuing to use the Service.",
+          "Previous versions may be retained for reference."
+        ]
       },
       "contact": {
-        "title": "Contact Us",
-        "text": "If you have any questions about your privacy or data, please reach out:"
+        "title": "Contact",
+        "paragraphs": [
+          "If you have questions about this Privacy Policy or about how we process personal information, please contact us:"
+        ],
+        "emailLabel": "Email:",
+        "email": "inigomeditation@gmail.com",
+        "closing": "or through the contact methods available within the Service or on our website."
+      },
+      "ourCommitment": {
+        "title": "Our Commitment",
+        "paragraphs": [
+          "Privacy is not simply a legal obligation.",
+          "It is part of the trust that allows people to practice openly, reflect honestly, and feel safe.",
+          "We will continue working to keep Inigo transparent, respectful, and worthy of that trust.",
+          "Thank you for trusting us with your practice."
+        ]
       }
-    },
-    "cta": {
-      "title": "Ready to join with confidence?",
-      "subtitle": "Your privacy is protected, your data is secure."
     }
   },
   "terms": {
-    "title": "Terms and Conditions",
-    "subtitle": "Please review these terms to understand how to use Inigo respectfully and safely.",
-    "lastUpdated": "Last updated:",
-    "lastUpdatedDate": "November 2025",
-    "intro": "Welcome to Inigo, a social meditation network and mobile application operated by Inigo (\"we\", \"us\", or \"our\"). These Terms and Conditions (\"Terms\") govern your access to and use of the Inigo mobile app (the \"App\") and the Inigo website available at https://inigo.now (the \"Site\", together the \"Service\"). By using Inigo, you agree to these Terms. If you do not agree, please do not use the App or Site.",
+    "title": "Terms of Service",
+    "subtitle": "How Inigo works, what you can expect from the Service, and what we ask from you in return.",
+    "versionLabel": "Version:",
+    "version": "1.0",
+    "effectiveDateLabel": "Effective Date:",
+    "effectiveDate": "To be completed",
     "sections": {
-      "aboutInigo": {
-        "title": "1. About Inigo",
-        "text1": "Inigo is a social meditation network designed to help people connect through quiet meditation, mindfulness, and shared meditation experiences.",
-        "text2": "Through Inigo, users can:",
-        "items": [
-          "Choose and return to places that hold you",
-          "Track personal meditation time",
-          "Contribute to a collective world meditation counter",
-          "Share reflections, photos, and meditation moments with others"
-        ],
-        "text3": "Inigo features may evolve or change without notice."
-      },
-      "eligibility": {
-        "title": "2. Eligibility",
-        "text": "To use Inigo, you must:",
-        "items": [
-          "Be at least 16 years old",
-          "Have the legal capacity to agree to these Terms",
-          "Use the App and Site in a respectful, lawful, and good-faith manner"
+      "welcome": {
+        "title": "Welcome to Inigo",
+        "paragraphs": [
+          "Welcome.",
+          "Inigo is a place for practice.",
+          "Whether you come to meditate, breathe, walk, reflect, or simply pause for a moment, our goal is to help you build a sustainable practice that supports everyday life.",
+          "These Terms of Service (\"Terms\") explain how Inigo works, what you can expect from the Service, and what we ask from you in return.",
+          "By creating an account, accessing, or using Inigo, you agree to these Terms.",
+          "If you do not agree with them, please do not use the Service."
         ]
       },
-      "accounts": {
-        "title": "3. Accounts and Authentication",
-        "text1": "You may create an account or sign in using Google or Apple authentication. By doing so, you agree to:",
-        "items": [
-          "Provide accurate and up-to-date information",
-          "Keep your login credentials secure",
-          "Accept responsibility for all actions taken under your account"
-        ],
-        "text2": "We reserve the right to suspend or terminate accounts that violate these Terms or harm the community."
+      "whoWeAre": {
+        "title": "Who We Are",
+        "paragraphs": [
+          "Inigo is currently owned and operated by Asaf Gadassi (\"Inigo\", \"we\", \"our\", or \"us\").",
+          "These Terms apply to all parts of the Inigo ecosystem, including our website, mobile applications, Creator Studio, community features, and any related services we provide.",
+          "If ownership of the Service changes in the future, these Terms may be updated accordingly."
+        ]
       },
-      "userContent": {
-        "title": "4. User Content",
-        "text1": "You may post reflections, photos, and experiences (\"User Content\"). By sharing such content, you grant Inigo a non-exclusive, royalty-free, worldwide license to use, display, and distribute that content within Inigo to operate and improve the service.",
-        "text2": "You represent and warrant that you have all necessary rights to post your User Content and that it will not:",
+      "definitions": {
+        "title": "Definitions",
+        "intro": "To make these Terms easier to read, we use the following definitions:",
         "items": [
-          "Violate any law or third-party rights",
-          "Contain harmful, explicit, hateful, or misleading material",
-          "Infringe on others' privacy",
-          "Include copyrighted material without authorization",
-          "Violate any person's privacy or publicity rights"
-        ],
-        "text3": "We may remove or restrict any content at our discretion, but we have no obligation to monitor User Content. You are solely responsible for your User Content."
+          {
+            "term": "Service",
+            "text": "means the Inigo platform, including all applications, websites, Creator Studio, content, and related services."
+          },
+          {
+            "term": "User",
+            "text": "means anyone who accesses or uses the Service."
+          },
+          {
+            "term": "Content",
+            "text": "means text, reflections, Presence Moments, comments, reactions, images, videos, audio, guided sessions, profile information, and any other material made available through the Service."
+          },
+          {
+            "term": "Creator",
+            "text": "means a user approved to publish content through Creator Studio."
+          },
+          {
+            "term": "Community Content",
+            "text": "means any content shared with other users through Inigo."
+          }
+        ]
       },
-      "communityGuidelines": {
-        "title": "5. Community Guidelines",
-        "text1": "Inigo exists to cultivate quiet, kindness, and authentic connection. By participating, you agree to:",
+      "whoCanUse": {
+        "title": "Who Can Use Inigo",
+        "intro": "You may use Inigo only if:",
         "items": [
-          "Share only in a mindful and respectful way",
-          "Avoid harassment, hate speech, or self-promotion",
-          "Honor silence and simplicity — sometimes saying nothing is enough"
+          "you are at least 16 years old, or the minimum legal age required where you live;",
+          "you have the legal capacity to accept these Terms;",
+          "your use of the Service complies with applicable laws."
         ],
-        "text2": "Users who act in ways that disrupt this environment may be suspended or removed."
+        "closing": "You may not use the Service if your access has previously been suspended or terminated for violating these Terms."
       },
-      "intellectualProperty": {
-        "title": "6. Intellectual Property",
-        "text": "All materials, designs, code, and content related to Inigo are owned by Inigo or its licensors. You may not copy, modify, or redistribute any part of Inigo without written permission."
+      "yourAccount": {
+        "title": "Your Account",
+        "paragraphs": [
+          "Creating an account allows your practice, preferences, and progress to remain available across your devices.",
+          "You are responsible for maintaining the security of your account."
+        ],
+        "intro": "You agree to:",
+        "items": [
+          "provide accurate information;",
+          "keep your credentials secure;",
+          "notify us if you believe your account has been compromised;",
+          "avoid sharing your account with others."
+        ],
+        "closingParagraphs": [
+          "You are responsible for activity performed through your account unless it results directly from our own security failure.",
+          "We may suspend or restrict access when reasonably necessary to protect users, the community, or the Service itself."
+        ]
+      },
+      "aboutInigo": {
+        "title": "About Inigo",
+        "paragraphs": [
+          "Inigo is designed to support personal wellbeing through intentional practice.",
+          "Depending on your region and the current version of the Service, Inigo may include features such as:"
+        ],
+        "items": [
+          "guided practice sessions;",
+          "meditation;",
+          "breathing exercises;",
+          "mindful walking;",
+          "practice timers;",
+          "reflections;",
+          "Presence Moments;",
+          "community interactions;",
+          "Creator Studio;",
+          "recommendations;",
+          "future wellbeing features."
+        ],
+        "closingParagraphs": [
+          "The Service will continue to evolve.",
+          "Features may be introduced, modified, replaced, or discontinued as we improve the experience.",
+          "Nothing in these Terms guarantees that a specific feature will always remain available."
+        ]
+      },
+      "personalWellbeing": {
+        "title": "Personal Wellbeing",
+        "paragraphs": [
+          "Inigo is designed to support personal wellbeing.",
+          "It is not a healthcare provider.",
+          "The Service does not provide medical advice, psychological treatment, psychotherapy, diagnosis, crisis intervention, or emergency services.",
+          "Content published by Inigo, Creators, or community members is intended for educational and wellbeing purposes only.",
+          "Always use your own judgment and consult qualified healthcare professionals regarding medical or mental health concerns.",
+          "If you experience physical discomfort, emotional distress, dizziness, breathing difficulty, or any concerning symptoms while practicing, stop immediately and seek appropriate professional assistance.",
+          "If you believe you are experiencing a medical emergency, contact your local emergency services immediately."
+        ]
+      },
+      "community": {
+        "title": "Community",
+        "paragraphs": [
+          "Inigo exists because of the people who practice here.",
+          "We ask everyone to contribute with respect."
+        ],
+        "intro": "You agree not to use the Service to:",
+        "items": [
+          "harass, threaten, intimidate, or abuse others;",
+          "promote violence or hatred;",
+          "publish illegal content;",
+          "violate another person's privacy;",
+          "impersonate another person;",
+          "upload malware or harmful software;",
+          "interfere with the normal operation of the Service;",
+          "intentionally spread misinformation that may endanger others;",
+          "encourage self-harm or dangerous activities;",
+          "infringe copyrights, trademarks, or other legal rights."
+        ],
+        "closingParagraphs": [
+          "We may investigate reports of misuse and take appropriate action, including removing content, limiting visibility, suspending accounts, or permanently terminating access when necessary.",
+          "Whenever reasonably possible, moderation decisions will be made proportionately and in good faith."
+        ]
+      },
+      "yourContent": {
+        "title": "Your Content",
+        "paragraphs": [
+          "Your practice belongs to you.",
+          "The content you create remains yours.",
+          "By sharing content through Inigo, you grant us a worldwide, non-exclusive, royalty-free license to:"
+        ],
+        "items": [
+          "host it;",
+          "store it;",
+          "reproduce technical copies;",
+          "display it according to your sharing preferences;",
+          "transmit it when necessary to operate the Service;",
+          "improve and maintain the Service."
+        ],
+        "closingParagraphs": [
+          "This license exists solely for operating and improving Inigo.",
+          "It does not transfer ownership of your work to us.",
+          "You are responsible for ensuring that you have the legal right to upload everything you publish.",
+          "If you delete content, we will remove it from the active Service within a reasonable time. Backup copies may temporarily remain as part of standard security and disaster recovery procedures."
+        ]
       },
       "privacy": {
-        "title": "7. Privacy",
-        "text": "Your privacy is important. Inigo uses secure third-party tools such as Firebase (for authentication and storage) and Django (for backend operations). We do not sell personal data. We may share data with service providers solely to operate the Service. Please review our Privacy Policy for details on how information is collected, stored, and used."
+        "title": "Privacy",
+        "paragraphs": [
+          "Your privacy matters.",
+          "Our collection, use, storage, and protection of personal information are described in our Privacy Policy, which forms an integral part of these Terms."
+        ],
+        "agreeBefore": "By using Inigo, you also agree to our ",
+        "agreeAfter": "."
       },
-      "experimental": {
-        "title": "8. Experimental Nature",
-        "text": "Inigo is an evolving prototype. You acknowledge that:",
+      "creatorStudio": {
+        "title": "Creator Studio",
+        "paragraphs": [
+          "Some members of the Inigo community may be invited or approved to publish guided sessions or other content through Creator Studio.",
+          "Creator approval is granted at our discretion and may be reviewed or revoked at any time.",
+          "If you publish content as a Creator, you represent and warrant that:"
+        ],
         "items": [
-          "Features may be incomplete or temporarily unavailable",
-          "Data or accounts may be reset during testing",
-          "The experience may change as development continues"
+          "you own the content or have all necessary rights and permissions to publish it;",
+          "your content does not infringe the intellectual property, privacy, publicity, or other rights of any third party;",
+          "your content complies with these Terms and all applicable laws;",
+          "any advice, guidance, or educational material you publish is presented honestly and responsibly."
+        ],
+        "closingParagraphs": [
+          "Creators remain solely responsible for the content they publish.",
+          "Approval as a Creator does not create an employment, partnership, agency, or joint venture relationship with Inigo.",
+          "We may review, limit the visibility of, remove, or suspend Creator content if we reasonably believe it violates these Terms, creates legal risk, or may harm users or the community."
         ]
       },
-      "assumptionOfRisk": {
-        "title": "9. Assumption of Risk",
-        "text": "Meditation, breathwork, and related practices may cause emotional discomfort or physical sensations (such as lightheadedness). You voluntarily assume all risks associated with using Inigo and are responsible for your own wellbeing. If you experience discomfort, stop immediately and seek professional help if needed."
-      },
-      "disclaimer": {
-        "title": "10. Disclaimer",
-        "text": "Inigo is not a medical, therapeutic, diagnostic, or emergency service. It is not a substitute for professional medical, psychological, or therapeutic advice. No clinician-patient or professional relationship is created through your use of Inigo. If you are experiencing a mental health crisis or emergency, please contact your local emergency services immediately."
-      },
-      "limitation": {
-        "title": "11. Limitation of Liability",
-        "text": "To the maximum extent permitted by law, Inigo shall not be liable for any indirect, incidental, consequential, or special damages, including but not limited to loss of data, service interruptions, user-generated content, or third-party service failures. To the maximum extent permitted by law, Inigo's total liability will not exceed the greater of (a) amounts paid by you to Inigo in the last 12 months, or (b) 100 NIS."
-      },
-      "indemnification": {
-        "title": "12. Indemnification",
-        "text": "You agree to defend, indemnify, and hold harmless Inigo, its operators, and affiliates from and against any claims, damages, losses, liabilities, and expenses (including reasonable attorneys' fees) arising out of or relating to:",
-        "items": [
-          "Your User Content",
-          "Your violation of these Terms",
-          "Your misuse of the Service",
-          "Any claims brought by third parties related to your use of Inigo"
+      "userGeneratedContent": {
+        "title": "User Generated Content",
+        "paragraphs": [
+          "Community content is one of the things that makes Inigo meaningful.",
+          "However, views expressed by users belong to those users.",
+          "Comments, reflections, Presence Moments, guided content published by independent Creators, and other community contributions do not necessarily represent the views of Inigo.",
+          "We are not responsible for opinions expressed by users.",
+          "We reserve the right—but not the obligation—to review, remove, restrict, or moderate content that violates these Terms or applicable law."
         ]
       },
-      "prohibitedUses": {
-        "title": "13. Prohibited Uses",
-        "text": "You agree not to use Inigo to:",
-        "items": [
-          "Violate any applicable law or regulation",
-          "Harass, threaten, or harm others",
-          "Post hate speech, discriminatory content, or sexual content",
-          "Exploit or harm minors",
-          "Impersonate any person or entity",
-          "Scrape, reverse engineer, or attempt to extract data through automated means",
-          "Use bots, scripts, or automated access without authorization",
-          "Distribute malware, viruses, or harmful code",
-          "Attempt to bypass security measures or gain unauthorized access"
+      "copyright": {
+        "title": "Copyright",
+        "paragraphs": [
+          "We respect intellectual property rights.",
+          "If you believe that content published through Inigo infringes your copyright or other intellectual property rights, please contact us with sufficient information for us to investigate the matter.",
+          "Where appropriate, we may remove the content while the claim is being reviewed.",
+          "Users who repeatedly infringe the intellectual property rights of others may have their accounts suspended or terminated."
         ]
+      },
+      "acceptableUse": {
+        "title": "Acceptable Use",
+        "intro": "To help keep Inigo safe and reliable, you agree not to:",
+        "items": [
+          "use automated tools to scrape or collect data from the Service without our permission;",
+          "interfere with the security or operation of the Service;",
+          "attempt to gain unauthorized access to systems or accounts;",
+          "distribute spam or deceptive content;",
+          "use bots to artificially increase engagement;",
+          "manipulate community metrics;",
+          "upload malicious code or harmful software;",
+          "reverse engineer, decompile, or attempt to extract source code except where expressly permitted by law."
+        ],
+        "closing": "You also agree not to use Inigo in any way that could reasonably harm other users or the integrity of the Service."
+      },
+      "artificialIntelligence": {
+        "title": "Artificial Intelligence and Future Technologies",
+        "paragraphs": [
+          "As Inigo evolves, certain features may use artificial intelligence, machine learning, or similar technologies to improve the user experience.",
+          "Such features may assist with organization, recommendations, content discovery, summaries, or other wellbeing-related functionality.",
+          "Unless explicitly stated, AI-generated outputs are intended to support your personal practice and should not be relied upon as professional medical, legal, psychological, or financial advice."
+        ]
+      },
+      "paidFeatures": {
+        "title": "Paid Features",
+        "paragraphs": [
+          "Some parts of Inigo may become paid in the future.",
+          "These may include subscriptions, premium guided sessions, Creator tools, digital purchases, or additional features.",
+          "If paid services become available:"
+        ],
+        "items": [
+          "pricing will always be presented before purchase;",
+          "purchases processed through Apple or Google will also be subject to their respective platform terms;",
+          "subscription management, renewals, cancellations, and refunds may be handled through the platform used to complete the purchase unless otherwise stated."
+        ],
+        "closing": "Introducing paid features does not automatically change these Terms, although material changes may require an updated version."
+      },
+      "feedback": {
+        "title": "Feedback",
+        "paragraphs": [
+          "We genuinely value ideas from our community.",
+          "If you choose to send us suggestions, ideas, feature requests, or feedback, you agree that we may use them to improve the Service without any obligation to compensate you.",
+          "This helps us continue building Inigo together."
+        ]
+      },
+      "availability": {
+        "title": "Availability",
+        "paragraphs": [
+          "We work hard to make Inigo reliable.",
+          "However, no online service can guarantee uninterrupted availability.",
+          "From time to time we may:"
+        ],
+        "items": [
+          "perform maintenance;",
+          "release updates;",
+          "improve infrastructure;",
+          "fix bugs;",
+          "temporarily disable features."
+        ],
+        "closing": "We are not responsible for interruptions caused by circumstances beyond our reasonable control, including failures of internet providers, cloud infrastructure, mobile platforms, payment providers, or other third-party services."
+      },
+      "softwareUpdates": {
+        "title": "Software Updates",
+        "paragraphs": [
+          "From time to time we may release updates to improve security, performance, reliability, or introduce new features.",
+          "Some updates may be required for continued access to parts of the Service.",
+          "Where technically possible, we aim to maintain backward compatibility, but older versions of the application may eventually lose support."
+        ]
+      },
+      "electronicCommunications": {
+        "title": "Electronic Communications",
+        "paragraphs": [
+          "By creating an account, you agree that we may communicate with you electronically.",
+          "These communications may include:"
+        ],
+        "items": [
+          "account notifications;",
+          "security alerts;",
+          "updates to these Terms or our Privacy Policy;",
+          "important information about the Service;",
+          "transactional emails relating to your account."
+        ],
+        "closing": "Where required by law, marketing communications will always respect your communication preferences and applicable consent requirements."
       },
       "thirdPartyServices": {
-        "title": "14. Third-Party Services",
-        "text": "Inigo relies on third-party service providers (such as Firebase, Apple, Google, and others) to operate the Service. Inigo is not responsible for outages, policy changes, or actions of these third-party providers. Your use of certain features may be subject to additional terms from these providers."
+        "title": "Third-Party Services",
+        "paragraphs": [
+          "Inigo integrates with trusted third-party providers to operate the Service.",
+          "These providers may include authentication services, cloud hosting, storage providers, analytics providers, notification services, payment processors, or other technical partners.",
+          "Your use of certain features may also be subject to the terms and privacy policies of those third parties.",
+          "Whenever possible, we choose providers that share our commitment to privacy, security, and reliability."
+        ]
       },
-      "forceMajeure": {
-        "title": "15. Force Majeure",
-        "text": "Inigo shall not be responsible for any failure or delay in performance due to circumstances beyond its reasonable control, including but not limited to natural disasters, war, terrorism, labor disputes, internet or telecommunications failures, or government actions."
-      },
-      "termination": {
-        "title": "16. Termination",
-        "text": "You may stop using Inigo at any time. We may suspend or delete accounts that violate these Terms, disrupt others' experiences, or threaten the integrity of the platform."
-      },
-      "changes": {
-        "title": "17. Changes to Terms",
-        "text": "These Terms may be updated as Inigo grows. When changes are made, the updated version will be published at https://inigo.now/terms. Your continued use of Inigo after changes take effect means you accept the revised Terms."
-      },
-      "disputeResolution": {
-        "title": "18. Dispute Resolution",
-        "text1": "If you have a concern about these Terms or the Service, please contact us first at inigomeditation@gmail.com to try to resolve it informally.",
-        "text2": "These Terms shall be governed by and construed in accordance with the laws of Israel, without regard to conflict of law principles. Any disputes arising out of or relating to these Terms or the Service shall be subject to the exclusive jurisdiction of the competent courts in Tel Aviv, Israel."
-      },
-      "contact": {
-        "title": "19. Contact",
-        "text": "If you have any questions, feedback, or concerns, please contact:",
+      "suspensionAndTermination": {
+        "title": "Suspension and Termination",
+        "paragraphs": [
+          "We hope you never have to leave Inigo.",
+          "You are free to stop using the Service and delete your account at any time.",
+          "We may suspend, restrict, or terminate access to the Service if we reasonably believe that:"
+        ],
         "items": [
-          "Email: inigomeditation@gmail.com (operated by Asaf Gadassi)",
-          "Website: https://inigo.now"
+          "these Terms have been materially violated;",
+          "the Service is being used unlawfully;",
+          "your activity creates a significant risk to other users, the community, or the Service;",
+          "fraudulent, abusive, or deceptive behavior has occurred;",
+          "we are required to do so by law."
+        ],
+        "closingParagraphs": [
+          "Whenever reasonably possible, we will attempt to resolve issues before permanently restricting access.",
+          "Termination of your account does not affect rights or obligations that arose before the termination date."
+        ]
+      },
+      "limitationOfLiability": {
+        "title": "Limitation of Liability",
+        "paragraphs": [
+          "We built Inigo to support people in developing a consistent personal practice.",
+          "While we strive to provide a reliable and meaningful experience, the Service is provided on an \"as available\" and \"as is\" basis to the fullest extent permitted by applicable law.",
+          "To the maximum extent permitted by law, Inigo and its owner shall not be liable for indirect, incidental, consequential, exemplary, special, or punitive damages arising from or relating to your use of the Service.",
+          "Nothing in these Terms excludes or limits liability where such exclusion is prohibited by applicable law."
+        ]
+      },
+      "yourResponsibility": {
+        "title": "Your Responsibility",
+        "paragraphs": [
+          "You are responsible for how you choose to use Inigo.",
+          "You agree to exercise reasonable judgment while participating in any practice, including breathing exercises, meditation, mindful walking, movement, or any future wellbeing activity offered through the Service.",
+          "You should never use the Service while driving, operating machinery, or performing any activity that requires your full attention."
+        ]
+      },
+      "indemnification": {
+        "title": "Indemnification",
+        "intro": "To the extent permitted by applicable law, you agree to indemnify and hold harmless Inigo and its owner from claims, damages, liabilities, losses, and reasonable legal costs arising directly from:",
+        "items": [
+          "your violation of these Terms;",
+          "your unlawful use of the Service;",
+          "content you publish;",
+          "your infringement of another person's rights."
+        ]
+      },
+      "changesToService": {
+        "title": "Changes to the Service",
+        "paragraphs": [
+          "Inigo will continue to evolve.",
+          "We may introduce new features, improve existing functionality, discontinue features, or modify parts of the Service as technology and user needs change.",
+          "Whenever possible, we will make these changes in a way that preserves the continuity of your experience."
+        ]
+      },
+      "changesToTerms": {
+        "title": "Changes to These Terms",
+        "paragraphs": [
+          "From time to time we may update these Terms.",
+          "Whenever we do, we will publish a new version together with its effective date.",
+          "If changes materially affect your rights or obligations, we may ask you to review and accept the updated Terms before continuing to use the Service.",
+          "Previous versions may be retained for reference."
         ]
       },
       "governingLaw": {
-        "title": "20. Governing Law and Jurisdiction",
-        "text": "These Terms shall be governed by and construed in accordance with the laws of Israel, without regard to conflict of law principles. Any disputes shall be subject to the exclusive jurisdiction of the competent courts in Tel Aviv, Israel."
+        "title": "Governing Law",
+        "paragraphs": [
+          "These Terms are governed by the laws of the State of Israel.",
+          "Nothing in these Terms limits any mandatory consumer rights that apply under the laws of your country of residence."
+        ]
+      },
+      "contact": {
+        "title": "Contact",
+        "paragraphs": [
+          "If you have questions about these Terms or about Inigo, you can contact us at:"
+        ],
+        "emailLabel": "Email:",
+        "email": "inigomeditation@gmail.com",
+        "closing": "or through the contact options available on our website."
+      },
+      "entireAgreement": {
+        "title": "Entire Agreement",
+        "paragraphs": [
+          "These Terms, together with our Privacy Policy and any policies expressly incorporated by reference, constitute the complete agreement between you and Inigo regarding your use of the Service.",
+          "They replace any previous understandings relating to the same subject matter."
+        ]
+      },
+      "severability": {
+        "title": "Severability",
+        "paragraphs": [
+          "If any provision of these Terms is found to be invalid or unenforceable, the remaining provisions will continue in full force and effect.",
+          "The invalid provision will be interpreted, where possible, in a manner that most closely reflects its original purpose."
+        ]
+      },
+      "noWaiver": {
+        "title": "No Waiver",
+        "paragraphs": [
+          "If we choose not to enforce a particular provision of these Terms, that does not mean we waive our right to enforce it later."
+        ]
+      },
+      "assignment": {
+        "title": "Assignment",
+        "paragraphs": [
+          "You may not transfer or assign your rights under these Terms without our prior written consent.",
+          "If ownership of Inigo changes in the future, we may transfer these Terms and our rights and obligations under them to the new owner as part of that transition."
+        ]
+      },
+      "thankYou": {
+        "title": "Thank You",
+        "paragraphs": [
+          "Thank you for choosing to practice with us.",
+          "Our hope is that Inigo becomes more than an application on your phone.",
+          "We hope it becomes a place you return to—not because you have to, but because it helps you slow down, reconnect, and remember what matters.",
+          "Thank you for being part of the Inigo community."
+        ]
       }
     }
   }

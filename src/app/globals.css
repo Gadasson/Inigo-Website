@@ -6430,6 +6430,18 @@ main.subpage-quiet .terms-section h2 {
   margin-bottom: 1rem;
 }
 
+main.subpage-quiet .privacy-subsection {
+  margin-top: clamp(1.5rem, 3vw, 2rem);
+}
+
+main.subpage-quiet .privacy-subsection h3 {
+  font-size: clamp(1.1rem, 2.2vw, 1.25rem);
+  color: var(--quiet-text);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.75rem;
+}
+
 main.subpage-quiet .privacy-section p,
 main.subpage-quiet .privacy-section li,
 main.subpage-quiet .terms-section p,
