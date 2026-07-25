@@ -11,7 +11,7 @@ export async function generateMetadata({
 
   const title = isHe ? 'אודות — איניגו' : 'About — Inigo';
   const description = isHe
-    ? 'למה איניגו קיימת. אנחנו מאמינים בתרגול של חזרה — לנוכחות, לקלות, וביחד עם אחרים.'
+    ? 'למה איניגו קיימת. אנחנו מאמינים בתרגול של חזרה — לנוכחות, לנחת, וביחד עם אחרים.'
     : 'Why Inigo exists. We believe in a practice of returning—to presence, to ease, and together with others.';
 
   return {

@@ -25,11 +25,11 @@ export async function generateMetadata({
   const isHe = locale === 'he';
 
   const title = isHe
-    ? 'איניגו — לתרגל את החיים'
+    ? 'איניגו — Practice Being Alive'
     : 'Inigo — Practice Being Alive';
   const description = isHe
-    ? 'לחזור בקלות. לבנות תרגול שנשאר איתכם—דרך מדיטציה, הליכה, נשימה ורגעים משותפים.'
-    : 'Return with ease. Build a practice that stays with you—through meditation, walking, breathing, and shared moments.';
+    ? 'תמיד אפשר לחזור. לבנות תרגול שנשאר איתכם—דרך הליכה, נשימה, סשנים מודרכים, מדיטציה ורגעים משותפים.'
+    : 'Return with ease. Build a practice that stays with you—through walking, breathing, guided sessions, meditation, and shared moments.';
 
   return {
     metadataBase: new URL('https://inigo.now'),
