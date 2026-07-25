@@ -5659,6 +5659,18 @@ main.home-quiet .hero-new-subheadline {
   line-height: 1.5;
 }
 
+main.home-quiet .hero-new-body {
+  color: var(--quiet-muted-light);
+  font-size: clamp(1rem, 2vw, 1.125rem);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  text-align: center;
+  max-width: 42ch;
+  margin: 0 auto;
+  line-height: 1.65;
+  opacity: 0.92;
+}
+
 main.home-quiet .hero-new-cta--quiet {
   justify-content: center;
   flex-wrap: wrap;
@@ -5718,7 +5730,8 @@ html[dir="rtl"] main.home-quiet .hero-new-text {
 }
 
 html[dir="rtl"] main.home-quiet .hero-new-headline,
-html[dir="rtl"] main.home-quiet .hero-new-subheadline {
+html[dir="rtl"] main.home-quiet .hero-new-subheadline,
+html[dir="rtl"] main.home-quiet .hero-new-body {
   text-align: center;
 }
 
@@ -6006,7 +6019,7 @@ main.home-quiet .home-section-final .final-cta-tagline {
   font-weight: 400;
   letter-spacing: 0.04em;
   color: var(--color-text-subtle-on-dark);
-  line-height: 1;
+  line-height: 1.5;
 }
 
 main.home-quiet .home-section-final .final-cta-tagline-line {

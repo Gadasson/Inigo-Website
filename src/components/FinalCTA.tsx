@@ -30,11 +30,7 @@ export default function FinalCTA({
             {t('headline')}
           </h2>
 
-          <p className="final-cta-tagline" aria-label={`${t('line1')} ${t('line2')} ${t('line3')}`}>
-            <span className="final-cta-tagline-line">{t('line1')}</span>
-            <span className="final-cta-tagline-line">{t('line2')}</span>
-            <span className="final-cta-tagline-line">{t('line3')}</span>
-          </p>
+          <p className="final-cta-tagline">{t('supporting')}</p>
 
           <div className="final-cta-buttons final-cta-buttons--final">
             <a

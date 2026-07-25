@@ -16,9 +16,10 @@
     "primaryCta": "Get Early Access"
   },
   "heroNew": {
-    "headline": "Your presence matters.",
-    "subheadline": "Sit. Feel. Shift the world.",
-    "primaryCta": "Join the quiet movement",
+    "headline": "Practice Being Alive.",
+    "subheadline": "Return with ease.",
+    "body": "Build a practice that stays with you—through meditation, walking, breathing, and shared moments with people walking the same path.",
+    "primaryCta": "Start your practice",
     "exploreCta": "Explore Inigo",
     "appStore": "App Store",
     "googlePlay": "Google Play",
@@ -26,33 +27,31 @@
     "download": "Download"
   },
   "howItWorksNew": {
-    "line1": "This is not just meditation.",
-    "line2": "This is shared presence.",
-    "body1": "When you sit,",
-    "body2": "something changes.",
-    "body3": "Not just in you."
+    "line1": "Practice is a way of returning.",
+    "line2": "Not escaping life—meeting it differently.",
+    "body1": "Small moments of returning.",
+    "body2": "A calmer nervous system. More presence.",
+    "body3": "Wiser reactions. A more intentional everyday life."
   },
   "worldStateNew": {
-    "headline": "A living world.",
-    "subheadline": "Moved by quiet moments.",
+    "headline": "Practice is easier together.",
+    "subheadline": "People inspire people.",
     "liveNow": "Live now",
-    "explanation": "Every session adds to something bigger."
+    "explanation": "Every practice contributes to something bigger—not because of algorithms, but because returning becomes easier together."
   },
   "createYourPresence": {
-    "title1": "See others.",
-    "title2": "Feel connection.",
-    "title3": "Share your presence.",
-    "supporting": "Inigo turns quiet moments into shared signals — small traces of presence, felt together."
+    "title1": "Bring practice into everyday life.",
+    "title2": "Share meaningful moments.",
+    "title3": "Encourage one another.",
+    "supporting": "See people returning every day—at work, with family, in nature, in conversation. Learn from real life."
   },
   "communityNew": {
-    "headline": "No noise.\nNo pressure.\nJust sit.",
-    "supporting": "When you're ready, simply begin."
+    "headline": "Share from presence.\nNot perfection.\nNot performance.",
+    "supporting": "Life as it is. People supporting people."
   },
   "finalCTA": {
-    "headline": "Join the quiet movement.",
-    "line1": "Sit.",
-    "line2": "Feel.",
-    "line3": "Share.",
+    "headline": "Practice Being Alive.",
+    "supporting": "Return with ease.",
     "appStore": "App Store",
     "googlePlay": "Google Play"
   },
@@ -343,44 +342,101 @@
   },
   "about": {
     "hero": {
-      "title": "A different kind of space.",
+      "title": "Why Inigo exists.",
       "backCta": "Back to home"
     },
     "blocks": [
       {
-        "lead": "Inigo was created from a simple idea:",
+        "lead": "People today live in a world that constantly pulls their attention away.",
         "lines": [
-          "Presence matters."
+          "Faster.",
+          "Louder.",
+          "More reactive.",
+          "More distracted."
         ]
       },
       {
-        "lead": "Most of the world moves fast.",
+        "lead": "We don't believe the answer is to escape modern life.",
         "lines": [
-          "Noise.",
-          "Pressure.",
-          "Disconnection."
+          "We believe the answer is learning how to return.",
+          "Again.",
+          "And again."
         ]
       },
       {
-        "lead": "We wanted something quieter.",
+        "lead": "Practice is simply the way we do that.",
         "lines": [
-          "Something real.",
-          "Something shared."
+          "Meditation.",
+          "Walking.",
+          "Breathing.",
+          "Guided sessions.",
+          "Moments of awareness throughout everyday life."
         ]
       },
       {
-        "lead": "Meditation is not just personal.",
+        "lead": "Practice is not the goal.",
         "lines": [
-          "It can be felt together."
-        ]
-      },
-      {
-        "lead": "Every moment of presence",
-        "lines": [
-          "adds to something bigger.",
+          "Practice helps us return.",
           "",
-          "A shared field.",
-          "A living state."
+          "Over time those small returns change how we experience life.",
+          "A calmer nervous system.",
+          "More presence.",
+          "Healthier relationships.",
+          "Kinder reactions.",
+          "More intentional choices.",
+          "",
+          "Practice becomes a way of living."
+        ]
+      },
+      {
+        "lead": "Returning is easier when we remember we are not alone.",
+        "lines": [
+          "Seeing another person show up today matters.",
+          "Encouraging someone matters.",
+          "Sharing an ordinary moment matters.",
+          "",
+          "Not because ordinary moments are extraordinary.",
+          "But because they remind us that practice belongs inside real life.",
+          "",
+          "Community exists to support practice.",
+          "Not attention."
+        ]
+      },
+      {
+        "lead": "We believe the way we share shapes the culture we create.",
+        "lines": [
+          "Many places encourage performance.",
+          "We invite something quieter.",
+          "",
+          "Share life as it is.",
+          "Not perfect.",
+          "Present.",
+          "",
+          "Moments don't need to impress anyone.",
+          "Sometimes they simply remind another human being to come back."
+        ]
+      },
+      {
+        "lead": "We believe that small moments practiced consistently create meaningful change.",
+        "lines": [
+          "Not through pressure.",
+          "Not through streaks.",
+          "Not through perfection.",
+          "",
+          "Through returning.",
+          "Again and again."
+        ]
+      },
+      {
+        "lead": "A calmer person changes more than their own life.",
+        "lines": [
+          "Presence naturally spreads into families.",
+          "Friendships.",
+          "Communities.",
+          "The way we meet one another.",
+          "",
+          "This is the future we hope to help build.",
+          "One practice at a time."
         ]
       }
     ]

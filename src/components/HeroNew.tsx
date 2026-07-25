@@ -19,6 +19,7 @@ export default function HeroNew() {
               {t('headline')}
             </h1>
             <p className="hero-new-subheadline">{t('subheadline')}</p>
+            <p className="hero-new-body">{t('body')}</p>
 
             <div className="hero-new-cta hero-new-cta--quiet">
               <a

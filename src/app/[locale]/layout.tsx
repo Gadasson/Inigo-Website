@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { locales } from '@/i18n/config';
 import ScrollToTop from '../../components/ScrollToTop';
@@ -24,11 +25,11 @@ export async function generateMetadata({
   const isHe = locale === 'he';
 
   const title = isHe
-    ? 'איניגו — נוכחות משותפת'
-    : 'Inigo — Your presence matters';
+    ? 'איניגו — לתרגל את החיים'
+    : 'Inigo — Practice Being Alive';
   const description = isHe
-    ? 'נוכחות משותפת. תנועה שקטה. שבו, הרגישו, והזיזו משהו יחד.'
-    : 'Shared presence. A quiet movement. Sit, feel, and shift the world together.';
+    ? 'לחזור בקלות. לבנות תרגול שנשאר איתכם—דרך מדיטציה, הליכה, נשימה ורגעים משותפים.'
+    : 'Return with ease. Build a practice that stays with you—through meditation, walking, breathing, and shared moments.';
 
   return {
     metadataBase: new URL('https://inigo.now'),
@@ -80,22 +81,13 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
 
-  // Validate locale (middleware should handle this, but double-check)
   if (!locale || !locales.includes(locale as (typeof locales)[number])) {
     notFound();
   }
 
-  // Providing all messages to the client
-  // Load messages directly using the locale from params
-  let messages;
-  try {
-    // Import messages directly for the locale
-    messages = (await import(`../../../messages/${locale}.json`)).default;
-  } catch (error) {
-    console.error('Error loading messages:', error);
-    // Fallback to empty messages if loading fails
-    messages = {};
-  }
+  setRequestLocale(locale);
+
+  const messages = await getMessages();
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages} timeZone="Asia/Jerusalem">
@@ -112,4 +104,3 @@ export default async function LocaleLayout({
     </NextIntlClientProvider>
   );
 }
-

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import FinalCTA from '../../../components/FinalCTA';
 
 type AboutBlock = { lead?: string; lines: string[] };
@@ -42,6 +42,8 @@ export default async function About({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  setRequestLocale(locale);
+
   const t = await getTranslations('about');
   const blocks = t.raw('blocks') as AboutBlock[];
 

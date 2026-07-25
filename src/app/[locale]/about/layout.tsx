@@ -11,8 +11,8 @@ export async function generateMetadata({
 
   const title = isHe ? 'אודות — איניגו' : 'About — Inigo';
   const description = isHe
-    ? 'סוג אחר של מקום. נוכחות משותפת — המשך מהעמוד הראשי של איניגו.'
-    : 'A different kind of space. Shared presence — a continuation of the Inigo homepage.';
+    ? 'למה איניגו קיימת. אנחנו מאמינים בתרגול של חזרה — לנוכחות, לקלות, וביחד עם אחרים.'
+    : 'Why Inigo exists. We believe in a practice of returning—to presence, to ease, and together with others.';
 
   return {
     title,
