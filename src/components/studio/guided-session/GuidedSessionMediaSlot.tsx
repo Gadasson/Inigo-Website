@@ -1,7 +1,8 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
+  type GuidedSessionMediaActivity,
   type GuidedSessionMediaSlotConfig,
   getVideoOptimizationDisplayStatus,
   guidedSessionMediaFileName,
@@ -13,6 +14,7 @@ import {
   validateGuidedSessionMediaAttach,
   validateGuidedSessionMediaFile,
 } from '@/lib/studio/guidedSessionMedia';
+import { resolveCoverImagePreview } from '@/lib/studio/coverImagePreview';
 import {
   getMediaUploadErrorCode,
   getPendingMediaAttach,
@@ -23,6 +25,11 @@ import type {
   PendingMediaAttach,
 } from '@/lib/studio/guidedSessionMediaTypes';
 import type { MediaUploadResult } from '@/lib/studio/guidedSessionMediaUpload';
+import {
+  clearPendingMediaAttach,
+  loadPendingMediaAttach,
+  savePendingMediaAttach,
+} from '@/lib/studio/pendingMediaAttachStorage';
 import { isFirebaseStorageConfigured } from '@/lib/firebase/config';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -40,6 +47,8 @@ type Props = {
   session: StudioGuidedSession;
   disabled: boolean;
   onSessionUpdated: OnGuidedSessionMediaUpdated;
+  /** Stable callback preferred — slot id is provided by this component. */
+  onActivityChange?: (slotId: string, activity: GuidedSessionMediaActivity) => void;
 };
 
 type SlotPhase =
@@ -97,17 +106,61 @@ export default function GuidedSessionMediaSlot({
   session,
   disabled,
   onSessionUpdated,
+  onActivityChange,
 }: Props) {
   const { getIdToken } = useAuth();
   const t = useTranslations('media');
   const tv = useTranslations('mediaValidation');
   const te = useTranslations('mediaError');
   const inputRef = useRef<HTMLInputElement>(null);
+  const localObjectUrlRef = useRef<string | null>(null);
   const [phase, setPhase] = useState<SlotPhase>('idle');
   const [uploadPercent, setUploadPercent] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [pendingAttach, setPendingAttach] = useState<PendingMediaAttach | null>(null);
+  const [localObjectUrl, setLocalObjectUrl] = useState<string | null>(null);
   const [removeConfirmOpen, setRemoveConfirmOpen] = useState(false);
+  const [restoredPending, setRestoredPending] = useState(false);
+
+  useEffect(() => {
+    if (restoredPending || disabled) return;
+    const stored = loadPendingMediaAttach(session.id, slot.role);
+    if (!stored) {
+      setRestoredPending(true);
+      return;
+    }
+    setPendingAttach(stored);
+    setPhase('attach_pending');
+    setError(te('attachPending'));
+    setRestoredPending(true);
+  }, [disabled, restoredPending, session.id, slot.role, te]);
+
+  useEffect(() => {
+    return () => {
+      if (localObjectUrlRef.current) {
+        URL.revokeObjectURL(localObjectUrlRef.current);
+        localObjectUrlRef.current = null;
+      }
+    };
+  }, []);
+
+  const revokeLocalObjectUrl = () => {
+    if (localObjectUrlRef.current) {
+      URL.revokeObjectURL(localObjectUrlRef.current);
+      localObjectUrlRef.current = null;
+    }
+    setLocalObjectUrl(null);
+  };
+
+  const setLocalPreviewFromFile = (file: File) => {
+    revokeLocalObjectUrl();
+    if (slot.role !== 'thumbnail' || !file.type.startsWith('image/')) {
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    localObjectUrlRef.current = url;
+    setLocalObjectUrl(url);
+  };
 
   const videoOptStatus =
     slot.role === 'video' ? getVideoOptimizationDisplayStatus(session) : null;
@@ -121,9 +174,33 @@ export default function GuidedSessionMediaSlot({
   const isInteractionDisabled = disabled || isBlocked;
 
   const displayFileName =
-    (isAttached && attachedName) ||
     pendingAttach?.originalFileName ||
+    (isAttached && !hasPendingAttach ? attachedName : null) ||
     null;
+
+  const coverPreview =
+    slot.role === 'thumbnail'
+      ? resolveCoverImagePreview({
+          persistedUrl: attachedUrl,
+          localObjectUrl,
+          hasPendingAttach,
+          isUploading: phase === 'uploading',
+        })
+      : null;
+
+  const onActivityChangeRef = useRef(onActivityChange);
+  onActivityChangeRef.current = onActivityChange;
+
+  useEffect(() => {
+    onActivityChangeRef.current?.(slot.id, {
+      uploading:
+        phase === 'uploading' ||
+        phase === 'retrying_attach' ||
+        phase === 'removing' ||
+        phase === 'retrying_optimization',
+      attachPending: hasPendingAttach,
+    });
+  }, [phase, hasPendingAttach, slot.id]);
 
   const slotLabel = t(SLOT_LABEL_KEYS[slot.id] ?? slot.id);
   const slotHint = (() => {
@@ -153,7 +230,10 @@ export default function GuidedSessionMediaSlot({
   const formatUploadError = (err: unknown) => te(getMediaUploadErrorCode(err));
 
   const statusLabel = (() => {
-    if (phase === 'uploading') return t('statusUploading', { percent: uploadPercent });
+    if (phase === 'uploading') {
+      if (uploadPercent >= 100) return t('statusAttaching');
+      return t('statusUploading', { percent: uploadPercent });
+    }
     if (phase === 'removing') return t('statusRemoving');
     if (phase === 'retrying_attach') return t('statusRetrying');
     if (phase === 'retrying_optimization') return t('statusRetryingOptimization');
@@ -187,15 +267,27 @@ export default function GuidedSessionMediaSlot({
   })();
 
   const buttonLabel = (() => {
-    if (phase === 'uploading') return t('buttonUploading', { percent: uploadPercent });
+    if (phase === 'uploading') {
+      if (uploadPercent >= 100) return t('buttonAttaching');
+      return t('buttonUploading', { percent: uploadPercent });
+    }
     if (phase === 'removing') return t('buttonRemoving');
     if (phase === 'retrying_attach') return t('buttonRetrying');
     if (phase === 'retrying_optimization') return t('buttonRetryingOptimization');
     return isAttached || hasPendingAttach ? t('buttonReplace') : t('buttonChoose');
   })();
 
+  const persistPending = (next: PendingMediaAttach | null) => {
+    setPendingAttach(next);
+    if (next) {
+      savePendingMediaAttach(next);
+    } else {
+      clearPendingMediaAttach(session.id, slot.role);
+    }
+  };
+
   const clearPendingAttach = () => {
-    setPendingAttach(null);
+    persistPending(null);
   };
 
   const onChooseFile = () => {
@@ -204,6 +296,7 @@ export default function GuidedSessionMediaSlot({
 
   const onDiscardPending = () => {
     clearPendingAttach();
+    revokeLocalObjectUrl();
     setPhase('idle');
     setError(null);
     setUploadPercent(0);
@@ -220,6 +313,7 @@ export default function GuidedSessionMediaSlot({
       const updated = await detachGuidedSessionMedia(session.id, slot.role, token);
       onSessionUpdated(updated);
       clearPendingAttach();
+      revokeLocalObjectUrl();
       setRemoveConfirmOpen(false);
       setPhase('idle');
       setUploadPercent(0);
@@ -244,11 +338,12 @@ export default function GuidedSessionMediaSlot({
 
       applyMediaUploadResult(result, onSessionUpdated);
       clearPendingAttach();
+      revokeLocalObjectUrl();
       setPhase('idle');
       setUploadPercent(0);
     } catch (err) {
       const nextPending = getPendingMediaAttach(err) ?? pendingAttach;
-      setPendingAttach(nextPending);
+      persistPending(nextPending);
       setPhase('attach_pending');
       setError(formatUploadError(err));
     }
@@ -302,6 +397,7 @@ export default function GuidedSessionMediaSlot({
       return;
     }
 
+    setLocalPreviewFromFile(file);
     setPhase('uploading');
     setUploadPercent(0);
     setError(null);
@@ -313,21 +409,23 @@ export default function GuidedSessionMediaSlot({
         role: slot.role,
         file,
         getIdToken,
-        onProgress: ({ percent }) => {
-          setUploadPercent(percent);
+        onProgress: ({ stage, percent }) => {
+          setUploadPercent(stage === 'attach' ? 100 : percent);
         },
       });
 
       applyMediaUploadResult(result, onSessionUpdated);
       clearPendingAttach();
+      revokeLocalObjectUrl();
       setPhase('idle');
       setUploadPercent(0);
     } catch (err) {
       const nextPending = getPendingMediaAttach(err);
       if (nextPending) {
-        setPendingAttach(nextPending);
+        persistPending(nextPending);
         setPhase('attach_pending');
       } else {
+        revokeLocalObjectUrl();
         setPhase('error');
       }
       setUploadPercent(0);
@@ -345,7 +443,7 @@ export default function GuidedSessionMediaSlot({
   return (
     <li
       className={`creator-workspace__media-slot${
-        isAttached ? ' creator-workspace__media-slot--attached' : ''
+        isAttached && !hasPendingAttach ? ' creator-workspace__media-slot--attached' : ''
       }${slotModifier ? ` creator-workspace__media-slot--${slotModifier}` : ''}`}
     >
       <div className="creator-workspace__media-slot-main">
@@ -383,15 +481,28 @@ export default function GuidedSessionMediaSlot({
           <p className="creator-workspace__media-hint">{slotHint}</p>
         ) : null}
 
-        {slot.role === 'thumbnail' && attachedUrl ? (
+        {coverPreview?.kind === 'persisted' && coverPreview.src ? (
           <LoadingRemoteImage
-            src={attachedUrl}
+            src={coverPreview.src}
             className="creator-workspace__media-thumb"
             wrapperClassName="creator-workspace__media-thumb-wrap"
           />
         ) : null}
 
-        {slot.role === 'audio' && attachedUrl ? (
+        {coverPreview?.kind === 'local_pending' && coverPreview.src ? (
+          <div className="creator-workspace__media-thumb-wrap creator-workspace__media-thumb-wrap--pending">
+            {/* Local blob preview — not persisted server media */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={coverPreview.src}
+              alt=""
+              className="creator-workspace__media-thumb creator-workspace__media-thumb--pending"
+            />
+            <span className="creator-workspace__media-pending-badge">{t('pendingPreviewBadge')}</span>
+          </div>
+        ) : null}
+
+        {slot.role === 'audio' && attachedUrl && !hasPendingAttach ? (
           <audio
             className="creator-workspace__media-audio"
             controls
@@ -452,7 +563,7 @@ export default function GuidedSessionMediaSlot({
           disabled={isInteractionDisabled || isBusy}
           onChange={onFileChange}
         />
-        {isAttached ? (
+        {isAttached && !hasPendingAttach ? (
           <button
             type="button"
             className="creator-workspace__media-btn creator-workspace__media-btn--ghost"

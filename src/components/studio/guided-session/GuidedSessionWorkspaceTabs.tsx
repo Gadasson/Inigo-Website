@@ -5,6 +5,7 @@ import type { GuidedSessionEditorForm } from '@/lib/studio/guidedSessionEditorFo
 import type { CreatorWorkspaceSection } from '@/lib/studio/creatorWorkspaceSections';
 import type { WorkspaceReadiness } from '@/lib/studio/workspaceReadiness';
 import type { OnGuidedSessionMediaUpdated } from '@/lib/studio/guidedSessionMediaTypes';
+import type { GuidedSessionMediaActivity } from '@/lib/studio/guidedSessionMedia';
 import GuidedSessionMediaSection from '@/components/studio/guided-session/GuidedSessionMediaSection';
 import GuidedSessionPreviewSection from '@/components/studio/guided-session/GuidedSessionPreviewSection';
 import GuidedSessionShareSection from '@/components/studio/guided-session/GuidedSessionShareSection';
@@ -19,9 +20,14 @@ type Props = {
   isEditable: boolean;
   onSessionUpdated: OnGuidedSessionMediaUpdated;
   onSessionPublished: (session: StudioGuidedSession) => void;
+  onMediaActivityChange?: (activity: GuidedSessionMediaActivity) => void;
 };
 
-/** Client-only workspace tabs (media, preview, share) in one lazy chunk. */
+/**
+ * Client-only workspace tabs (media, preview, share).
+ * Media stays mounted while the lazy chunk is open so in-flight upload /
+ * attach-pending state survives Preview ↔ Publish navigation.
+ */
 export default function GuidedSessionWorkspaceTabs({
   activeSection,
   session,
@@ -32,33 +38,38 @@ export default function GuidedSessionWorkspaceTabs({
   isEditable,
   onSessionUpdated,
   onSessionPublished,
+  onMediaActivityChange,
 }: Props) {
-  if (activeSection === 'media') {
-    return (
-      <GuidedSessionMediaSection
-        session={session}
-        isEditable={isEditable}
-        onSessionUpdated={onSessionUpdated}
-      />
-    );
-  }
+  const showMediaPane =
+    activeSection === 'media' || activeSection === 'preview' || activeSection === 'share';
 
-  if (activeSection === 'preview') {
-    return <GuidedSessionPreviewSection session={session} form={form} />;
-  }
+  return (
+    <>
+      {showMediaPane ? (
+        <div hidden={activeSection !== 'media'}>
+          <GuidedSessionMediaSection
+            session={session}
+            isEditable={isEditable}
+            onSessionUpdated={onSessionUpdated}
+            onMediaActivityChange={onMediaActivityChange}
+          />
+        </div>
+      ) : null}
 
-  if (activeSection === 'share') {
-    return (
-      <GuidedSessionShareSection
-        sessionId={sessionId}
-        sessionSlug={session.session_id}
-        status={status}
-        isAvailable={session.is_available ?? false}
-        readiness={readiness}
-        onSessionPublished={onSessionPublished}
-      />
-    );
-  }
+      {activeSection === 'preview' ? (
+        <GuidedSessionPreviewSection session={session} form={form} />
+      ) : null}
 
-  return null;
+      {activeSection === 'share' ? (
+        <GuidedSessionShareSection
+          sessionId={sessionId}
+          sessionSlug={session.session_id}
+          status={status}
+          isAvailable={session.is_available ?? false}
+          readiness={readiness}
+          onSessionPublished={onSessionPublished}
+        />
+      ) : null}
+    </>
+  );
 }

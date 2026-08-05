@@ -345,6 +345,39 @@ export function hasGuidedSessionPrimaryMedia(session: StudioGuidedSession): bool
   return hasValidGuidedSessionPrimaryMedia(session);
 }
 
+/**
+ * Cover is publish-ready only when the server thumbnail pipeline reports ready.
+ * Mirrors `validate_thumbnail_ready_for_publication` (URL alone is not enough).
+ */
+export function isGuidedSessionCoverReady(session: StudioGuidedSession): boolean {
+  if (!guidedSessionMediaUrl(session, 'thumbnail')) {
+    return false;
+  }
+  return session.thumbnail_optimization_status === 'ready';
+}
+
+/** @deprecated Prefer isGuidedSessionCoverReady — kept as alias for call sites. */
 export function hasGuidedSessionCover(session: StudioGuidedSession): boolean {
-  return Boolean(guidedSessionMediaUrl(session, 'thumbnail'));
+  return isGuidedSessionCoverReady(session);
+}
+
+/** Aggregate in-flight / unrecovered media work that must block publish. */
+export type GuidedSessionMediaActivity = {
+  uploading: boolean;
+  attachPending: boolean;
+};
+
+export function isGuidedSessionMediaBlockingPublish(
+  activity: GuidedSessionMediaActivity | null | undefined,
+): boolean {
+  return Boolean(activity?.uploading || activity?.attachPending);
+}
+
+export function mergeGuidedSessionMediaActivity(
+  activities: ReadonlyArray<GuidedSessionMediaActivity>,
+): GuidedSessionMediaActivity {
+  return {
+    uploading: activities.some((item) => item.uploading),
+    attachPending: activities.some((item) => item.attachPending),
+  };
 }

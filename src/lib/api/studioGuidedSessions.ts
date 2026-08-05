@@ -58,6 +58,9 @@ export type StudioGuidedSession = {
   tags?: string[];
   sub_categories?: string[];
   thumbnail_url?: string | null;
+  /** Canonical display derivative; prefer when optimization is ready. */
+  thumbnail_display_url?: string | null;
+  thumbnail_optimization_status?: 'pending' | 'processing' | 'ready' | 'failed' | null;
   audio_url?: string | null;
   video_url?: string | null;
   has_audio?: boolean;

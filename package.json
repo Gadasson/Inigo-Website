@@ -14,7 +14,9 @@
     "build:turbo": "node scripts/ensure-node-version.cjs && next build --turbopack",
     "start": "next start",
     "start:prod": "npm run build && next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:studio-media": "npx --yes tsx --test src/lib/studio/studioThumbnailLifecycle.test.ts",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",

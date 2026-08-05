@@ -24,6 +24,10 @@ import {
 import { formatSessionDate } from '@/lib/studio/formatSessionDate';
 import { buildGuidedSessionWorkspaceReadiness } from '@/lib/studio/workspaceReadiness';
 import {
+  isGuidedSessionMediaBlockingPublish,
+  type GuidedSessionMediaActivity,
+} from '@/lib/studio/guidedSessionMedia';
+import {
   guidedSessionDurationDisplayLabel,
   isGuidedSessionDurationFromMedia,
   guidedSessionDurationMediaSource,
@@ -91,6 +95,10 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isReady, setIsReady] = useState(false);
   const [welcomeVisible, setWelcomeVisible] = useState(false);
+  const [mediaActivity, setMediaActivity] = useState<GuidedSessionMediaActivity>({
+    uploading: false,
+    attachPending: false,
+  });
 
   const activeSection = parseCreatorWorkspaceSection(searchParams.get('section'));
 
@@ -302,16 +310,20 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
   );
 
   const lastSavedLabel = useMemo(() => {
+    if (isGuidedSessionMediaBlockingPublish(mediaActivity)) {
+      if (mediaActivity.uploading) return t('mediaSaving');
+      return t('mediaPending');
+    }
     if (saveState === 'saving') return t('saving');
-    if (saveState === 'saved') return t('saved');
+    if (saveState === 'saved') return t('detailsSaved');
     if (saveState === 'error') return t('saveFailed');
     return sessionTimestampDisplay;
-  }, [saveState, sessionTimestampDisplay, t]);
+  }, [mediaActivity, saveState, sessionTimestampDisplay, t]);
 
   const workspaceReadiness = useMemo(() => {
     if (!session || !form) return null;
-    return buildGuidedSessionWorkspaceReadiness(session, form);
-  }, [session, form]);
+    return buildGuidedSessionWorkspaceReadiness(session, form, { mediaActivity });
+  }, [session, form, mediaActivity]);
 
   if (loading) {
     return (
@@ -403,6 +415,7 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
           isEditable={isEditable}
           onSessionUpdated={onSessionUpdated}
           onSessionPublished={onSessionPublished}
+          onMediaActivityChange={setMediaActivity}
         />
       ) : null}
     </CreatorWorkspace>

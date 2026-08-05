@@ -4,8 +4,9 @@ import type { CreatorWorkspaceSection } from './creatorWorkspaceSections';
 import { isValidEstimatedDurationMmSs } from '@/lib/studio/formatDuration';
 import {
   hasGuidedSessionCover,
-  hasGuidedSessionPrimaryMediaConflict,
   hasValidGuidedSessionPrimaryMedia,
+  isGuidedSessionMediaBlockingPublish,
+  type GuidedSessionMediaActivity,
 } from '@/lib/studio/guidedSessionMedia';
 
 export type WorkspaceReadinessItemState =
@@ -58,14 +59,22 @@ function partitionReadiness(items: WorkspaceReadinessItem[]): WorkspaceReadiness
   };
 }
 
+export type BuildGuidedSessionWorkspaceReadinessOptions = {
+  /** In-flight upload or unrecovered attach-pending must keep cover incomplete. */
+  mediaActivity?: GuidedSessionMediaActivity | null;
+};
+
 /** Guided Session V1 — reusable by Share and future Publish. */
 export function buildGuidedSessionWorkspaceReadiness(
   session: StudioGuidedSession,
   form: GuidedSessionEditorForm,
+  options?: BuildGuidedSessionWorkspaceReadinessOptions,
 ): WorkspaceReadiness {
   const detailsComplete = isGuidedSessionDetailsComplete(form);
-  const hasPrimaryMedia = hasValidGuidedSessionPrimaryMedia(session);
-  const hasCover = hasGuidedSessionCover(session);
+  const mediaBlocked = isGuidedSessionMediaBlockingPublish(options?.mediaActivity);
+  const hasPrimaryMedia =
+    hasValidGuidedSessionPrimaryMedia(session) && !mediaBlocked;
+  const hasCover = hasGuidedSessionCover(session) && !mediaBlocked;
 
   const items: WorkspaceReadinessItem[] = [
     {

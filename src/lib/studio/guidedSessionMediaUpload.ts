@@ -73,13 +73,22 @@ function isNetworkFailure(error: unknown): boolean {
 }
 
 function toAttachError(cause: unknown, pendingAttach?: PendingMediaAttach): MediaUploadError {
+  // Always retain pendingAttach after Firebase succeeded so retry can resume post-reauth.
   if (cause instanceof StudioApiError && cause.status === 401) {
-    return new MediaUploadError('auth', '', cause);
+    return new MediaUploadError('auth', '', cause, pendingAttach);
   }
   if (isNetworkFailure(cause)) {
     return new MediaUploadError('network', '', cause, pendingAttach);
   }
   return new MediaUploadError('attach', '', cause, pendingAttach);
+}
+
+/** Exported for unit tests — wraps attach failures with pending recovery payload. */
+export function buildAttachMediaUploadError(
+  cause: unknown,
+  pendingAttach?: PendingMediaAttach,
+): MediaUploadError {
+  return toAttachError(cause, pendingAttach);
 }
 
 function toFirebaseError(cause: unknown): MediaUploadError {
