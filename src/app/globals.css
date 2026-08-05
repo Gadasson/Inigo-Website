@@ -6011,6 +6011,8 @@ main.home-quiet .home-section-final .final-cta-headline {
   font-size: clamp(2rem, 5vw, 3rem);
   letter-spacing: -0.03em;
   margin: 0;
+  direction: ltr;
+  unicode-bidi: isolate;
 }
 
 /* Final CTA — supporting lines (Sit. / Feel. / Share.) */
@@ -6265,6 +6267,8 @@ main.about-quiet .home-section-final .final-cta-headline {
   font-size: clamp(2rem, 5vw, 3rem);
   letter-spacing: -0.03em;
   margin: 0;
+  direction: ltr;
+  unicode-bidi: isolate;
 }
 
 main.about-quiet .home-section-final .final-cta-tagline {
@@ -6593,6 +6597,8 @@ main.subpage-quiet .home-section-final .final-cta-headline {
   font-size: clamp(2rem, 5vw, 3rem);
   letter-spacing: -0.03em;
   margin: 0;
+  direction: ltr;
+  unicode-bidi: isolate;
 }
 
 main.subpage-quiet .home-section-final .final-cta-tagline {

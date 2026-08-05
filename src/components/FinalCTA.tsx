@@ -26,7 +26,7 @@ export default function FinalCTA({
     >
       <div className="container container--narrow">
         <div className="final-cta-content">
-          <h2 id={titleId} className="final-cta-headline">
+          <h2 id={titleId} className="final-cta-headline" dir="ltr" lang="en">
             {t('headline')}
           </h2>
 
