@@ -30,3 +30,30 @@ export function parseStudioApiError(error: unknown): string {
 
   return 'Something went wrong. Please try again.';
 }
+
+/** Extract DRF-style field errors from a Studio API error body. */
+export function getStudioApiFieldErrors(error: unknown): Record<string, string> {
+  if (!(error instanceof StudioApiError)) {
+    return {};
+  }
+  const body = error.body;
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return {};
+  }
+
+  const result: Record<string, string> = {};
+  for (const [key, value] of Object.entries(body as Record<string, unknown>)) {
+    if (key === 'detail' || key === 'code' || key === 'message' || key === 'error') {
+      continue;
+    }
+    if (Array.isArray(value)) {
+      const parts = value.filter((item): item is string => typeof item === 'string');
+      if (parts.length > 0) {
+        result[key] = parts.join(' ');
+      }
+    } else if (typeof value === 'string' && value.trim()) {
+      result[key] = value.trim();
+    }
+  }
+  return result;
+}

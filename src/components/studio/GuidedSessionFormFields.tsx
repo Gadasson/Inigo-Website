@@ -12,6 +12,8 @@ import {
 } from '@/lib/studio/guidedSessionOptions';
 import StudioFieldLabel from '@/components/studio/StudioFieldLabel';
 import GuidedSessionDurationField from '@/components/studio/GuidedSessionDurationField';
+import GuidedSessionTimeSuitabilityField from '@/components/studio/GuidedSessionTimeSuitabilityField';
+import type { TimeSuitabilityValue } from '@/lib/studio/timeSuitability';
 
 type Props = {
   form: GuidedSessionEditorForm;
@@ -22,9 +24,11 @@ type Props = {
   taxonomyError?: string | null;
   disabled?: boolean;
   simplified?: boolean;
+  timeSuitabilityError?: string | null;
   onChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => void;
+  onTimeSuitabilityChange: (next: TimeSuitabilityValue[]) => void;
 };
 
 const LANGUAGE_LABEL_KEYS: Record<string, string> = {
@@ -71,7 +75,9 @@ export default function GuidedSessionFormFields({
   taxonomyError = null,
   disabled = false,
   simplified = false,
+  timeSuitabilityError = null,
   onChange,
+  onTimeSuitabilityChange,
 }: Props) {
   const t = useTranslations('createForm');
   const tf = useTranslations('fields');
@@ -255,6 +261,15 @@ export default function GuidedSessionFormFields({
     </p>
   ) : null;
 
+  const timeSuitabilityField = (
+    <GuidedSessionTimeSuitabilityField
+      value={form.timeSuitability}
+      disabled={disabled}
+      error={timeSuitabilityError}
+      onChange={onTimeSuitabilityChange}
+    />
+  );
+
   if (simplified) {
     return (
       <div className="studio-form">
@@ -273,6 +288,8 @@ export default function GuidedSessionFormFields({
         </div>
 
         {durationField}
+
+        {timeSuitabilityField}
 
         <p className="studio-form__section-note">{t('defaultsNote')}</p>
       </div>
@@ -300,6 +317,8 @@ export default function GuidedSessionFormFields({
       </div>
 
       {taxonomyErrorBlock}
+
+      {timeSuitabilityField}
 
       <div className="studio-form__field">
         <StudioFieldLabel htmlFor="instructor" hintKey="instructor">

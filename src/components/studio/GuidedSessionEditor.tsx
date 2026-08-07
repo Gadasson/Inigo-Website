@@ -11,7 +11,7 @@ import {
   type StudioGuidedSession,
 } from '@/lib/api/studioGuidedSessions';
 import { StudioApiError } from '@/lib/api/studioApiClient';
-import { parseStudioApiError } from '@/lib/studio/parseStudioApiError';
+import { getStudioApiFieldErrors, parseStudioApiError } from '@/lib/studio/parseStudioApiError';
 import {
   buildGuidedSessionPatch,
   sessionToEditorForm,
@@ -27,6 +27,7 @@ import {
   isGuidedSessionMediaBlockingPublish,
   type GuidedSessionMediaActivity,
 } from '@/lib/studio/guidedSessionMedia';
+import { normalizeTimeSuitability, type TimeSuitabilityValue } from '@/lib/studio/timeSuitability';
 import {
   guidedSessionDurationDisplayLabel,
   isGuidedSessionDurationFromMedia,
@@ -93,6 +94,7 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [saveState, setSaveState] = useState<SaveState>('idle');
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [timeSuitabilityError, setTimeSuitabilityError] = useState<string | null>(null);
   const [isReady, setIsReady] = useState(false);
   const [welcomeVisible, setWelcomeVisible] = useState(false);
   const [mediaActivity, setMediaActivity] = useState<GuidedSessionMediaActivity>({
@@ -177,6 +179,7 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
     baselineRef.current = nextForm;
     setSaveState('idle');
     setSaveError(null);
+    setTimeSuitabilityError(null);
   }, []);
 
   useEffect(() => {
@@ -192,6 +195,7 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
       setIsReady(false);
       setSaveState('idle');
       setSaveError(null);
+      setTimeSuitabilityError(null);
 
       try {
         const token = await getIdToken();
@@ -252,6 +256,22 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
     [saveState, taxonomy],
   );
 
+  const onTimeSuitabilityChange = useCallback(
+    (next: TimeSuitabilityValue[]) => {
+      setForm((prev) =>
+        prev
+          ? { ...prev, timeSuitability: normalizeTimeSuitability(next) }
+          : prev,
+      );
+      setTimeSuitabilityError(null);
+      setSaveError(null);
+      if (saveState === 'saved' || saveState === 'error') {
+        setSaveState('idle');
+      }
+    },
+    [saveState],
+  );
+
   useEffect(() => {
     if (!isReady || !isEditable || !form || !baseline) return;
 
@@ -269,6 +289,7 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
 
       setSaveState('saving');
       setSaveError(null);
+      setTimeSuitabilityError(null);
 
       try {
         const token = await getIdToken();
@@ -278,9 +299,20 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
         setBaseline(nextBaseline);
         setSession(updated);
         setStatus(updated.status);
+        if (pendingPatch.time_suitability) {
+          setForm((prev) =>
+            prev
+              ? { ...prev, timeSuitability: nextBaseline.timeSuitability }
+              : prev,
+          );
+        }
         setSaveState('saved');
       } catch (err) {
-        if (err instanceof StudioApiError && (err.status === 403 || err.status === 404)) {
+        const fieldErrors = getStudioApiFieldErrors(err);
+        if (fieldErrors.time_suitability) {
+          setTimeSuitabilityError(fieldErrors.time_suitability);
+          setSaveError(null);
+        } else if (err instanceof StudioApiError && (err.status === 403 || err.status === 404)) {
           setSaveError(t('noAccessEdit'));
         } else {
           setSaveError(parseStudioApiError(err));
@@ -290,7 +322,7 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
     }, AUTOSAVE_MS);
 
     return () => window.clearTimeout(timer);
-  }, [form, baseline, isReady, isEditable, sessionId, getIdToken]);
+  }, [form, baseline, isReady, isEditable, sessionId, getIdToken, t]);
 
   const statusLabel = (value: string) =>
     STATUS_LABEL_KEYS[value] ? ts(STATUS_LABEL_KEYS[value]) : value;
@@ -399,7 +431,9 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
             taxonomyLoading={taxonomyLoading}
             taxonomyError={taxonomyError}
             disabled={!isEditable}
+            timeSuitabilityError={timeSuitabilityError}
             onChange={onFieldChange}
+            onTimeSuitabilityChange={onTimeSuitabilityChange}
           />
         </section>
       ) : null}

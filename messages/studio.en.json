@@ -178,6 +178,8 @@
     "accessTier": "Access tier",
     "tags": "Tags",
     "tagsPlaceholder": "calm, morning, breath",
+    "timeSuitability": "Suitable times",
+    "timeSuitabilityHelper": "When does this practice fit best? This helps Inigo choose a more relevant invitation during the day.",
     "loadingPractices": "Loading practices…",
     "selectPractice": "Select practice",
     "selectPracticeFirst": "Select a practice first",
@@ -210,7 +212,12 @@
     "accessFree": "Free",
     "accessPlus": "Plus",
     "accessPremium": "Premium",
-    "accessPro": "Pro"
+    "accessPro": "Pro",
+    "timeSuitabilityAnytime": "Anytime",
+    "timeSuitabilityMorning": "Morning",
+    "timeSuitabilityMidday": "Midday",
+    "timeSuitabilityEvening": "Evening",
+    "timeSuitabilityLateNight": "Late night"
   },
   "duration": {
     "estimated": "Estimated duration",
@@ -345,6 +352,7 @@
     "focus": "Please select a focus.",
     "instructor": "Please add an instructor name.",
     "environment": "Please add an environment.",
-    "backgroundMusic": "Please add background music."
+    "backgroundMusic": "Please add background music.",
+    "timeSuitability": "Please choose when this practice fits best."
   }
 }

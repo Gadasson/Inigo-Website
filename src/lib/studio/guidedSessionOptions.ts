@@ -24,10 +24,18 @@ export const GUIDED_SESSION_ACCESS_TIERS = [
   { value: 'pro', label: 'Pro' },
 ] as const;
 
+/** Values from Django guided_time_suitability.TIME_SUITABILITY_ORDER — do not invent alternatives. */
+export {
+  TIME_SUITABILITY_ORDER,
+  TIME_SUITABILITY_VALUES,
+  type TimeSuitabilityValue,
+} from '@/lib/studio/timeSuitability';
+
 export const GUIDED_SESSION_CREATE_DEFAULTS = {
   environment: 'indoor',
   background_music: 'ambient',
   access_tier: 'free' as const,
   tags: [] as string[],
   sub_category_codes: [] as string[],
+  time_suitability: ['anytime'] as const,
 };

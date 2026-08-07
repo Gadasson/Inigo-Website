@@ -9,6 +9,11 @@ import {
 } from '@/lib/studio/formatDuration';
 import { buildGuidedSessionTaxonomyPayload } from '@/lib/studio/guidedSessionTaxonomy';
 import { GUIDED_SESSION_CREATE_DEFAULTS } from '@/lib/studio/guidedSessionOptions';
+import {
+  normalizeTimeSuitability,
+  timeSuitabilityEqual,
+  type TimeSuitabilityValue,
+} from '@/lib/studio/timeSuitability';
 
 export type GuidedSessionEditorForm = {
   title: string;
@@ -26,6 +31,7 @@ export type GuidedSessionEditorForm = {
   backgroundMusicCreator: string;
   accessTier: string;
   tagsText: string;
+  timeSuitability: TimeSuitabilityValue[];
 };
 
 export function parseTagsText(text: string): string[] {
@@ -66,6 +72,9 @@ export function createDefaultGuidedSessionForm(
     backgroundMusicCreator: '',
     accessTier: GUIDED_SESSION_CREATE_DEFAULTS.access_tier,
     tagsText: '',
+    timeSuitability: normalizeTimeSuitability(
+      GUIDED_SESSION_CREATE_DEFAULTS.time_suitability,
+    ),
   };
 }
 
@@ -88,6 +97,7 @@ export function sessionToEditorForm(session: StudioGuidedSession): GuidedSession
     backgroundMusicCreator: session.background_music_creator ?? '',
     accessTier: session.access_tier ?? GUIDED_SESSION_CREATE_DEFAULTS.access_tier,
     tagsText: tagsToText(session.tags),
+    timeSuitability: normalizeTimeSuitability(session.time_suitability),
   };
 }
 
@@ -150,6 +160,11 @@ export function buildGuidedSessionPatch(
   const baseTags = parseTagsText(baseline.tagsText);
   if (JSON.stringify(nextTags) !== JSON.stringify(baseTags)) {
     patch.tags = nextTags;
+  }
+
+  const nextSuitability = normalizeTimeSuitability(form.timeSuitability);
+  if (!timeSuitabilityEqual(nextSuitability, baseline.timeSuitability)) {
+    patch.time_suitability = nextSuitability;
   }
 
   return patch;

@@ -8,7 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { createGuidedSessionDraft } from '@/lib/api/studioGuidedSessions';
 import { generateSessionId } from '@/lib/studio/generateSessionId';
 import { isValidEstimatedDurationMmSs, mmSsToDurationString } from '@/lib/studio/formatDuration';
-import { parseStudioApiError } from '@/lib/studio/parseStudioApiError';
+import { parseStudioApiError, getStudioApiFieldErrors } from '@/lib/studio/parseStudioApiError';
 import {
   createDefaultGuidedSessionForm,
   parseTagsText,
@@ -16,6 +16,7 @@ import {
 } from '@/lib/studio/guidedSessionEditorForm';
 import { buildGuidedSessionTaxonomyPayload, applyPracticeSelectionToForm } from '@/lib/studio/guidedSessionTaxonomy';
 import { GUIDED_SESSION_CREATE_DEFAULTS } from '@/lib/studio/guidedSessionOptions';
+import { normalizeTimeSuitability, type TimeSuitabilityValue } from '@/lib/studio/timeSuitability';
 import { useGuidedSessionTaxonomy } from '@/hooks/useGuidedSessionTaxonomy';
 import GuidedSessionFormFields from '@/components/studio/GuidedSessionFormFields';
 
@@ -55,6 +56,7 @@ export default function CreateGuidedSessionForm() {
   );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [timeSuitabilityError, setTimeSuitabilityError] = useState<string | null>(null);
   const [createdSession, setCreatedSession] = useState<{ id: number; title: string } | null>(
     null,
   );
@@ -93,6 +95,14 @@ export default function CreateGuidedSessionForm() {
     });
   };
 
+  const onTimeSuitabilityChange = (next: TimeSuitabilityValue[]) => {
+    setTimeSuitabilityError(null);
+    setForm((prev) => ({
+      ...prev,
+      timeSuitability: normalizeTimeSuitability(next),
+    }));
+  };
+
   const validate = (): string | null => {
     if (form.title.trim().length < 2) return tv('title');
     if (form.description.trim().length < 10) return tv('description');
@@ -110,6 +120,7 @@ export default function CreateGuidedSessionForm() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setTimeSuitabilityError(null);
 
     const validationError = validate();
     if (validationError) {
@@ -143,13 +154,19 @@ export default function CreateGuidedSessionForm() {
           access_tier: GUIDED_SESSION_CREATE_DEFAULTS.access_tier,
           tags: parseTagsText(form.tagsText),
           sub_category_codes: taxonomyPayload.sub_category_codes,
+          time_suitability: normalizeTimeSuitability(form.timeSuitability),
         },
         token,
       );
 
       setCreatedSession({ id: draft.id, title: draft.title.trim() || form.title.trim() });
     } catch (err) {
-      setError(parseStudioApiError(err));
+      const fieldErrors = getStudioApiFieldErrors(err);
+      if (fieldErrors.time_suitability) {
+        setTimeSuitabilityError(fieldErrors.time_suitability);
+      } else {
+        setError(parseStudioApiError(err));
+      }
     } finally {
       setSubmitting(false);
     }
@@ -212,7 +229,9 @@ export default function CreateGuidedSessionForm() {
           taxonomyLoading={taxonomyLoading}
           taxonomyError={taxonomyError}
           simplified
+          timeSuitabilityError={timeSuitabilityError}
           onChange={onChange}
+          onTimeSuitabilityChange={onTimeSuitabilityChange}
         />
 
         {error ? (

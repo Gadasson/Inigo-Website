@@ -178,6 +178,8 @@
     "accessTier": "רמת גישה",
     "tags": "תגיות",
     "tagsPlaceholder": "רוגע, בוקר, נשימה",
+    "timeSuitability": "זמנים מתאימים",
+    "timeSuitabilityHelper": "מתי התרגול הזה מתאים במיוחד? המידע עוזר לאיניגו לבחור הזמנה רלוונטית יותר במהלך היום.",
     "loadingPractices": "טוען סוגי תרגול…",
     "selectPractice": "בחרו תרגול",
     "selectPracticeFirst": "בחרו קודם תרגול",
@@ -210,7 +212,12 @@
     "accessFree": "חינם",
     "accessPlus": "Plus",
     "accessPremium": "Premium",
-    "accessPro": "Pro"
+    "accessPro": "Pro",
+    "timeSuitabilityAnytime": "בכל זמן",
+    "timeSuitabilityMorning": "בוקר",
+    "timeSuitabilityMidday": "אמצע היום",
+    "timeSuitabilityEvening": "ערב",
+    "timeSuitabilityLateNight": "לילה מאוחר"
   },
   "duration": {
     "estimated": "משך משוער",
@@ -345,6 +352,7 @@
     "focus": "בחרו מיקוד.",
     "instructor": "הוסיפו שם מנחה.",
     "environment": "הוסיפו סביבה.",
-    "backgroundMusic": "הוסיפו מוזיקת רקע."
+    "backgroundMusic": "הוסיפו מוזיקת רקע.",
+    "timeSuitability": "בחרו מתי התרגול הזה מתאים במיוחד."
   }
 }

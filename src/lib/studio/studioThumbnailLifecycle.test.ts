@@ -42,6 +42,7 @@ function baseForm(overrides: Partial<GuidedSessionEditorForm> = {}): GuidedSessi
     soundGender: 'female',
     accessTier: 'free',
     tagsText: '',
+    timeSuitability: ['anytime'],
     ...overrides,
   };
 }

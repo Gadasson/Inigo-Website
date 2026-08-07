@@ -1,4 +1,5 @@
 import { studioFetch, StudioApiError } from '@/lib/api/studioApiClient';
+import type { TimeSuitabilityValue } from '@/lib/studio/timeSuitability';
 
 const BASE = '/api/studio/guided-sessions';
 
@@ -19,6 +20,8 @@ export type CreateGuidedSessionDraftPayload = {
   access_tier: string;
   tags: string[];
   sub_category_codes: string[];
+  /** Optional for older servers; preferred create default is ['anytime']. */
+  time_suitability?: TimeSuitabilityValue[];
 };
 
 /** Creator-facing video optimization state from the Studio session API. */
@@ -57,6 +60,8 @@ export type StudioGuidedSession = {
   access_tier?: string;
   tags?: string[];
   sub_categories?: string[];
+  /** Suitable invitation windows; omit/null treated as anytime by clients. */
+  time_suitability?: TimeSuitabilityValue[] | null;
   thumbnail_url?: string | null;
   /** Canonical display derivative; prefer when optimization is ready. */
   thumbnail_display_url?: string | null;
@@ -100,6 +105,7 @@ export type UpdateGuidedSessionDraftPayload = Partial<{
   access_tier: string;
   tags: string[];
   sub_category_codes?: string[];
+  time_suitability: TimeSuitabilityValue[];
 }>;
 
 type StudioGuidedSessionListResponse =
