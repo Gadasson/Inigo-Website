@@ -17,6 +17,7 @@
     "lint": "eslint",
     "test:studio-media": "npx --yes tsx --test src/lib/studio/studioThumbnailLifecycle.test.ts",
     "test:studio-time-suitability": "npx --yes tsx --test src/lib/studio/timeSuitability.test.ts",
+    "test:app-download": "npx --yes tsx --test src/lib/appDownloadRedirect.test.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

@@ -21,6 +21,8 @@ export default function middleware(request: NextRequest) {
 
   // Exclude share paths and association files from locale redirects
   // These paths are handled by rewrites/proxies or served as static files
+  const excludedExactPaths = ['/app', '/app/'];
+
   const excludedPaths = [
     '/e/',
     '/s/',
@@ -39,7 +41,9 @@ export default function middleware(request: NextRequest) {
   ];
 
   // Check if pathname matches any excluded path
-  const shouldExclude = excludedPaths.some(path => pathname.startsWith(path));
+  const shouldExclude =
+    excludedExactPaths.includes(pathname) ||
+    excludedPaths.some(path => pathname.startsWith(path));
 
   if (shouldExclude) {
     // Bypass locale middleware - let Vercel rewrites or static file serving handle it
