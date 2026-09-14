@@ -11,6 +11,7 @@ import {
 } from '@/lib/guidedSessionPreview';
 import { getPublicSiteUrl } from '@/lib/publicSiteUrl';
 import GuidedSessionShareCover from '@/components/guided-session/GuidedSessionShareCover';
+import OpenInInigoButton from '@/components/guided-session/OpenInInigoButton';
 import '../guided-session-share.css';
 
 const FALLBACK_OG_PATH = '/static/share/session.jpg';
@@ -148,7 +149,11 @@ export default async function GuidedSessionSharePage({
     ? await fetchGuidedSessionPreview(id)
     : { kind: 'not_found' as const };
 
-  /** Same URL as canonical / og:url so universal links stay on the public domain (not VERCEL_URL). */
+  /**
+   * Public https canonical — used for OG / Universal Links / iOS CTA.
+   * Android “Open in Inigo” upgrades to an Intent URL client-side (same-origin
+   * https does not reopen App Links after Chrome / WhatsApp already landed here).
+   */
   const openUrl = resolveGuidedSessionShareCanonicalUrl(site, id, preview);
 
   const coverSrc =
@@ -218,9 +223,7 @@ export default async function GuidedSessionSharePage({
           )}
 
           <div className="gss__actions">
-            <a className="gss__btn gss__btn--primary" href={openUrl}>
-              Open in Inigo
-            </a>
+            <OpenInInigoButton className="gss__btn gss__btn--primary" httpsUrl={openUrl} />
             <div className="gss__stores">
               <a className="gss__store" href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">
                 App Store
@@ -230,8 +233,8 @@ export default async function GuidedSessionSharePage({
               </a>
             </div>
             <p className="gss__lede" style={{ marginTop: '0.75rem', marginBottom: 0, maxWidth: 'none' }}>
-              If the app is already installed, the button above should gently hand you over. Otherwise, download Inigo
-              and come back to this link.
+              On your phone, this opens the Inigo app when it is installed. If you do not have it yet, get Inigo from
+              the App Store or Google Play, then return to this link.
             </p>
           </div>
         </div>
