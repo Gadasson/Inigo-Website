@@ -18,6 +18,8 @@ type Props = {
   status: string;
   readiness: WorkspaceReadiness;
   isEditable: boolean;
+  canReplaceLiveMedia?: boolean;
+  canReplaceLiveCover?: boolean;
   onSessionUpdated: OnGuidedSessionMediaUpdated;
   onSessionPublished: (session: StudioGuidedSession) => void;
   onMediaActivityChange?: (activity: GuidedSessionMediaActivity) => void;
@@ -36,6 +38,8 @@ export default function GuidedSessionWorkspaceTabs({
   status,
   readiness,
   isEditable,
+  canReplaceLiveMedia = false,
+  canReplaceLiveCover = false,
   onSessionUpdated,
   onSessionPublished,
   onMediaActivityChange,
@@ -50,6 +54,8 @@ export default function GuidedSessionWorkspaceTabs({
           <GuidedSessionMediaSection
             session={session}
             isEditable={isEditable}
+            canReplaceLiveMedia={canReplaceLiveMedia}
+            canReplaceLiveCover={canReplaceLiveCover}
             onSessionUpdated={onSessionUpdated}
             onMediaActivityChange={onMediaActivityChange}
           />

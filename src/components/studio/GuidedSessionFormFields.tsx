@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import type { GuidedSessionEditorForm } from '@/lib/studio/guidedSessionEditorForm';
+import type { GuidedSessionFormFieldId } from '@/lib/studio/guidedSessionCapabilities';
 import type { GuidedSessionDurationMediaSource } from '@/lib/studio/guidedSessionDuration';
 import type { GuidedSessionTaxonomy } from '@/lib/studio/guidedSessionTaxonomy';
 import { getFocusOptionsForPractice } from '@/lib/studio/guidedSessionTaxonomy';
@@ -23,6 +24,8 @@ type Props = {
   taxonomyLoading: boolean;
   taxonomyError?: string | null;
   disabled?: boolean;
+  /** Per-field lock. When omitted, `disabled` applies to every field. */
+  isFieldDisabled?: (field: GuidedSessionFormFieldId) => boolean;
   simplified?: boolean;
   timeSuitabilityError?: string | null;
   onChange: (
@@ -74,6 +77,7 @@ export default function GuidedSessionFormFields({
   taxonomyLoading,
   taxonomyError = null,
   disabled = false,
+  isFieldDisabled,
   simplified = false,
   timeSuitabilityError = null,
   onChange,
@@ -83,11 +87,15 @@ export default function GuidedSessionFormFields({
   const tf = useTranslations('fields');
   const to = useTranslations('options');
 
+  const fieldLocked = (field: GuidedSessionFormFieldId) =>
+    isFieldDisabled ? isFieldDisabled(field) : disabled;
+
   const practices = withCurrentTaxonomyOption(taxonomy?.practices ?? [], form.practice);
   const practiceFocuses = getFocusOptionsForPractice(taxonomy, form.practice);
   const focuses = withCurrentTaxonomyOption(practiceFocuses, form.focus);
+  const focusLocked = fieldLocked('focus');
   const focusSelectDisabled =
-    disabled ||
+    focusLocked ||
     taxonomyLoading ||
     !form.practice.trim() ||
     practiceFocuses.length === 0;
@@ -101,7 +109,7 @@ export default function GuidedSessionFormFields({
         type="text"
         value={form.title}
         onChange={onChange}
-        disabled={disabled}
+        disabled={fieldLocked('title')}
         autoComplete="off"
         placeholder={tf('titlePlaceholder')}
       />
@@ -119,7 +127,7 @@ export default function GuidedSessionFormFields({
         rows={4}
         value={form.description}
         onChange={onChange}
-        disabled={disabled}
+        disabled={fieldLocked('description')}
         placeholder={tf('descriptionPlaceholder')}
       />
     </div>
@@ -131,7 +139,7 @@ export default function GuidedSessionFormFields({
       durationSs={form.durationSs}
       isFromMedia={durationFromMedia}
       mediaSource={durationMediaSource}
-      disabled={disabled}
+      disabled={fieldLocked('duration')}
       onChange={onChange}
     />
   );
@@ -144,7 +152,7 @@ export default function GuidedSessionFormFields({
         name="language"
         value={form.language}
         onChange={onChange}
-        disabled={disabled}
+        disabled={fieldLocked('language')}
       >
         {GUIDED_SESSION_LANGUAGES.map((opt) => (
           <option key={opt.value} value={opt.value}>
@@ -165,7 +173,7 @@ export default function GuidedSessionFormFields({
         name="soundGender"
         value={form.soundGender}
         onChange={onChange}
-        disabled={disabled}
+        disabled={fieldLocked('soundGender')}
       >
         {GUIDED_SESSION_SOUND_GENDERS.map((opt) => (
           <option key={opt.value} value={opt.value}>
@@ -186,7 +194,7 @@ export default function GuidedSessionFormFields({
         name="difficulty"
         value={form.difficulty}
         onChange={onChange}
-        disabled={disabled}
+        disabled={fieldLocked('difficulty')}
       >
         {GUIDED_SESSION_DIFFICULTIES.map((opt) => (
           <option key={opt.value} value={opt.value}>
@@ -207,7 +215,7 @@ export default function GuidedSessionFormFields({
         name="practice"
         value={form.practice}
         onChange={onChange}
-        disabled={taxonomySelectDisabled(disabled, taxonomyLoading, practices.length)}
+        disabled={taxonomySelectDisabled(fieldLocked('practice'), taxonomyLoading, practices.length)}
       >
         {!form.practice ? (
           <option value="">
@@ -264,7 +272,7 @@ export default function GuidedSessionFormFields({
   const timeSuitabilityField = (
     <GuidedSessionTimeSuitabilityField
       value={form.timeSuitability}
-      disabled={disabled}
+      disabled={fieldLocked('timeSuitability')}
       error={timeSuitabilityError}
       onChange={onTimeSuitabilityChange}
     />
@@ -330,7 +338,7 @@ export default function GuidedSessionFormFields({
           type="text"
           value={form.instructor}
           onChange={onChange}
-          disabled={disabled}
+          disabled={fieldLocked('instructor')}
           autoComplete="off"
         />
       </div>
@@ -346,7 +354,7 @@ export default function GuidedSessionFormFields({
             type="text"
             value={form.environment}
             onChange={onChange}
-            disabled={disabled}
+            disabled={fieldLocked('environment')}
             autoComplete="off"
             placeholder={tf('environmentPlaceholder')}
           />
@@ -362,7 +370,7 @@ export default function GuidedSessionFormFields({
             type="text"
             value={form.backgroundMusic}
             onChange={onChange}
-            disabled={disabled}
+            disabled={fieldLocked('backgroundMusic')}
             autoComplete="off"
             placeholder={tf('backgroundMusicPlaceholder')}
           />
@@ -379,7 +387,7 @@ export default function GuidedSessionFormFields({
           type="text"
           value={form.backgroundMusicCreator}
           onChange={onChange}
-          disabled={disabled}
+          disabled={fieldLocked('backgroundMusicCreator')}
           autoComplete="off"
           placeholder={tf('backgroundMusicCreatorPlaceholder')}
         />
@@ -395,7 +403,7 @@ export default function GuidedSessionFormFields({
           type="text"
           value={form.tagsText}
           onChange={onChange}
-          disabled={disabled}
+          disabled={fieldLocked('tags')}
           autoComplete="off"
           placeholder={tf('tagsPlaceholder')}
         />

@@ -2505,3 +2505,60 @@
 [dir='rtl'].studio-root .guided-session-preview__audio {
   direction: ltr;
 }
+
+.creator-workspace__replacement {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+}
+
+.creator-workspace__replacement-current,
+.creator-workspace__replacement-proposal {
+  padding: 0.875rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(var(--inigo-accent-rgb), 0.16);
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.creator-workspace__replacement-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.creator-workspace__replacement-heading h3,
+.creator-workspace__replacement-title {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.creator-workspace__replacement-live {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #3d6b45;
+}
+
+.creator-workspace__media-video {
+  display: block;
+  width: 100%;
+  max-height: 24rem;
+  border-radius: 0.5rem;
+  background: #111;
+}
+
+.creator-workspace__replacement-confirm {
+  margin-top: 0.75rem;
+}
+
+.creator-workspace__replacement-confirm p {
+  margin: 0 0 0.35rem;
+}
+
+.studio-session-item__status--live,
+.studio-session-item__status--awaiting-approval {
+  text-transform: none;
+}

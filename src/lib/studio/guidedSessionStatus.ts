@@ -10,7 +10,7 @@ export const GUIDED_SESSION_STATUS_FILTERS: {
   { id: 'archived', label: 'Archived' },
 ];
 
-/** Backend uses `available` for published sessions. */
+/** Backend uses `available` for both awaiting-approval and live sessions. */
 export function matchesStatusFilter(
   status: string,
   filter: GuidedSessionStatusFilter,
@@ -22,11 +22,21 @@ export function matchesStatusFilter(
   return true;
 }
 
-export function guidedSessionStatusLabel(status: string): string {
+/**
+ * Creator-facing label.
+ * `available` + is_available distinguishes awaiting initial approval from live.
+ * When availability is unknown, available stays unlabeled as a single "Published".
+ */
+export function guidedSessionStatusLabel(
+  status: string,
+  isAvailable?: boolean,
+): string {
   switch (status) {
     case 'draft':
       return 'Draft';
     case 'available':
+      if (isAvailable === true) return 'Live';
+      if (isAvailable === false) return 'Awaiting review';
       return 'Published';
     case 'archived':
       return 'Archived';

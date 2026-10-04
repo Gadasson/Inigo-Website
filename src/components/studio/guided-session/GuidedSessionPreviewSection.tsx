@@ -8,6 +8,7 @@ import {
   GUIDED_SESSION_LANGUAGES,
 } from '@/lib/studio/guidedSessionOptions';
 import { guidedSessionDurationDisplayLabel } from '@/lib/studio/guidedSessionDuration';
+import { studioSessionPhase } from '@/lib/studio/guidedSessionPhase';
 import {
   getVideoOptimizationDisplayStatus,
   guidedSessionCanonicalVideoUrl,
@@ -36,12 +37,6 @@ const DIFFICULTY_LABEL_KEYS: Record<string, string> = {
   advanced: 'difficultyAdvanced',
 };
 
-const STATUS_LABEL_KEYS: Record<string, string> = {
-  draft: 'draft',
-  available: 'available',
-  archived: 'archived',
-};
-
 function optionLabel(
   options: readonly { value: string; label: string }[],
   labelKeys: Record<string, string>,
@@ -66,9 +61,17 @@ export default function GuidedSessionPreviewSection({ session, form }: Props) {
   const title = form.title.trim() || t('untitled');
   const description = form.description.trim() || t('descriptionPlaceholder');
 
-  const statusLabel = STATUS_LABEL_KEYS[session.status]
-    ? ts(STATUS_LABEL_KEYS[session.status])
-    : session.status;
+  const phase = studioSessionPhase(session);
+  const statusLabel =
+    phase === 'draft'
+      ? ts('draft')
+      : phase === 'awaiting_approval'
+        ? ts('awaitingApproval')
+        : phase === 'live'
+          ? ts('live')
+          : phase === 'archived'
+            ? ts('archived')
+            : session.status;
 
   const metaParts = [
     guidedSessionDurationDisplayLabel(session, form),

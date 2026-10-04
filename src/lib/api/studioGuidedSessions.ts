@@ -39,6 +39,31 @@ export type VideoOptimizationStatus =
   | 'failed'
   | null;
 
+export type MediaReplacementStatus =
+  | 'awaiting_upload'
+  | 'pending'
+  | 'processing'
+  | 'ready_for_review'
+  | 'failed'
+  | 'rejected'
+  | 'promoted';
+
+/** Latest proposed replacement on a live session. Not a session status. */
+export type StudioMediaReplacement = {
+  id: number;
+  generation: string;
+  media_type: 'audio' | 'video';
+  status: MediaReplacementStatus;
+  error: string;
+  created_at: string | null;
+  ready_at: string | null;
+  reviewed_at: string | null;
+  rejection_reason: string;
+  proposed_duration_seconds: number | null;
+  /** Present only while the server is waiting for the browser upload. */
+  upload_storage_path?: string;
+};
+
 export type StudioGuidedSession = {
   id: number;
   session_id: string;
@@ -79,6 +104,8 @@ export type StudioGuidedSession = {
   file_metadata?: Record<string, Record<string, unknown>>;
   created_at?: string;
   updated_at?: string;
+  /** Latest replacement on detail. Absent from public/mobile payloads. */
+  media_replacement?: StudioMediaReplacement | null;
 };
 
 export type AttachGuidedSessionMediaPayload = {
@@ -232,6 +259,106 @@ export async function retryGuidedSessionVideoOptimization(
       token: authToken,
     }),
   );
+}
+
+export type StartMediaReplacementPayload = {
+  extension?: string;
+  media_type?: 'audio' | 'video';
+};
+
+export type AttachMediaReplacementPayload = {
+  generation: string;
+  storage_path: string;
+  storage_url: string;
+};
+
+type MediaReplacementResponse = {
+  media_replacement: StudioMediaReplacement | null;
+};
+
+export async function startGuidedSessionMediaReplacement(
+  id: number,
+  payload: StartMediaReplacementPayload,
+  token: string | null,
+): Promise<StudioMediaReplacement> {
+  const data = await withToken(token, (authToken) =>
+    studioFetch<MediaReplacementResponse>(`${BASE}/${id}/media-replacement/`, {
+      method: 'POST',
+      body: payload,
+      token: authToken,
+    }),
+  );
+  if (!data.media_replacement) {
+    throw new Error('Media replacement did not start.');
+  }
+  return data.media_replacement;
+}
+
+export async function getGuidedSessionMediaReplacement(
+  id: number,
+  token: string | null,
+): Promise<StudioMediaReplacement | null> {
+  const data = await withToken(token, (authToken) =>
+    studioFetch<MediaReplacementResponse>(`${BASE}/${id}/media-replacement/`, {
+      method: 'GET',
+      token: authToken,
+    }),
+  );
+  return data.media_replacement;
+}
+
+export async function attachGuidedSessionMediaReplacement(
+  id: number,
+  payload: AttachMediaReplacementPayload,
+  token: string | null,
+): Promise<StudioMediaReplacement> {
+  const data = await withToken(token, (authToken) =>
+    studioFetch<MediaReplacementResponse>(`${BASE}/${id}/media-replacement/attach/`, {
+      method: 'POST',
+      body: payload,
+      token: authToken,
+    }),
+  );
+  if (!data.media_replacement) {
+    throw new Error('Media replacement was not attached.');
+  }
+  return data.media_replacement;
+}
+
+export async function retryGuidedSessionMediaReplacement(
+  id: number,
+  generation: string,
+  token: string | null,
+): Promise<StudioMediaReplacement> {
+  const data = await withToken(token, (authToken) =>
+    studioFetch<MediaReplacementResponse>(`${BASE}/${id}/media-replacement/retry/`, {
+      method: 'POST',
+      body: { generation },
+      token: authToken,
+    }),
+  );
+  if (!data.media_replacement) {
+    throw new Error('Media replacement could not be retried.');
+  }
+  return data.media_replacement;
+}
+
+export async function discardGuidedSessionMediaReplacement(
+  id: number,
+  generation: string,
+  token: string | null,
+): Promise<StudioMediaReplacement> {
+  const data = await withToken(token, (authToken) =>
+    studioFetch<MediaReplacementResponse>(`${BASE}/${id}/media-replacement/discard/`, {
+      method: 'POST',
+      body: { generation },
+      token: authToken,
+    }),
+  );
+  if (!data.media_replacement) {
+    throw new Error('Media replacement could not be discarded.');
+  }
+  return data.media_replacement;
 }
 
 export async function publishGuidedSession(

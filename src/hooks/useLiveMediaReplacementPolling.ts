@@ -5,11 +5,11 @@ import {
   getGuidedSession,
   type StudioGuidedSession,
 } from '@/lib/api/studioGuidedSessions';
-import { getVideoOptimizationDisplayStatus } from '@/lib/studio/guidedSessionMedia';
-import { shouldPollDraftVideoOptimization } from '@/lib/studio/mediaReplacement';
-
-/** Calm poll while display_status is optimizing (5–10s band). */
-export const VIDEO_OPTIMIZATION_POLL_INTERVAL_MS = 7_000;
+import {
+  MEDIA_REPLACEMENT_POLL_INTERVAL_MS,
+  shouldPollMediaReplacement,
+  shouldRefreshSessionAfterPromotion,
+} from '@/lib/studio/mediaReplacement';
 
 type Options = {
   session: StudioGuidedSession | null;
@@ -19,11 +19,11 @@ type Options = {
 };
 
 /**
- * Polls session detail while video_optimization_display_status === 'optimizing'.
- * Lives above Media tab so creators can keep editing while optimization runs.
- * Stops on ready / failed / null, unmount, or when enabled becomes false.
+ * Polls session detail while a live replacement is preparing, optimizing,
+ * or waiting for review (so promotion can update the public media URL).
+ * Independent of draft editability.
  */
-export function useGuidedSessionVideoOptimizationPolling({
+export function useLiveMediaReplacementPolling({
   session,
   enabled = true,
   getIdToken,
@@ -35,23 +35,20 @@ export function useGuidedSessionVideoOptimizationPolling({
   onSessionUpdatedRef.current = onSessionUpdated;
 
   const sessionId = session?.id ?? null;
-  const shouldPoll =
-    sessionId != null &&
-    shouldPollDraftVideoOptimization(
-      enabled,
-      getVideoOptimizationDisplayStatus(session!),
-    );
+  const replacementStatus = session?.media_replacement?.status ?? null;
+  const shouldPoll = enabled && sessionId != null && shouldPollMediaReplacement(session?.media_replacement);
 
   useEffect(() => {
     if (!shouldPoll || sessionId == null) return;
 
     let cancelled = false;
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    let previousStatus = replacementStatus;
 
     const schedule = () => {
       timeoutId = setTimeout(() => {
         void pollOnce();
-      }, VIDEO_OPTIMIZATION_POLL_INTERVAL_MS);
+      }, MEDIA_REPLACEMENT_POLL_INTERVAL_MS);
     };
 
     const pollOnce = async () => {
@@ -60,14 +57,19 @@ export function useGuidedSessionVideoOptimizationPolling({
         const token = await getIdTokenRef.current();
         const updated = await getGuidedSession(sessionId, token);
         if (cancelled) return;
+        const nextStatus = updated.media_replacement?.status ?? null;
         onSessionUpdatedRef.current(updated);
-        if (getVideoOptimizationDisplayStatus(updated) === 'optimizing') {
-          schedule();
+        if (
+          shouldRefreshSessionAfterPromotion(previousStatus, nextStatus) ||
+          shouldPollMediaReplacement(updated.media_replacement)
+        ) {
+          previousStatus = nextStatus;
+          if (shouldPollMediaReplacement(updated.media_replacement)) {
+            schedule();
+          }
         }
       } catch {
-        if (!cancelled) {
-          schedule();
-        }
+        if (!cancelled) schedule();
       }
     };
 
@@ -77,5 +79,5 @@ export function useGuidedSessionVideoOptimizationPolling({
       cancelled = true;
       if (timeoutId != null) clearTimeout(timeoutId);
     };
-  }, [shouldPoll, sessionId]);
+  }, [shouldPoll, sessionId, replacementStatus]);
 }

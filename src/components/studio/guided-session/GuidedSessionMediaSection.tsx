@@ -10,11 +10,14 @@ import {
 } from '@/lib/studio/guidedSessionMedia';
 import type { OnGuidedSessionMediaUpdated } from '@/lib/studio/guidedSessionMediaTypes';
 import GuidedSessionMediaSlot from '@/components/studio/guided-session/GuidedSessionMediaSlot';
+import LiveMediaReplacement from '@/components/studio/guided-session/LiveMediaReplacement';
 import { useTranslations } from 'next-intl';
 
 type Props = {
   session: StudioGuidedSession;
   isEditable: boolean;
+  canReplaceLiveMedia?: boolean;
+  canReplaceLiveCover?: boolean;
   onSessionUpdated: OnGuidedSessionMediaUpdated;
   onMediaActivityChange?: (activity: GuidedSessionMediaActivity) => void;
 };
@@ -27,6 +30,8 @@ const IDLE_ACTIVITY: GuidedSessionMediaActivity = {
 export default function GuidedSessionMediaSection({
   session,
   isEditable,
+  canReplaceLiveMedia = false,
+  canReplaceLiveCover = false,
   onSessionUpdated,
   onMediaActivityChange,
 }: Props) {
@@ -67,8 +72,10 @@ export default function GuidedSessionMediaSection({
       <h2 id="workspace-media-heading" className="creator-workspace__section-title">
         {t('title')}
       </h2>
-      <p className="creator-workspace__section-lede">{t('lede')}</p>
-      <p className="creator-workspace__section-note">{t('uploadFlowNote')}</p>
+      <p className="creator-workspace__section-lede">
+        {canReplaceLiveMedia ? t('liveLede') : t('lede')}
+      </p>
+      {canReplaceLiveMedia ? null : <p className="creator-workspace__section-note">{t('uploadFlowNote')}</p>}
 
       {hasGuidedSessionPrimaryMediaConflict(session) ? (
         <p className="studio-form__error" role="alert">
@@ -76,23 +83,34 @@ export default function GuidedSessionMediaSection({
         </p>
       ) : null}
 
-      {!isEditable ? (
+      {!isEditable && !canReplaceLiveMedia ? (
         <p className="creator-workspace__media-readonly" role="status">
           {t('readonly')}
         </p>
       ) : null}
 
+      {canReplaceLiveMedia ? (
+        <LiveMediaReplacement session={session} onSessionUpdated={onSessionUpdated} />
+      ) : null}
+
       <ul className="creator-workspace__media-list">
-        {GUIDED_SESSION_MEDIA_SLOTS.map((slot) => (
-          <GuidedSessionMediaSlot
-            key={slot.id}
-            slot={slot}
-            session={session}
-            disabled={!isEditable}
-            onSessionUpdated={onSessionUpdated}
-            onActivityChange={reportSlotActivity}
-          />
-        ))}
+        {GUIDED_SESSION_MEDIA_SLOTS.filter((slot) => !canReplaceLiveMedia || slot.id === 'cover').map(
+          (slot) => {
+            const liveCover = canReplaceLiveCover && slot.id === 'cover';
+            return (
+              <GuidedSessionMediaSlot
+                key={slot.id}
+                slot={slot}
+                session={session}
+                disabled={liveCover ? false : !isEditable}
+                preserveCurrentCover={liveCover}
+                allowRemove={!liveCover}
+                onSessionUpdated={onSessionUpdated}
+                onActivityChange={reportSlotActivity}
+              />
+            );
+          },
+        )}
       </ul>
     </section>
   );

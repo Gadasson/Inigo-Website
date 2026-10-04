@@ -20,7 +20,18 @@ export function resolveCoverImagePreview(options: {
   localObjectUrl: string | null;
   hasPendingAttach: boolean;
   isUploading: boolean;
+  /**
+   * Live cover keeps the trusted public image until the server reports the
+   * new one. Draft uploads still prefer the local preview.
+   */
+  preservePersistedCover?: boolean;
 }): CoverImagePreview {
+  if (options.preservePersistedCover) {
+    const persisted = options.persistedUrl?.trim() || null;
+    if (persisted) return { kind: 'persisted', src: persisted };
+    return { kind: 'none', src: null };
+  }
+
   const local = options.localObjectUrl?.trim() || null;
   if (local && (options.hasPendingAttach || options.isUploading)) {
     return { kind: 'local_pending', src: local };

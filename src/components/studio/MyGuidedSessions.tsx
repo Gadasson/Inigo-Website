@@ -10,9 +10,9 @@ import {
 } from '@/lib/api/studioGuidedSessions';
 import { parseStudioApiError } from '@/lib/studio/parseStudioApiError';
 import { formatSessionDate } from '@/lib/studio/formatSessionDate';
+import { studioSessionPhase } from '@/lib/studio/guidedSessionPhase';
 import {
   GUIDED_SESSION_STATUS_FILTERS,
-  guidedSessionStatusLabel,
   matchesStatusFilter,
   type GuidedSessionStatusFilter,
 } from '@/lib/studio/guidedSessionStatus';
@@ -29,19 +29,21 @@ const FILTER_LABEL_KEYS: Record<GuidedSessionStatusFilter, string> = {
   archived: 'filterArchived',
 };
 
-const STATUS_LABEL_KEYS: Record<string, string> = {
+const STATUS_PHASE_KEYS = {
   draft: 'statusDraft',
-  available: 'statusPublished',
+  awaiting_approval: 'statusAwaitingApproval',
+  live: 'statusLive',
   archived: 'statusArchived',
-};
+} as const;
 
 export default function MyGuidedSessions({ active = true }: Props) {
   const { user, getIdToken } = useAuth();
   const locale = useLocale();
   const t = useTranslations('sessions');
-  const statusLabel = (status: string): string => {
-    const key = STATUS_LABEL_KEYS[status];
-    return key ? t(key) : guidedSessionStatusLabel(status);
+  const statusLabel = (session: StudioGuidedSession): string => {
+    const phase = studioSessionPhase(session);
+    if (phase === 'unknown') return session.status;
+    return t(STATUS_PHASE_KEYS[phase]);
   };
   const [sessions, setSessions] = useState<StudioGuidedSession[]>([]);
   const [loading, setLoading] = useState(true);
@@ -153,7 +155,8 @@ export default function MyGuidedSessions({ active = true }: Props) {
       {!loading && !error && filteredSessions.length > 0 ? (
         <ul className="studio-session-list">
           {filteredSessions.map((session) => {
-            const isDraft = session.status === 'draft';
+            const phase = studioSessionPhase(session);
+            const isDraft = phase === 'draft';
             const formatted = formatSessionDate(session.updated_at ?? session.created_at, locale);
             const timestamp = formatted
               ? session.updated_at
@@ -173,9 +176,11 @@ export default function MyGuidedSessions({ active = true }: Props) {
                     <h3 className="studio-session-item__title">{session.title}</h3>
                     <div className="studio-session-item__meta">
                       <span
-                        className={`studio-session-item__status studio-session-item__status--${session.status}`}
+                        className={`studio-session-item__status studio-session-item__status--${
+                          phase === 'unknown' ? session.status : phase.replace('_', '-')
+                        }`}
                       >
-                        {statusLabel(session.status)}
+                        {statusLabel(session)}
                       </span>
                       {timestamp ? (
                         <span className="studio-session-item__date">{timestamp}</span>

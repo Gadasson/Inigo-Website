@@ -46,6 +46,10 @@ type Props = {
   slot: GuidedSessionMediaSlotConfig;
   session: StudioGuidedSession;
   disabled: boolean;
+  /** Live cover keeps the current public image until attach returns the new one. */
+  preserveCurrentCover?: boolean;
+  /** Live cover cannot be removed; detach stays draft-only on the server. */
+  allowRemove?: boolean;
   onSessionUpdated: OnGuidedSessionMediaUpdated;
   /** Stable callback preferred — slot id is provided by this component. */
   onActivityChange?: (slotId: string, activity: GuidedSessionMediaActivity) => void;
@@ -105,6 +109,8 @@ export default function GuidedSessionMediaSlot({
   slot,
   session,
   disabled,
+  preserveCurrentCover = false,
+  allowRemove = true,
   onSessionUpdated,
   onActivityChange,
 }: Props) {
@@ -185,6 +191,7 @@ export default function GuidedSessionMediaSlot({
           localObjectUrl,
           hasPendingAttach,
           isUploading: phase === 'uploading',
+          preservePersistedCover: preserveCurrentCover,
         })
       : null;
 
@@ -274,6 +281,7 @@ export default function GuidedSessionMediaSlot({
     if (phase === 'removing') return t('buttonRemoving');
     if (phase === 'retrying_attach') return t('buttonRetrying');
     if (phase === 'retrying_optimization') return t('buttonRetryingOptimization');
+    if (preserveCurrentCover && (isAttached || hasPendingAttach)) return t('buttonReplaceCover');
     return isAttached || hasPendingAttach ? t('buttonReplace') : t('buttonChoose');
   })();
 
@@ -563,7 +571,7 @@ export default function GuidedSessionMediaSlot({
           disabled={isInteractionDisabled || isBusy}
           onChange={onFileChange}
         />
-        {isAttached && !hasPendingAttach ? (
+        {isAttached && !hasPendingAttach && allowRemove ? (
           <button
             type="button"
             className="creator-workspace__media-btn creator-workspace__media-btn--ghost"

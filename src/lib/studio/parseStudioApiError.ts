@@ -31,6 +31,15 @@ export function parseStudioApiError(error: unknown): string {
   return 'Something went wrong. Please try again.';
 }
 
+/** Top-level `code` from a Studio error body, when the server sent one. */
+export function getStudioApiErrorCode(error: unknown): string | null {
+  if (!(error instanceof StudioApiError)) return null;
+  const body = error.body;
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return null;
+  const code = (body as { code?: unknown }).code;
+  return typeof code === 'string' && code.trim() ? code : null;
+}
+
 /** Extract DRF-style field errors from a Studio API error body. */
 export function getStudioApiFieldErrors(error: unknown): Record<string, string> {
   if (!(error instanceof StudioApiError)) {

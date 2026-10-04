@@ -16,6 +16,8 @@
     "start:prod": "npm run build && next start",
     "lint": "eslint",
     "test:studio-media": "npx --yes tsx --test src/lib/studio/studioThumbnailLifecycle.test.ts",
+    "test:studio-media-replacement": "npx --yes tsx --test src/lib/studio/mediaReplacement.test.ts",
+    "test:studio-live-metadata": "npx --yes tsx --test src/lib/studio/liveMetadata.test.ts",
     "test:studio-time-suitability": "npx --yes tsx --test src/lib/studio/timeSuitability.test.ts",
     "test:app-download": "npx --yes tsx --test src/lib/appDownloadRedirect.test.ts",
     "test:open-in-app": "npx --yes tsx --test src/lib/openInApp.test.ts",

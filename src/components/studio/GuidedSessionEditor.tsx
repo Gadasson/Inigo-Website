@@ -11,7 +11,7 @@ import {
   type StudioGuidedSession,
 } from '@/lib/api/studioGuidedSessions';
 import { StudioApiError } from '@/lib/api/studioApiClient';
-import { getStudioApiFieldErrors, parseStudioApiError } from '@/lib/studio/parseStudioApiError';
+import { getStudioApiFieldErrors, getStudioApiErrorCode, parseStudioApiError } from '@/lib/studio/parseStudioApiError';
 import {
   buildGuidedSessionPatch,
   sessionToEditorForm,
@@ -36,6 +36,17 @@ import {
 import type { OnGuidedSessionMediaUpdated } from '@/lib/studio/guidedSessionMediaTypes';
 import { useGuidedSessionTaxonomy } from '@/hooks/useGuidedSessionTaxonomy';
 import { useGuidedSessionVideoOptimizationPolling } from '@/hooks/useGuidedSessionVideoOptimizationPolling';
+import { useLiveMediaReplacementPolling } from '@/hooks/useLiveMediaReplacementPolling';
+import { studioSessionPhase } from '@/lib/studio/guidedSessionPhase';
+import {
+  isGuidedSessionFieldDisabled,
+  studioEditorCapabilities,
+} from '@/lib/studio/guidedSessionCapabilities';
+import {
+  buildLiveGuidedSessionPatch,
+  liveAutosaveDecision,
+  livePatchPayloadKey,
+} from '@/lib/studio/liveGuidedSessionPatch';
 import { applyPracticeSelectionToForm } from '@/lib/studio/guidedSessionTaxonomy';
 import GuidedSessionFormFields from '@/components/studio/GuidedSessionFormFields';
 import CreatorWorkspace from '@/components/studio/workspace/CreatorWorkspace';
@@ -58,11 +69,12 @@ function GuidedSessionEditorLoading() {
   );
 }
 
-const STATUS_LABEL_KEYS: Record<string, string> = {
+const STATUS_PHASE_KEYS = {
   draft: 'draft',
-  available: 'available',
+  awaiting_approval: 'awaitingApproval',
+  live: 'live',
   archived: 'archived',
-};
+} as const;
 
 const LAZY_WORKSPACE_SECTIONS = new Set(['media', 'preview', 'share']);
 
@@ -104,7 +116,15 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
 
   const activeSection = parseCreatorWorkspaceSection(searchParams.get('section'));
 
-  const isEditable = status === 'draft';
+  const capabilities = studioEditorCapabilities(
+    session ? { status: session.status, is_available: session.is_available } : { status },
+  );
+  const canEditDraft = capabilities.canEditDraft;
+  const canEditLiveMetadata = capabilities.canEditLiveMetadata;
+  const isEditable = capabilities.canEditDraft;
+  const isLive = capabilities.canReplaceLiveMedia;
+  const saveMode = canEditDraft ? 'draft' : canEditLiveMetadata ? 'live' : 'none';
+  const blockedLivePatchRef = useRef<string | null>(null);
 
   const setActiveSection = useCallback(
     (section: CreatorWorkspaceSection) => {
@@ -164,6 +184,15 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
   useGuidedSessionVideoOptimizationPolling({
     session,
     enabled: isEditable,
+    getIdToken,
+    onSessionUpdated: (updated) => {
+      onSessionUpdated(updated);
+    },
+  });
+
+  useLiveMediaReplacementPolling({
+    session,
+    enabled: isLive,
     getIdToken,
     onSessionUpdated: (updated) => {
       onSessionUpdated(updated);
@@ -240,6 +269,7 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
   const onFieldChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
       const { name, value } = e.target;
+      if (name === 'practice' && !canEditDraft) return;
       setForm((prev) => {
         if (!prev) return prev;
         const next =
@@ -253,7 +283,7 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
         setSaveState('idle');
       }
     },
-    [saveState, taxonomy],
+    [saveState, taxonomy, canEditDraft],
   );
 
   const onTimeSuitabilityChange = useCallback(
@@ -273,10 +303,13 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
   );
 
   useEffect(() => {
-    if (!isReady || !isEditable || !form || !baseline) return;
+    if (!isReady || saveMode === 'none' || !form || !baseline) return;
 
-    const patch = buildGuidedSessionPatch(form, baseline);
-    if (Object.keys(patch).length === 0) {
+    const patch =
+      saveMode === 'draft'
+        ? buildGuidedSessionPatch(form, baseline)
+        : buildLiveGuidedSessionPatch(form, baseline);
+    if (liveAutosaveDecision(patch, saveMode === 'live' ? blockedLivePatchRef.current : null) !== 'save') {
       return;
     }
 
@@ -284,8 +317,18 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
       const currentBaseline = baselineRef.current;
       if (!currentBaseline) return;
 
-      const pendingPatch = buildGuidedSessionPatch(form, currentBaseline);
-      if (Object.keys(pendingPatch).length === 0) return;
+      const pendingPatch =
+        saveMode === 'draft'
+          ? buildGuidedSessionPatch(form, currentBaseline)
+          : buildLiveGuidedSessionPatch(form, currentBaseline);
+      if (
+        liveAutosaveDecision(
+          pendingPatch,
+          saveMode === 'live' ? blockedLivePatchRef.current : null,
+        ) !== 'save'
+      ) {
+        return;
+      }
 
       setSaveState('saving');
       setSaveError(null);
@@ -296,6 +339,7 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
         const updated = await updateGuidedSessionDraft(sessionId, pendingPatch, token);
         const nextBaseline = sessionToEditorForm(updated);
         baselineRef.current = nextBaseline;
+        blockedLivePatchRef.current = null;
         setBaseline(nextBaseline);
         setSession(updated);
         setStatus(updated.status);
@@ -309,6 +353,26 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
         setSaveState('saved');
       } catch (err) {
         const fieldErrors = getStudioApiFieldErrors(err);
+        const code = getStudioApiErrorCode(err);
+        if (code === 'live_field_read_only') {
+          blockedLivePatchRef.current = livePatchPayloadKey(pendingPatch);
+          setSaveError(t('liveFieldReadOnly'));
+          setSaveState('error');
+          try {
+            const token = await getIdToken();
+            const fresh = await getGuidedSession(sessionId, token);
+            const reconciled = sessionToEditorForm(fresh);
+            baselineRef.current = reconciled;
+            blockedLivePatchRef.current = null;
+            setBaseline(reconciled);
+            setForm(reconciled);
+            setSession(fresh);
+            setStatus(fresh.status);
+          } catch {
+            /* Keep the rejected payload blocked so autosave does not loop. */
+          }
+          return;
+        }
         if (fieldErrors.time_suitability) {
           setTimeSuitabilityError(fieldErrors.time_suitability);
           setSaveError(null);
@@ -322,10 +386,15 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
     }, AUTOSAVE_MS);
 
     return () => window.clearTimeout(timer);
-  }, [form, baseline, isReady, isEditable, sessionId, getIdToken, t]);
+  }, [form, baseline, isReady, saveMode, sessionId, getIdToken, t]);
 
-  const statusLabel = (value: string) =>
-    STATUS_LABEL_KEYS[value] ? ts(STATUS_LABEL_KEYS[value]) : value;
+  const sessionPhase = studioSessionPhase(
+    session ? { status: session.status, is_available: session.is_available } : { status },
+  );
+  const statusLabel =
+    sessionPhase === 'unknown'
+      ? status
+      : ts(STATUS_PHASE_KEYS[sessionPhase]);
 
   const sessionTimestampDisplay = useMemo(() => {
     if (!session) return null;
@@ -385,7 +454,7 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
     <CreatorWorkspace
       title={form.title}
       status={status}
-      statusLabel={statusLabel(status)}
+      statusLabel={statusLabel}
       lastSavedLabel={lastSavedLabel}
       saveState={saveState}
       activeSection={activeSection}
@@ -401,7 +470,7 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
           durationLabel={durationLabel}
           durationFromMedia={durationFromMedia}
           durationMediaSource={durationMediaSource}
-          statusLabel={statusLabel(status)}
+          statusLabel={statusLabel}
           lastUpdated={updatedAtDisplay}
           creator={form.instructor}
           draftIncomplete={isEditable && workspaceReadiness ? !workspaceReadiness.publishable : false}
@@ -413,11 +482,14 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
           <h2 id="workspace-content-heading" className="visually-hidden">
             {t('contentAria')}
           </h2>
-          {!isEditable ? (
-            <p className="creator-workspace__section-lede">{t('contentReadonly')}</p>
-          ) : (
+          {canEditDraft || canEditLiveMetadata ? (
             <p className="creator-workspace__section-lede">{t('contentAutosaved')}</p>
+          ) : (
+            <p className="creator-workspace__section-lede">{t('contentReadonly')}</p>
           )}
+          {canEditLiveMetadata ? (
+            <p className="creator-workspace__section-note">{t('liveDetailsNote')}</p>
+          ) : null}
           {saveError ? (
             <p className="studio-form__error" role="alert">
               {saveError}
@@ -430,7 +502,8 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
             taxonomy={taxonomy}
             taxonomyLoading={taxonomyLoading}
             taxonomyError={taxonomyError}
-            disabled={!isEditable}
+            disabled={!canEditDraft && !canEditLiveMetadata}
+            isFieldDisabled={(field) => isGuidedSessionFieldDisabled(field, capabilities)}
             timeSuitabilityError={timeSuitabilityError}
             onChange={onFieldChange}
             onTimeSuitabilityChange={onTimeSuitabilityChange}
@@ -447,6 +520,8 @@ export default function GuidedSessionEditor({ sessionId }: Props) {
           status={status}
           readiness={workspaceReadiness}
           isEditable={isEditable}
+          canReplaceLiveMedia={capabilities.canReplaceLiveMedia}
+          canReplaceLiveCover={capabilities.canReplaceLiveCover}
           onSessionUpdated={onSessionUpdated}
           onSessionPublished={onSessionPublished}
           onMediaActivityChange={setMediaActivity}
