@@ -6,33 +6,44 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
-import { StudioApiError } from '@/lib/api/studioApiClient';
 import {
+  emptyStudioCapabilities,
   fetchStudioBootstrap,
-  isApprovedStudioCreator,
+  parseStudioAccess,
+  type StudioCapabilities,
+  type StudioPublishingLimits,
 } from '@/lib/api/studioBootstrap';
+import { subscribeStudioRequestForbidden } from '@/lib/api/studioForbiddenSignal';
 import { useAuth } from '@/contexts/AuthContext';
+import {
+  applyStudioAccessFailure,
+  applyStudioAccessSuccess,
+  beginStudioAccessRefresh,
+  classifyStudioAccessFailure,
+  createStudioAccessSession,
+  planStudioForbiddenRefresh,
+  shouldStartFocusRefresh,
+  signOutStudioAccess,
+  type StudioAccessSession,
+} from '@/lib/studio/studioAccessSession';
 
 /**
- * Studio access state, derived from the Django `/api/me/bootstrap/` call.
+ * Studio access from GET /api/me/bootstrap/.
  *
- * - `idle`      — no signed-in user yet; no access check performed
- * - `loading`   — bootstrap in flight; do NOT render the Studio workspace
- * - `connected` — approved Studio creator (`studio_access.is_studio_creator === true`)
- * - `denied`    — signed in but not an approved creator — show access notice
- * - `offline`   — backend unreachable / network error — show retry
- * - `error`     — auth/token or unexpected backend failure — show retry
+ * - `idle`      — signed out
+ * - `loading`   — first check for this account; the workspace stays hidden
+ * - `connected` — `studio_access.enabled === true` (or the legacy creator flag)
+ * - `denied`    — signed in, but Studio entry is not granted
+ * - `offline`   — the first check could not reach the backend
+ * - `error`     — the first check failed authentication or unexpectedly
  *
- * Access is determined by the `studio_access.is_studio_creator` field in the
- * bootstrap payload — NOT by HTTP status. Bootstrap returns 200 for every
- * authenticated user, so a 200 with `is_studio_creator: false` is `denied`.
- *
- * The backend remains authoritative; this only gates the UI so approved
- * creators enter Studio and everyone else gets a clear, calm screen instead
- * of a workspace that fails later with 403/404.
+ * A connected user may still lack a specific capability. That is not `denied`.
+ * Background refresh keeps a connected workspace mounted. A failed refresh
+ * does not grant access and does not treat a network error as revocation.
  */
 export type StudioAccessState =
   | { state: 'idle' }
@@ -44,129 +55,180 @@ export type StudioAccessState =
 
 type StudioAccessContextValue = {
   status: StudioAccessState;
-  retry: () => void;
+  enabled: boolean;
+  capabilities: StudioCapabilities;
+  publishingLimits: StudioPublishingLimits;
+  refresh: () => void;
 };
 
 const StudioAccessContext = createContext<StudioAccessContextValue | undefined>(undefined);
 
-function formatUnknownError(error: unknown): string {
-  if (error instanceof Error) return error.message;
-  if (error instanceof Event) {
-    return 'Backend offline or unreachable — is Django running and CORS configured?';
-  }
-  if (typeof error === 'string' && error.trim()) return error.trim();
-  return 'Unexpected error checking access.';
-}
+const EMPTY_LIMITS: StudioPublishingLimits = {
+  creator_publish_cooldown_hours: null,
+  creator_max_live_guided_sessions: null,
+};
 
-function isNetworkError(error: unknown): boolean {
-  if (error instanceof Event) return true;
-  if (error instanceof TypeError && /fetch|network|failed/i.test(error.message)) return true;
-  if (error instanceof DOMException && (error.name === 'AbortError' || error.name === 'NetworkError')) {
-    return true;
+function toPublicStatus(session: StudioAccessSession): StudioAccessState {
+  switch (session.phase) {
+    case 'idle':
+      return { state: 'idle' };
+    case 'loading':
+      return { state: 'loading' };
+    case 'connected':
+      return { state: 'connected' };
+    case 'denied':
+      return { state: 'denied', message: session.message ?? '' };
+    case 'offline':
+      return { state: 'offline', message: session.message ?? '' };
+    case 'error':
+      return { state: 'error', message: session.message ?? '' };
+    default: {
+      const unreachable: never = session.phase;
+      return unreachable;
+    }
   }
-  return false;
-}
-
-function mapApiError(error: StudioApiError): StudioAccessState {
-  if (error.status === 403) {
-    return {
-      state: 'denied',
-      message: error.message || 'This account is not an approved Studio creator.',
-    };
-  }
-
-  if (error.status === 401) {
-    return {
-      state: 'error',
-      message: 'Your session could not be verified. Please sign in again.',
-    };
-  }
-
-  if (error.status >= 500) {
-    return {
-      state: 'offline',
-      message: `Backend error (${error.status}) — the server may be down or misconfigured.`,
-    };
-  }
-
-  return {
-    state: 'error',
-    message: error.message || `Access check failed (${error.status}).`,
-  };
 }
 
 export function StudioAccessProvider({ children }: { children: ReactNode }) {
   const { user, getIdToken } = useAuth();
-  const [status, setStatus] = useState<StudioAccessState>({ state: 'idle' });
-  const [reloadToken, setReloadToken] = useState(0);
+  const [session, setSession] = useState<StudioAccessSession>(createStudioAccessSession);
+  const sessionRef = useRef(session);
+  const generationRef = useRef(0);
+  const userIdRef = useRef<string | null>(null);
+  const refreshLockRef = useRef(false);
+  const runRefreshRef = useRef<(mode: 'initial' | 'background', userId: string) => void>(() => {});
 
-  const retry = useCallback(() => {
-    setReloadToken((token) => token + 1);
-  }, []);
+  useEffect(() => {
+    sessionRef.current = session;
+  }, [session]);
+
+  const runRefresh = useCallback(
+    (mode: 'initial' | 'background', userId: string) => {
+      if (mode === 'background' && refreshLockRef.current) return;
+      refreshLockRef.current = true;
+      const generation = ++generationRef.current;
+      setSession((current) => beginStudioAccessRefresh(current, { userId, generation, mode }));
+
+      void (async () => {
+        try {
+          const token = await getIdToken();
+          if (generation !== generationRef.current || userId !== userIdRef.current) return;
+          if (!token) {
+            setSession((current) =>
+              applyStudioAccessFailure(current, {
+                userId,
+                generation,
+                mode,
+                failure: 'auth',
+                message: 'Could not obtain a Firebase ID token. Please sign in again.',
+              }),
+            );
+            return;
+          }
+
+          const bootstrap = await fetchStudioBootstrap(token);
+          if (generation !== generationRef.current || userId !== userIdRef.current) return;
+          setSession((current) =>
+            applyStudioAccessSuccess(current, {
+              userId,
+              generation,
+              access: parseStudioAccess(bootstrap),
+            }),
+          );
+        } catch (error) {
+          if (generation !== generationRef.current || userId !== userIdRef.current) return;
+          const classified = classifyStudioAccessFailure(error);
+          setSession((current) =>
+            applyStudioAccessFailure(current, {
+              userId,
+              generation,
+              mode,
+              failure: classified.failure,
+              message: classified.message,
+            }),
+          );
+        } finally {
+          if (generation === generationRef.current) {
+            refreshLockRef.current = false;
+          }
+        }
+      })();
+    },
+    [getIdToken],
+  );
+
+  useEffect(() => {
+    runRefreshRef.current = runRefresh;
+  }, [runRefresh]);
 
   useEffect(() => {
     if (!user) {
-      setStatus({ state: 'idle' });
+      userIdRef.current = null;
+      const generation = ++generationRef.current;
+      refreshLockRef.current = false;
+      setSession((current) => signOutStudioAccess(current, generation));
       return;
     }
 
-    let cancelled = false;
+    userIdRef.current = user.uid;
+    runRefreshRef.current('initial', user.uid);
+  }, [user]);
 
-    async function checkAccess() {
-      setStatus({ state: 'loading' });
+  const refresh = useCallback(() => {
+    const userId = userIdRef.current;
+    if (!userId) return;
+    const mode = sessionRef.current.phase === 'connected' ? 'background' : 'initial';
+    runRefreshRef.current(mode, userId);
+  }, []);
 
-      try {
-        const token = await getIdToken();
-        if (!token) {
-          if (!cancelled) {
-            setStatus({
-              state: 'error',
-              message: 'Could not obtain a Firebase ID token. Please sign in again.',
-            });
-          }
-          return;
-        }
+  useEffect(() => {
+    return subscribeStudioRequestForbidden((path) => {
+      const plan = planStudioForbiddenRefresh({
+        path,
+        refreshInFlight: refreshLockRef.current,
+      });
+      if (plan.action !== 'start' || plan.replay) return;
+      const userId = userIdRef.current;
+      if (!userId) return;
+      runRefreshRef.current('background', userId);
+    });
+  }, []);
 
-        const bootstrap = await fetchStudioBootstrap(token);
-
-        if (!cancelled) {
-          setStatus(
-            isApprovedStudioCreator(bootstrap)
-              ? { state: 'connected' }
-              : {
-                  state: 'denied',
-                  message: 'This account is not an approved Studio creator.',
-                },
-          );
-        }
-      } catch (error) {
-        if (cancelled) return;
-
-        if (isNetworkError(error)) {
-          setStatus({
-            state: 'offline',
-            message: 'Backend offline or unreachable — is Django running and CORS configured?',
-          });
-          return;
-        }
-
-        if (error instanceof StudioApiError) {
-          setStatus(mapApiError(error));
-          return;
-        }
-
-        setStatus({ state: 'error', message: formatUnknownError(error) });
+  useEffect(() => {
+    function onReturn() {
+      const visibilityState = document.visibilityState === 'visible' ? 'visible' : 'hidden';
+      if (
+        !shouldStartFocusRefresh({
+          visibilityState,
+          signedIn: userIdRef.current != null,
+          refreshInFlight: refreshLockRef.current,
+          phase: sessionRef.current.phase,
+        })
+      ) {
+        return;
       }
+      const userId = userIdRef.current;
+      if (!userId) return;
+      runRefreshRef.current('background', userId);
     }
 
-    void checkAccess();
-
+    window.addEventListener('focus', onReturn);
+    document.addEventListener('visibilitychange', onReturn);
     return () => {
-      cancelled = true;
+      window.removeEventListener('focus', onReturn);
+      document.removeEventListener('visibilitychange', onReturn);
     };
-  }, [user, getIdToken, reloadToken]);
+  }, []);
 
-  const value = useMemo(() => ({ status, retry }), [status, retry]);
+  const status = toPublicStatus(session);
+  const enabled = session.phase === 'connected' && session.access?.enabled === true;
+  const capabilities = enabled && session.access ? session.access.capabilities : emptyStudioCapabilities();
+  const publishingLimits = session.access?.publishingLimits ?? EMPTY_LIMITS;
+
+  const value = useMemo(
+    () => ({ status, enabled, capabilities, publishingLimits, refresh }),
+    [status, enabled, capabilities, publishingLimits, refresh],
+  );
 
   return <StudioAccessContext.Provider value={value}>{children}</StudioAccessContext.Provider>;
 }

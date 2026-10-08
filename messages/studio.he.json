@@ -42,7 +42,14 @@
     "sessionsTitle": "הסשנים המודרכים שלכם",
     "sessionsLede": "המשיכו מהמקום שבו עצרתם.",
     "tabCreate": "יצירה",
-    "tabSessions": "הסשנים שלי"
+    "tabSessions": "הסשנים שלי",
+    "noAreasTitle": "עדיין אין אזור יצירה",
+    "noAreasBody": "חשבון הסטודיו פעיל, אבל עדיין אין אזור יצירה זמין עבורו."
+  },
+  "capability": {
+    "guidedSessionsTitle": "סשנים מודרכים אינם זמינים",
+    "guidedSessionsBody": "החשבון הזה יכול להיכנס לסטודיו, אבל הוא אינו כולל סשנים מודרכים.",
+    "backToStudio": "חזרה לסטודיו"
   },
   "create": {
     "soon": "בקרוב",

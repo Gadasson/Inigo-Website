@@ -20,7 +20,7 @@ function StudioLoading({ label }: { label: string }) {
 
 export default function StudioGate({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
-  const { status, retry } = useStudioAccess();
+  const { status, refresh } = useStudioAccess();
   const t = useTranslations('gate');
   const pathname = usePathname();
   const router = useRouter();
@@ -68,13 +68,13 @@ export default function StudioGate({ children }: { children: React.ReactNode }) 
       <StudioAccessNotice
         variant="denied"
         message={status.message}
-        onRetry={retry}
+        onRetry={refresh}
       />
     );
   }
 
   if (status.state === 'offline' || status.state === 'error') {
-    return <StudioAccessNotice variant="error" message={status.message} onRetry={retry} />;
+    return <StudioAccessNotice variant="error" message={status.message} onRetry={refresh} />;
   }
 
   return <>{children}</>;

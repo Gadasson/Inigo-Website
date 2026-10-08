@@ -1,3 +1,4 @@
+import { notifyStudioRequestForbidden } from '@/lib/api/studioForbiddenSignal';
 import { getInigoApiBase } from '@/lib/inigoApiBase';
 
 export class StudioApiError extends Error {
@@ -101,6 +102,9 @@ export async function studioFetch<T>(
   const parsedBody = isJson ? await response.json().catch(() => null) : await response.text().catch(() => null);
 
   if (!response.ok) {
+    if (response.status === 403) {
+      notifyStudioRequestForbidden(path);
+    }
     throw new StudioApiError(parseApiErrorMessage(parsedBody, response.status), response.status, parsedBody);
   }
 

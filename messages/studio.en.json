@@ -42,7 +42,14 @@
     "sessionsTitle": "Your guided sessions",
     "sessionsLede": "Pick up where you left off.",
     "tabCreate": "Create",
-    "tabSessions": "My guided sessions"
+    "tabSessions": "My guided sessions",
+    "noAreasTitle": "Nothing to create yet",
+    "noAreasBody": "Your Studio account is active, but no creation area is available for it yet."
+  },
+  "capability": {
+    "guidedSessionsTitle": "Guided sessions aren't available",
+    "guidedSessionsBody": "This account can open Studio, but it doesn't include guided sessions.",
+    "backToStudio": "Back to Studio"
   },
   "create": {
     "soon": "Soon",

@@ -1,9 +1,12 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
+import { useStudioAccess } from '@/contexts/StudioAccessContext';
+import { GUIDED_SESSIONS_CAPABILITY } from '@/lib/api/studioBootstrap';
+import { shouldLoadStudioArea } from '@/lib/studio/studioAreas';
 import {
   listGuidedSessions,
   type StudioGuidedSession,
@@ -38,6 +41,12 @@ const STATUS_PHASE_KEYS = {
 
 export default function MyGuidedSessions({ active = true }: Props) {
   const { user, getIdToken } = useAuth();
+  const { status, enabled, capabilities } = useStudioAccess();
+  const canLoadSessions =
+    status.state === 'connected' &&
+    shouldLoadStudioArea(GUIDED_SESSIONS_CAPABILITY, { enabled, capabilities });
+  const canLoadRef = useRef(canLoadSessions);
+  canLoadRef.current = canLoadSessions;
   const locale = useLocale();
   const t = useTranslations('sessions');
   const statusLabel = (session: StudioGuidedSession): string => {
@@ -51,7 +60,7 @@ export default function MyGuidedSessions({ active = true }: Props) {
   const [filter, setFilter] = useState<GuidedSessionStatusFilter>('all');
 
   const loadSessions = useCallback(async () => {
-    if (!user) return;
+    if (!user || !canLoadRef.current) return;
 
     setLoading(true);
     setError(null);
@@ -59,18 +68,27 @@ export default function MyGuidedSessions({ active = true }: Props) {
     try {
       const token = await getIdToken();
       const data = await listGuidedSessions(token);
+      if (!canLoadRef.current) return;
       setSessions(data);
     } catch (err) {
+      if (!canLoadRef.current) return;
       setError(parseStudioApiError(err));
     } finally {
-      setLoading(false);
+      if (canLoadRef.current) setLoading(false);
     }
   }, [user, getIdToken]);
 
   useEffect(() => {
-    if (!active || !user) return;
+    if (canLoadSessions) return;
+    setSessions([]);
+    setError(null);
+    setLoading(false);
+  }, [canLoadSessions]);
+
+  useEffect(() => {
+    if (!active || !user || !canLoadSessions) return;
     void loadSessions();
-  }, [active, user, loadSessions]);
+  }, [active, user, canLoadSessions, loadSessions]);
 
   const filteredSessions = useMemo(
     () => sessions.filter((session) => matchesStatusFilter(session.status, filter)),
@@ -93,6 +111,8 @@ export default function MyGuidedSessions({ active = true }: Props) {
 
     return counts;
   }, [sessions]);
+
+  if (!canLoadSessions) return null;
 
   return (
     <section className="studio-workspace__library" aria-labelledby="studio-library-heading">
