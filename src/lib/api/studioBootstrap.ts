@@ -3,10 +3,13 @@ import { studioFetch } from '@/lib/api/studioApiClient';
 /** Django bootstrap endpoint — verifies Firebase token and reports Studio access. */
 export const STUDIO_BOOTSTRAP_PATH = '/api/me/bootstrap/';
 
-/** The only Studio capability the product implements today. */
+/** Studio capabilities the product implements today. */
 export const GUIDED_SESSIONS_CAPABILITY = 'guided_sessions' as const;
+export const CHALLENGES_CAPABILITY = 'challenges' as const;
 
-export type StudioCapabilityId = typeof GUIDED_SESSIONS_CAPABILITY;
+export type StudioCapabilityId =
+  | typeof GUIDED_SESSIONS_CAPABILITY
+  | typeof CHALLENGES_CAPABILITY;
 
 export type StudioCapabilities = Record<StudioCapabilityId, boolean>;
 
@@ -49,6 +52,7 @@ export type StudioBootstrapResponse = {
 
 const EMPTY_CAPABILITIES: StudioCapabilities = {
   guided_sessions: false,
+  challenges: false,
 };
 
 const EMPTY_LIMITS: StudioPublishingLimits = {
@@ -80,6 +84,7 @@ function capabilitiesFromMap(value: unknown): StudioCapabilities {
   const source = isRecord(value) ? value : null;
   return {
     guided_sessions: source?.guided_sessions === true,
+    challenges: source?.challenges === true,
   };
 }
 
@@ -97,7 +102,8 @@ function denied(contract: StudioAccessContract, limits: StudioPublishingLimits =
  *
  * New contract (`capabilities` is present, including null or a non-object):
  * - `enabled === true` is the only general entry.
- * - `capabilities.guided_sessions === true` is the only session grant.
+ * - `capabilities.guided_sessions === true` grants guided sessions.
+ * - `capabilities.challenges === true` grants challenges. Nothing else does.
  * - A missing capability key is false.
  * - Unknown capability keys do not open a screen.
  * - `is_studio_creator` is ignored.
@@ -106,6 +112,7 @@ function denied(contract: StudioAccessContract, limits: StudioPublishingLimits =
  *
  * Legacy contract (`capabilities` is absent entirely):
  * - `is_studio_creator === true` grants entry and `guided_sessions` only.
+ * - Challenges stay closed. The old flag never grants them.
  */
 export function parseStudioAccess(
   bootstrap: StudioBootstrapResponse | null | undefined,
@@ -120,7 +127,7 @@ export function parseStudioAccess(
     return {
       contract: 'legacy',
       enabled: legacyCreator,
-      capabilities: { guided_sessions: legacyCreator },
+      capabilities: { guided_sessions: legacyCreator, challenges: false },
       publishingLimits: limits,
     };
   }

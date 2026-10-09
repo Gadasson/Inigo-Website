@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import {
+  CHALLENGES_CAPABILITY,
   GUIDED_SESSIONS_CAPABILITY,
   STUDIO_BOOTSTRAP_PATH,
   parseStudioAccess,
@@ -27,11 +28,17 @@ function access(patch: {
   return parseStudioAccess({ studio_access: patch });
 }
 
-function granted(capabilities: ParsedStudioAccess['capabilities']): ParsedStudioAccess {
+function granted(
+  capabilities: Partial<ParsedStudioAccess['capabilities']>,
+): ParsedStudioAccess {
   return {
     contract: 'capabilities',
     enabled: true,
-    capabilities,
+    capabilities: {
+      guided_sessions: false,
+      challenges: false,
+      ...capabilities,
+    },
     publishingLimits: {
       creator_publish_cooldown_hours: null,
       creator_max_live_guided_sessions: null,
@@ -54,6 +61,28 @@ describe('new capability contract', () => {
     assert.equal(parsed.publishingLimits.creator_publish_cooldown_hours, 12);
     assert.equal(parsed.publishingLimits.creator_max_live_guided_sessions, 2);
     assert.equal(shouldLoadStudioArea(GUIDED_SESSIONS_CAPABILITY, parsed), true);
+    assert.equal(parsed.capabilities.challenges, false);
+  });
+
+  it('grants challenges only from their own boolean and not from guided sessions', () => {
+    const parsed = access({
+      enabled: true,
+      is_studio_creator: true,
+      capabilities: { guided_sessions: true, challenges: true },
+    });
+    assert.equal(parsed.capabilities.challenges, true);
+    assert.equal(shouldLoadStudioArea('challenges', parsed), true);
+    assert.equal(studioHomeView(parsed).showChallengeList, true);
+
+    const sessionsOnly = access({
+      enabled: true,
+      is_studio_creator: true,
+      capabilities: { guided_sessions: true },
+    });
+    assert.equal(sessionsOnly.capabilities.challenges, false);
+    assert.equal(shouldLoadStudioArea('challenges', sessionsOnly), false);
+    assert.equal(studioHomeView(sessionsOnly).showChallengeList, false);
+    assert.equal(studioHomeView(sessionsOnly).showNeutralEmpty, false);
   });
 
   it('does not grant guided sessions from false', () => {
@@ -96,6 +125,7 @@ describe('new capability contract', () => {
     assert.equal(plain.enabled, false);
     assert.equal(plain.capabilities.guided_sessions, false);
     assert.equal(studioHomeView(plain).showNeutralEmpty, false);
+    assert.equal(plain.capabilities.challenges, false);
   });
 
   it('rejects malformed capabilities instead of using the legacy flag', () => {
@@ -119,9 +149,22 @@ describe('new capability contract', () => {
       capabilities: { recipes: true, challenges: true },
     });
     assert.equal(parsed.capabilities.guided_sessions, false);
-    assert.equal(studioHomeView(parsed).areas.length, 0);
-    assert.equal(studioHomeView(parsed).showNeutralEmpty, true);
+    assert.equal(parsed.capabilities.challenges, true);
+    assert.equal(studioHomeView(parsed).areas.length, 1);
+    assert.equal(studioHomeView(parsed).areas[0]?.capability, CHALLENGES_CAPABILITY);
+    assert.equal(studioHomeView(parsed).showNeutralEmpty, false);
     assert.equal(studioHomeView(parsed).showSessionList, false);
+    assert.equal(studioHomeView(parsed).showChallengeList, true);
+
+    const unknownOnly = access({
+      enabled: true,
+      is_studio_creator: true,
+      capabilities: { recipes: true },
+    });
+    assert.equal(unknownOnly.capabilities.guided_sessions, false);
+    assert.equal(unknownOnly.capabilities.challenges, false);
+    assert.equal(studioHomeView(unknownOnly).areas.length, 0);
+    assert.equal(studioHomeView(unknownOnly).showNeutralEmpty, true);
   });
 
   it('does not treat non-boolean capability values as grants', () => {

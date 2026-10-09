@@ -1,4 +1,5 @@
 import {
+  CHALLENGES_CAPABILITY,
   GUIDED_SESSIONS_CAPABILITY,
   hasStudioCapability,
   type ParsedStudioAccess,
@@ -14,10 +15,10 @@ export type StudioAreaDefinition = {
   capability: StudioCapabilityId;
   createHref: string;
   manageHref: string;
-  titleKey: 'create.guidedSessionTitle';
-  descriptionKey: 'create.guidedSessionDesc';
-  actionKey: 'create.guidedSessionAction';
-  manageLabelKey: 'home.tabSessions';
+  titleKey: 'create.guidedSessionTitle' | 'create.challengeTitle';
+  descriptionKey: 'create.guidedSessionDesc' | 'create.challengeDesc';
+  actionKey: 'create.guidedSessionAction' | 'create.challengeAction';
+  manageLabelKey: 'home.tabSessions' | 'home.tabChallenges';
 };
 
 export const STUDIO_AREAS: readonly StudioAreaDefinition[] = [
@@ -29,6 +30,15 @@ export const STUDIO_AREAS: readonly StudioAreaDefinition[] = [
     descriptionKey: 'create.guidedSessionDesc',
     actionKey: 'create.guidedSessionAction',
     manageLabelKey: 'home.tabSessions',
+  },
+  {
+    capability: CHALLENGES_CAPABILITY,
+    createHref: '/studio/challenges/new',
+    manageHref: '/studio/challenges',
+    titleKey: 'create.challengeTitle',
+    descriptionKey: 'create.challengeDesc',
+    actionKey: 'create.challengeAction',
+    manageLabelKey: 'home.tabChallenges',
   },
 ];
 
@@ -46,6 +56,7 @@ export function shouldLoadStudioArea(
 export type StudioHomeView = {
   areas: StudioAreaDefinition[];
   showSessionList: boolean;
+  showChallengeList: boolean;
   showNeutralEmpty: boolean;
 };
 
@@ -54,12 +65,18 @@ export function studioHomeView(
   access: Pick<ParsedStudioAccess, 'enabled' | 'capabilities'> | null | undefined,
 ): StudioHomeView {
   if (!access?.enabled) {
-    return { areas: [], showSessionList: false, showNeutralEmpty: false };
+    return {
+      areas: [],
+      showSessionList: false,
+      showChallengeList: false,
+      showNeutralEmpty: false,
+    };
   }
   const areas = areasForCapabilities(access.capabilities);
   return {
     areas,
     showSessionList: areas.some((area) => area.capability === GUIDED_SESSIONS_CAPABILITY),
+    showChallengeList: areas.some((area) => area.capability === CHALLENGES_CAPABILITY),
     showNeutralEmpty: areas.length === 0,
   };
 }

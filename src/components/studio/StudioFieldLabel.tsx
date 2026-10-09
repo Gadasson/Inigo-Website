@@ -19,7 +19,7 @@ export default function StudioFieldLabel({ htmlFor, hintKey, children }: Props) 
   return (
     <div className="studio-form__label-row">
       <label htmlFor={htmlFor}>{children}</label>
-      {hint && hintId ? <StudioFieldHint text={hint} id={hintId} /> : null}
+      {hint && hintId ? <StudioFieldHint text={hint} id={hintId} label={t('fieldHelp')} /> : null}
     </div>
   );
 }

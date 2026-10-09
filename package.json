@@ -19,6 +19,7 @@
     "test:studio-media-replacement": "npx --yes tsx --test src/lib/studio/mediaReplacement.test.ts",
     "test:studio-live-metadata": "npx --yes tsx --test src/lib/studio/liveMetadata.test.ts",
     "test:studio-access": "npx --yes tsx --test src/lib/studio/studioAccess.test.ts",
+    "test:studio-challenges": "npx --yes tsx --test src/lib/studio/challengeEditor.test.ts src/lib/studio/studioAccess.test.ts",
     "test:studio-time-suitability": "npx --yes tsx --test src/lib/studio/timeSuitability.test.ts",
     "test:app-download": "npx --yes tsx --test src/lib/appDownloadRedirect.test.ts",
     "test:open-in-app": "npx --yes tsx --test src/lib/openInApp.test.ts",

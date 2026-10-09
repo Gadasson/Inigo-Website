@@ -8,10 +8,11 @@ import { useStudioAccess } from '@/contexts/StudioAccessContext';
 import { GUIDED_SESSIONS_CAPABILITY, type StudioCapabilityId } from '@/lib/api/studioBootstrap';
 import { studioHomeView } from '@/lib/studio/studioAreas';
 import MyGuidedSessions from './MyGuidedSessions';
+import MyChallenges from './challenges/MyChallenges';
 
 type IconProps = { className?: string };
 
-type StudioHomeTab = 'create' | 'sessions';
+type StudioHomeTab = 'create' | 'sessions' | 'challenges';
 
 function GuidedSessionIcon({ className }: IconProps) {
   return (
@@ -33,7 +34,10 @@ const AREA_ICONS: Partial<Record<StudioCapabilityId, ComponentType<IconProps>>> 
 };
 
 function tabFromSearchParams(searchParams: ReturnType<typeof useSearchParams>): StudioHomeTab {
-  return searchParams.get('tab') === 'sessions' ? 'sessions' : 'create';
+  const tab = searchParams.get('tab');
+  if (tab === 'sessions') return 'sessions';
+  if (tab === 'challenges') return 'challenges';
+  return 'create';
 }
 
 export default function CreatorHome() {
@@ -45,15 +49,20 @@ export default function CreatorHome() {
   const home = studioHomeView({ enabled, capabilities });
   const activeTab = tabFromSearchParams(searchParams);
   const sessionsTabVisible = home.showSessionList;
+  const challengesTabVisible = home.showChallengeList;
   const visibleTab: StudioHomeTab =
-    activeTab === 'sessions' && sessionsTabVisible ? 'sessions' : 'create';
+    activeTab === 'sessions' && sessionsTabVisible
+      ? 'sessions'
+      : activeTab === 'challenges' && challengesTabVisible
+        ? 'challenges'
+        : 'create';
 
   const setActiveTab = (tab: StudioHomeTab) => {
     const params = new URLSearchParams(searchParams.toString());
-    if (tab === 'sessions') {
-      params.set('tab', 'sessions');
-    } else {
+    if (tab === 'create') {
       params.delete('tab');
+    } else {
+      params.set('tab', tab);
     }
     const query = params.toString();
     router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
@@ -64,7 +73,7 @@ export default function CreatorHome() {
       <div className="studio-workspace__container">
         <header
           className={`studio-workspace__intro${
-            visibleTab === 'sessions' ? ' studio-workspace__intro--compact' : ''
+            visibleTab === 'create' ? '' : ' studio-workspace__intro--compact'
           }`}
         >
           {home.showNeutralEmpty ? (
@@ -77,6 +86,11 @@ export default function CreatorHome() {
               <p className="studio-workspace__greeting">{t('home.greeting')}</p>
               <h1 className="studio-workspace__title">{t('home.createTitle')}</h1>
               <p className="studio-workspace__lede">{t('home.createLede')}</p>
+            </>
+          ) : visibleTab === 'challenges' ? (
+            <>
+              <h1 className="studio-workspace__title">{t('home.challengesTitle')}</h1>
+              <p className="studio-workspace__lede">{t('home.challengesLede')}</p>
             </>
           ) : (
             <>
@@ -108,6 +122,18 @@ export default function CreatorHome() {
                 onClick={() => setActiveTab('sessions')}
               >
                 {t('home.tabSessions')}
+              </button>
+            ) : null}
+            {challengesTabVisible ? (
+              <button
+                type="button"
+                className={`studio-workspace__tab${
+                  visibleTab === 'challenges' ? ' studio-workspace__tab--active' : ''
+                }`}
+                aria-current={visibleTab === 'challenges' ? 'page' : undefined}
+                onClick={() => setActiveTab('challenges')}
+              >
+                {t('home.tabChallenges')}
               </button>
             ) : null}
           </nav>
@@ -149,8 +175,10 @@ export default function CreatorHome() {
               })}
             </ul>
           </section>
-        ) : (
+        ) : visibleTab === 'sessions' ? (
           <MyGuidedSessions active />
+        ) : (
+          <MyChallenges active embedded />
         )}
       </div>
     </main>

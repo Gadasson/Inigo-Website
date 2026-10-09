@@ -2164,7 +2164,7 @@
   bottom: calc(100% + 0.5rem);
   z-index: 2;
   width: max-content;
-  max-width: 14rem;
+  max-width: min(18rem, calc(100vw - 2rem));
   padding: 0.5rem 0.625rem;
   border-radius: 0.5rem;
   background: var(--inigo-charcoal);
@@ -2180,7 +2180,8 @@
 }
 
 .studio-field-hint:hover .studio-field-hint__tooltip,
-.studio-field-hint:focus-within .studio-field-hint__tooltip {
+.studio-field-hint:focus-within .studio-field-hint__tooltip,
+.studio-field-hint--open .studio-field-hint__tooltip {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
@@ -2561,4 +2562,87 @@
 .studio-session-item__status--live,
 .studio-session-item__status--awaiting-approval {
   text-transform: none;
+}
+
+.studio-challenge-list__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.studio-challenge-list__create {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.studio-challenge-actions,
+.studio-challenge-step__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.studio-challenge-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.studio-challenge-step {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(var(--inigo-accent-rgb), 0.12);
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.studio-challenge-step__index {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.studio-challenge-step__guided p {
+  margin: 0 0 0.5rem;
+}
+
+.studio-challenge-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.studio-challenge-picker__option {
+  width: 100%;
+  text-align: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.studio-challenge-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0.25rem 0 0;
+  padding: 0.75rem 0.875rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(var(--inigo-accent-rgb), 0.12);
+  background: rgba(var(--inigo-accent-rgb), 0.06);
+  color: #52524a;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+}
+
+.studio-challenge-summary p {
+  margin: 0;
 }
