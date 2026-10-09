@@ -9,6 +9,7 @@ import { GUIDED_SESSIONS_CAPABILITY, type StudioCapabilityId } from '@/lib/api/s
 import { studioHomeView, resolveStudioHomeTab, type StudioHomeTab } from '@/lib/studio/studioAreas';
 import MyGuidedSessions from './MyGuidedSessions';
 import MyChallenges from './challenges/MyChallenges';
+import MyRecipes from './recipes/MyRecipes';
 
 type IconProps = { className?: string };
 
@@ -41,6 +42,7 @@ export default function CreatorHome() {
   const visibleTab: StudioHomeTab = resolveStudioHomeTab(searchParams.get('tab'), { enabled, capabilities });
   const sessionsTabVisible = home.showSessionList;
   const challengesTabVisible = home.showChallengeList;
+  const recipesTabVisible = home.showRecipeList;
 
   const setActiveTab = (tab: StudioHomeTab) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -76,6 +78,11 @@ export default function CreatorHome() {
             <>
               <h1 className="studio-workspace__title">{t('home.challengesTitle')}</h1>
               <p className="studio-workspace__lede">{t('home.challengesLede')}</p>
+            </>
+          ) : visibleTab === 'recipes' ? (
+            <>
+              <h1 className="studio-workspace__title">{t('home.recipesTitle')}</h1>
+              <p className="studio-workspace__lede">{t('home.recipesLede')}</p>
             </>
           ) : (
             <>
@@ -121,6 +128,18 @@ export default function CreatorHome() {
                 {t('home.tabChallenges')}
               </button>
             ) : null}
+            {recipesTabVisible ? (
+              <button
+                type="button"
+                className={`studio-workspace__tab${
+                  visibleTab === 'recipes' ? ' studio-workspace__tab--active' : ''
+                }`}
+                aria-current={visibleTab === 'recipes' ? 'page' : undefined}
+                onClick={() => setActiveTab('recipes')}
+              >
+                {t('home.tabRecipes')}
+              </button>
+            ) : null}
           </nav>
         )}
 
@@ -162,8 +181,10 @@ export default function CreatorHome() {
           </section>
         ) : visibleTab === 'sessions' ? (
           <MyGuidedSessions active />
-        ) : (
+        ) : visibleTab === 'challenges' ? (
           <MyChallenges active embedded />
+        ) : (
+          <MyRecipes active embedded />
         )}
       </div>
     </main>

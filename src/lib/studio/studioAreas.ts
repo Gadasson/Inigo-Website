@@ -1,6 +1,7 @@
 import {
   CHALLENGES_CAPABILITY,
   GUIDED_SESSIONS_CAPABILITY,
+  RECIPES_CAPABILITY,
   hasStudioCapability,
   type ParsedStudioAccess,
   type StudioCapabilities,
@@ -15,13 +16,13 @@ export type StudioAreaDefinition = {
   capability: StudioCapabilityId;
   createHref: string;
   manageHref: string;
-  titleKey: 'create.guidedSessionTitle' | 'create.challengeTitle';
-  descriptionKey: 'create.guidedSessionDesc' | 'create.challengeDesc';
-  actionKey: 'create.guidedSessionAction' | 'create.challengeAction';
-  manageLabelKey: 'home.tabSessions' | 'home.tabChallenges';
+  titleKey: 'create.guidedSessionTitle' | 'create.challengeTitle' | 'create.recipeTitle';
+  descriptionKey: 'create.guidedSessionDesc' | 'create.challengeDesc' | 'create.recipeDesc';
+  actionKey: 'create.guidedSessionAction' | 'create.challengeAction' | 'create.recipeAction';
+  manageLabelKey: 'home.tabSessions' | 'home.tabChallenges' | 'home.tabRecipes';
 };
 
-export type StudioHomeTab = 'create' | 'sessions' | 'challenges';
+export type StudioHomeTab = 'create' | 'sessions' | 'challenges' | 'recipes';
 
 /** Home tab in the URL. Create is the address without a tab parameter. */
 export function studioHomeHref(tab: StudioHomeTab = 'create'): string {
@@ -48,11 +49,21 @@ export const STUDIO_AREAS: readonly StudioAreaDefinition[] = [
     actionKey: 'create.challengeAction',
     manageLabelKey: 'home.tabChallenges',
   },
+  {
+    capability: RECIPES_CAPABILITY,
+    createHref: '/studio/recipes/new',
+    manageHref: studioHomeHref('recipes'),
+    titleKey: 'create.recipeTitle',
+    descriptionKey: 'create.recipeDesc',
+    actionKey: 'create.recipeAction',
+    manageLabelKey: 'home.tabRecipes',
+  },
 ];
 
 const HOME_TAB_CAPABILITY = {
   sessions: GUIDED_SESSIONS_CAPABILITY,
   challenges: CHALLENGES_CAPABILITY,
+  recipes: RECIPES_CAPABILITY,
 } as const satisfies Record<Exclude<StudioHomeTab, 'create'>, StudioCapabilityId>;
 
 /**
@@ -63,7 +74,7 @@ export function resolveStudioHomeTab(
   requested: string | null | undefined,
   access: Pick<ParsedStudioAccess, 'enabled' | 'capabilities'> | null | undefined,
 ): StudioHomeTab {
-  if (requested === 'sessions' || requested === 'challenges') {
+  if (requested === 'sessions' || requested === 'challenges' || requested === 'recipes') {
     if (shouldLoadStudioArea(HOME_TAB_CAPABILITY[requested], access)) return requested;
   }
   return 'create';
@@ -88,6 +99,7 @@ export type StudioHomeView = {
   areas: StudioAreaDefinition[];
   showSessionList: boolean;
   showChallengeList: boolean;
+  showRecipeList: boolean;
   showNeutralEmpty: boolean;
 };
 
@@ -100,6 +112,7 @@ export function studioHomeView(
       areas: [],
       showSessionList: false,
       showChallengeList: false,
+      showRecipeList: false,
       showNeutralEmpty: false,
     };
   }
@@ -108,6 +121,7 @@ export function studioHomeView(
     areas,
     showSessionList: areas.some((area) => area.capability === GUIDED_SESSIONS_CAPABILITY),
     showChallengeList: areas.some((area) => area.capability === CHALLENGES_CAPABILITY),
+    showRecipeList: areas.some((area) => area.capability === RECIPES_CAPABILITY),
     showNeutralEmpty: areas.length === 0,
   };
 }

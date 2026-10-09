@@ -110,3 +110,50 @@ export async function studioFetch<T>(
 
   return parsedBody as T;
 }
+
+/**
+ * Multipart upload. The browser sets the multipart boundary.
+ * Do not set Content-Type here.
+ */
+export async function studioFetchForm<T>(
+  path: string,
+  options: {
+    method?: 'POST';
+    formData: FormData;
+    token?: string | null;
+    signal?: AbortSignal;
+  },
+): Promise<T> {
+  const { method = 'POST', formData, token, signal } = options;
+  const headers: Record<string, string> = { Accept: 'application/json' };
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  let response: Response;
+  try {
+    response = await fetch(buildUrl(path), {
+      method,
+      headers,
+      body: formData,
+      signal,
+      cache: 'no-store',
+    });
+  } catch (error) {
+    if (error instanceof TypeError || error instanceof DOMException || error instanceof Event) {
+      throw error;
+    }
+    throw new TypeError('Network request failed');
+  }
+
+  const contentType = response.headers.get('content-type') ?? '';
+  const isJson = contentType.includes('application/json');
+  const parsedBody = isJson ? await response.json().catch(() => null) : await response.text().catch(() => null);
+
+  if (!response.ok) {
+    if (response.status === 403) {
+      notifyStudioRequestForbidden(path);
+    }
+    throw new StudioApiError(parseApiErrorMessage(parsedBody, response.status), response.status, parsedBody);
+  }
+
+  return parsedBody as T;
+}

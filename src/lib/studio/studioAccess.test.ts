@@ -37,6 +37,7 @@ function granted(
     capabilities: {
       guided_sessions: false,
       challenges: false,
+      recipes: false,
       ...capabilities,
     },
     publishingLimits: {
@@ -126,6 +127,8 @@ describe('new capability contract', () => {
     assert.equal(plain.capabilities.guided_sessions, false);
     assert.equal(studioHomeView(plain).showNeutralEmpty, false);
     assert.equal(plain.capabilities.challenges, false);
+    assert.equal(creator.capabilities.recipes, false);
+    assert.equal(plain.capabilities.recipes, false);
   });
 
   it('rejects malformed capabilities instead of using the legacy flag', () => {
@@ -146,23 +149,26 @@ describe('new capability contract', () => {
     const parsed = access({
       enabled: true,
       is_studio_creator: true,
-      capabilities: { recipes: true, challenges: true },
+      capabilities: { notes: true, challenges: true },
     });
     assert.equal(parsed.capabilities.guided_sessions, false);
     assert.equal(parsed.capabilities.challenges, true);
+    assert.equal(parsed.capabilities.recipes, false);
     assert.equal(studioHomeView(parsed).areas.length, 1);
     assert.equal(studioHomeView(parsed).areas[0]?.capability, CHALLENGES_CAPABILITY);
     assert.equal(studioHomeView(parsed).showNeutralEmpty, false);
     assert.equal(studioHomeView(parsed).showSessionList, false);
     assert.equal(studioHomeView(parsed).showChallengeList, true);
+    assert.equal(studioHomeView(parsed).showRecipeList, false);
 
     const unknownOnly = access({
       enabled: true,
       is_studio_creator: true,
-      capabilities: { recipes: true },
+      capabilities: { notes: true },
     });
     assert.equal(unknownOnly.capabilities.guided_sessions, false);
     assert.equal(unknownOnly.capabilities.challenges, false);
+    assert.equal(unknownOnly.capabilities.recipes, false);
     assert.equal(studioHomeView(unknownOnly).areas.length, 0);
     assert.equal(studioHomeView(unknownOnly).showNeutralEmpty, true);
   });

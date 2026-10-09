@@ -6,10 +6,12 @@ export const STUDIO_BOOTSTRAP_PATH = '/api/me/bootstrap/';
 /** Studio capabilities the product implements today. */
 export const GUIDED_SESSIONS_CAPABILITY = 'guided_sessions' as const;
 export const CHALLENGES_CAPABILITY = 'challenges' as const;
+export const RECIPES_CAPABILITY = 'recipes' as const;
 
 export type StudioCapabilityId =
   | typeof GUIDED_SESSIONS_CAPABILITY
-  | typeof CHALLENGES_CAPABILITY;
+  | typeof CHALLENGES_CAPABILITY
+  | typeof RECIPES_CAPABILITY;
 
 export type StudioCapabilities = Record<StudioCapabilityId, boolean>;
 
@@ -53,6 +55,7 @@ export type StudioBootstrapResponse = {
 const EMPTY_CAPABILITIES: StudioCapabilities = {
   guided_sessions: false,
   challenges: false,
+  recipes: false,
 };
 
 const EMPTY_LIMITS: StudioPublishingLimits = {
@@ -85,6 +88,7 @@ function capabilitiesFromMap(value: unknown): StudioCapabilities {
   return {
     guided_sessions: source?.guided_sessions === true,
     challenges: source?.challenges === true,
+    recipes: source?.recipes === true,
   };
 }
 
@@ -104,6 +108,7 @@ function denied(contract: StudioAccessContract, limits: StudioPublishingLimits =
  * - `enabled === true` is the only general entry.
  * - `capabilities.guided_sessions === true` grants guided sessions.
  * - `capabilities.challenges === true` grants challenges. Nothing else does.
+ * - `capabilities.recipes === true` grants recipes. Nothing else does.
  * - A missing capability key is false.
  * - Unknown capability keys do not open a screen.
  * - `is_studio_creator` is ignored.
@@ -112,7 +117,7 @@ function denied(contract: StudioAccessContract, limits: StudioPublishingLimits =
  *
  * Legacy contract (`capabilities` is absent entirely):
  * - `is_studio_creator === true` grants entry and `guided_sessions` only.
- * - Challenges stay closed. The old flag never grants them.
+ * - Challenges and recipes stay closed. The old flag never grants them.
  */
 export function parseStudioAccess(
   bootstrap: StudioBootstrapResponse | null | undefined,
@@ -127,7 +132,7 @@ export function parseStudioAccess(
     return {
       contract: 'legacy',
       enabled: legacyCreator,
-      capabilities: { guided_sessions: legacyCreator, challenges: false },
+      capabilities: { guided_sessions: legacyCreator, challenges: false, recipes: false },
       publishingLimits: limits,
     };
   }
