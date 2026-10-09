@@ -21,11 +21,19 @@ export type StudioAreaDefinition = {
   manageLabelKey: 'home.tabSessions' | 'home.tabChallenges';
 };
 
+export type StudioHomeTab = 'create' | 'sessions' | 'challenges';
+
+/** Home tab in the URL. Create is the address without a tab parameter. */
+export function studioHomeHref(tab: StudioHomeTab = 'create'): string {
+  if (tab === 'create') return '/studio';
+  return `/studio?tab=${tab}`;
+}
+
 export const STUDIO_AREAS: readonly StudioAreaDefinition[] = [
   {
     capability: GUIDED_SESSIONS_CAPABILITY,
     createHref: '/studio/guided-sessions/new',
-    manageHref: '/studio?tab=sessions',
+    manageHref: studioHomeHref('sessions'),
     titleKey: 'create.guidedSessionTitle',
     descriptionKey: 'create.guidedSessionDesc',
     actionKey: 'create.guidedSessionAction',
@@ -34,13 +42,36 @@ export const STUDIO_AREAS: readonly StudioAreaDefinition[] = [
   {
     capability: CHALLENGES_CAPABILITY,
     createHref: '/studio/challenges/new',
-    manageHref: '/studio/challenges',
+    manageHref: studioHomeHref('challenges'),
     titleKey: 'create.challengeTitle',
     descriptionKey: 'create.challengeDesc',
     actionKey: 'create.challengeAction',
     manageLabelKey: 'home.tabChallenges',
   },
 ];
+
+const HOME_TAB_CAPABILITY = {
+  sessions: GUIDED_SESSIONS_CAPABILITY,
+  challenges: CHALLENGES_CAPABILITY,
+} as const satisfies Record<Exclude<StudioHomeTab, 'create'>, StudioCapabilityId>;
+
+/**
+ * The requested tab opens only when that area is in STUDIO_AREAS and the user
+ * may load it. Any other value, including a missing or unknown parameter, is Create.
+ */
+export function resolveStudioHomeTab(
+  requested: string | null | undefined,
+  access: Pick<ParsedStudioAccess, 'enabled' | 'capabilities'> | null | undefined,
+): StudioHomeTab {
+  if (requested === 'sessions' || requested === 'challenges') {
+    if (shouldLoadStudioArea(HOME_TAB_CAPABILITY[requested], access)) return requested;
+  }
+  return 'create';
+}
+
+export function studioAreaManageHref(capability: StudioCapabilityId): string {
+  return STUDIO_AREAS.find((area) => area.capability === capability)?.manageHref ?? '/studio';
+}
 
 export function areasForCapabilities(capabilities: StudioCapabilities): StudioAreaDefinition[] {
   return STUDIO_AREAS.filter((area) => capabilities[area.capability] === true);

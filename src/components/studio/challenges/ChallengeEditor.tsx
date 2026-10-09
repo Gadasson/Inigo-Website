@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
+import { CHALLENGES_CAPABILITY } from '@/lib/api/studioBootstrap';
+import { studioAreaManageHref } from '@/lib/studio/studioAreas';
 import StudioConfirmDialog from '@/components/studio/StudioConfirmDialog';
 import StudioFieldHint from '@/components/studio/StudioFieldHint';
 import ChallengeSessionPicker from '@/components/studio/challenges/ChallengeSessionPicker';
@@ -315,7 +317,7 @@ export default function ChallengeEditor(props: Props) {
 
   return (
     <div className="studio-form-page">
-      <Link href="/studio/challenges" className="studio-form-page__back">
+      <Link href={studioAreaManageHref(CHALLENGES_CAPABILITY)} className="studio-form-page__back">
         <span className="studio-back-arrow" aria-hidden>
           ←
         </span>{' '}

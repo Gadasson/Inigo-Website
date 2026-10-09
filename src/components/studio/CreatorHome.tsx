@@ -6,13 +6,11 @@ import { useTranslations } from 'next-intl';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useStudioAccess } from '@/contexts/StudioAccessContext';
 import { GUIDED_SESSIONS_CAPABILITY, type StudioCapabilityId } from '@/lib/api/studioBootstrap';
-import { studioHomeView } from '@/lib/studio/studioAreas';
+import { studioHomeView, resolveStudioHomeTab, type StudioHomeTab } from '@/lib/studio/studioAreas';
 import MyGuidedSessions from './MyGuidedSessions';
 import MyChallenges from './challenges/MyChallenges';
 
 type IconProps = { className?: string };
-
-type StudioHomeTab = 'create' | 'sessions' | 'challenges';
 
 function GuidedSessionIcon({ className }: IconProps) {
   return (
@@ -33,13 +31,6 @@ const AREA_ICONS: Partial<Record<StudioCapabilityId, ComponentType<IconProps>>> 
   [GUIDED_SESSIONS_CAPABILITY]: GuidedSessionIcon,
 };
 
-function tabFromSearchParams(searchParams: ReturnType<typeof useSearchParams>): StudioHomeTab {
-  const tab = searchParams.get('tab');
-  if (tab === 'sessions') return 'sessions';
-  if (tab === 'challenges') return 'challenges';
-  return 'create';
-}
-
 export default function CreatorHome() {
   const router = useRouter();
   const pathname = usePathname();
@@ -47,15 +38,9 @@ export default function CreatorHome() {
   const t = useTranslations();
   const { enabled, capabilities } = useStudioAccess();
   const home = studioHomeView({ enabled, capabilities });
-  const activeTab = tabFromSearchParams(searchParams);
+  const visibleTab: StudioHomeTab = resolveStudioHomeTab(searchParams.get('tab'), { enabled, capabilities });
   const sessionsTabVisible = home.showSessionList;
   const challengesTabVisible = home.showChallengeList;
-  const visibleTab: StudioHomeTab =
-    activeTab === 'sessions' && sessionsTabVisible
-      ? 'sessions'
-      : activeTab === 'challenges' && challengesTabVisible
-        ? 'challenges'
-        : 'create';
 
   const setActiveTab = (tab: StudioHomeTab) => {
     const params = new URLSearchParams(searchParams.toString());

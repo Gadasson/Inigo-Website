@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { CHALLENGES_CAPABILITY, parseStudioAccess } from '@/lib/api/studioBootstrap';
-import { shouldLoadStudioArea, studioHomeView } from '@/lib/studio/studioAreas';
+import { shouldLoadStudioArea, studioAreaManageHref, studioHomeView, resolveStudioHomeTab } from '@/lib/studio/studioAreas';
 import {
   addChallengeStep,
   buildChallengeDetailsBody,
@@ -38,6 +38,38 @@ describe('challenge permissions', () => {
     assert.equal(studioHomeView(granted).showSessionList, false);
     assert.equal(studioHomeView(granted).showNeutralEmpty, false);
     assert.equal(studioHomeView(granted).areas[0]?.createHref, '/studio/challenges/new');
+    assert.equal(studioAreaManageHref(CHALLENGES_CAPABILITY), '/studio?tab=challenges');
+  });
+
+  it('opens the challenges home tab from the URL for challenges-only and for both capabilities', () => {
+    const challengesOnly = parseStudioAccess({
+      studio_access: {
+        enabled: true,
+        capabilities: { guided_sessions: false, challenges: true },
+      },
+    });
+    assert.equal(resolveStudioHomeTab('challenges', challengesOnly), 'challenges');
+    assert.equal(resolveStudioHomeTab('sessions', challengesOnly), 'create');
+    assert.equal(resolveStudioHomeTab(null, challengesOnly), 'create');
+
+    const both = parseStudioAccess({
+      studio_access: {
+        enabled: true,
+        capabilities: { guided_sessions: true, challenges: true },
+      },
+    });
+    assert.equal(resolveStudioHomeTab('challenges', both), 'challenges');
+    assert.equal(resolveStudioHomeTab('sessions', both), 'sessions');
+    assert.equal(resolveStudioHomeTab('recipes', both), 'create');
+
+    const sessionsOnly = parseStudioAccess({
+      studio_access: {
+        enabled: true,
+        capabilities: { guided_sessions: true, challenges: false },
+      },
+    });
+    assert.equal(resolveStudioHomeTab('challenges', sessionsOnly), 'create');
+    assert.notEqual(studioAreaManageHref(CHALLENGES_CAPABILITY), '/studio/challenges');
   });
 
   it('does not open challenges from guided sessions, the creator flag, or a legacy server', () => {
