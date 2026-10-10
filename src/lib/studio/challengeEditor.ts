@@ -1,3 +1,5 @@
+export const CHALLENGE_COVER_RETRY_STORAGE_KEY = 'inigo.studio.challengeCoverRetry';
+
 export const CHALLENGE_STEP_MIN = 1;
 export const CHALLENGE_STEP_MAX = 5;
 export const CHALLENGE_SILENT_MINUTES_MIN = 1;
@@ -339,6 +341,144 @@ export type ChallengeServerStep = {
   title: string | null;
   duration_seconds: number | null;
 };
+
+export type ChallengeCoverPhase = 'none' | 'pending' | 'uploading' | 'uploaded' | 'failed';
+
+export type ChallengeCoverVersion = {
+  status: ChallengeVersionStatus;
+  versionId: number;
+  versionNumber: number;
+  coverUrl: string | null;
+  coverStoragePath: string | null;
+};
+
+export function challengeCoverFormData(file: Blob): FormData {
+  const body = new FormData();
+  body.append('image', file);
+  return body;
+}
+
+export function challengeCoverPhase(input: {
+  hasLocalFile: boolean;
+  uploading: boolean;
+  failed: boolean;
+  hasCoverUrl: boolean;
+}): ChallengeCoverPhase {
+  if (input.uploading) return 'uploading';
+  if (input.failed) return 'failed';
+  if (input.hasLocalFile) return 'pending';
+  if (input.hasCoverUrl) return 'uploaded';
+  return 'none';
+}
+
+/**
+ * A cover is optional. Submit stays closed while a chosen file is still
+ * unsent, while the upload is running, or while a failed upload is unresolved.
+ */
+export function canSubmitChallenge(input: {
+  status: string | null | undefined;
+  dirty: boolean;
+  coverPending: boolean;
+  coverUploading: boolean;
+  coverFailed: boolean;
+}): boolean {
+  return (
+    isChallengeDraftEditable(input.status) &&
+    !input.dirty &&
+    !input.coverPending &&
+    !input.coverUploading &&
+    !input.coverFailed
+  );
+}
+
+/** After a failed upload, the draft id stays and another challenge is not created. */
+export function challengeCoverFailureKeepsDraft(createdId: number): { challengeId: number; createAnother: false } {
+  return { challengeId: createdId, createAnother: false };
+}
+
+/**
+ * Adopt the draft the cover response opened.
+ * Local titles, descriptions, schedule, and steps stay untouched.
+ */
+export function applyChallengeCoverResponse<T>(
+  localForm: T,
+  draft: {
+    id: number;
+    version_number: number;
+    status: ChallengeVersionStatus;
+    cover_url?: string | null;
+    cover_storage_path?: string | null;
+  },
+): { form: T; version: ChallengeCoverVersion } {
+  return {
+    form: localForm,
+    version: {
+      status: draft.status,
+      versionId: draft.id,
+      versionNumber: draft.version_number,
+      coverUrl: draft.cover_url?.trim() ? draft.cover_url : null,
+      coverStoragePath: draft.cover_storage_path?.trim() ? draft.cover_storage_path : null,
+    },
+  };
+}
+
+export function patchChallengeDraftVersion<T extends {
+  id: number;
+  version_number: number;
+  status: ChallengeVersionStatus;
+  cover_url?: string | null;
+  cover_storage_path?: string | null;
+}>(
+  current: T,
+  incoming: {
+    id: number;
+    version_number: number;
+    status: ChallengeVersionStatus;
+    cover_url?: string | null;
+    cover_storage_path?: string | null;
+  },
+): T {
+  return {
+    ...current,
+    id: incoming.id,
+    version_number: incoming.version_number,
+    status: incoming.status,
+    cover_url: incoming.cover_url ?? null,
+    cover_storage_path: incoming.cover_storage_path ?? null,
+  };
+}
+
+export function challengeCoverErrorKey(input: {
+  reasonCode: string | null;
+  field: string | null;
+}): 'versionNotEditable' | 'permission' | 'coverUpload' | 'image' | 'generic' {
+  if (input.reasonCode === 'version_not_editable') return 'versionNotEditable';
+  if (input.reasonCode === 'permission_denied' || input.reasonCode === 'not_owner') return 'permission';
+  if (input.reasonCode === 'cover_upload_failed') return 'coverUpload';
+  if (input.field === 'image' || input.reasonCode === 'validation_failed') return 'image';
+  return 'generic';
+}
+
+type CoverRetryStorage = {
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+  removeItem(key: string): void;
+};
+
+export function markChallengeCoverRetry(challengeId: number, storage?: CoverRetryStorage): void {
+  const target = storage ?? (typeof sessionStorage === 'undefined' ? null : sessionStorage);
+  if (!target) return;
+  target.setItem(CHALLENGE_COVER_RETRY_STORAGE_KEY, String(challengeId));
+}
+
+export function takeChallengeCoverRetry(challengeId: number, storage?: CoverRetryStorage): boolean {
+  const target = storage ?? (typeof sessionStorage === 'undefined' ? null : sessionStorage);
+  if (!target) return false;
+  const stored = target.getItem(CHALLENGE_COVER_RETRY_STORAGE_KEY);
+  if (stored !== String(challengeId)) return false;
+  target.removeItem(CHALLENGE_COVER_RETRY_STORAGE_KEY);
+  return true;
+}
 
 export function challengeFormFromServer(input: {
   draft: {

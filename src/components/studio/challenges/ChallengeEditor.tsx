@@ -18,14 +18,19 @@ import {
   patchStudioChallenge,
   replaceStudioChallengeSteps,
   submitStudioChallenge,
+  uploadStudioChallengeCover,
   type ChallengeSessionOption,
   type StudioChallengeDetail,
 } from '@/lib/api/studioChallenges';
 import {
   addChallengeStep,
+  applyChallengeCoverResponse,
   buildChallengeDetailsBody,
   buildChallengeStepsBody,
   canReviseApprovedChallenge,
+  canSubmitChallenge,
+  challengeCoverErrorKey,
+  challengeCoverPhase,
   challengeDetailsDirty,
   challengeFormFromServer,
   challengeFormSummary,
@@ -36,10 +41,13 @@ import {
   guidedChallengeStep,
   isChallengeDraftEditable,
   isChallengePendingReview,
+  markChallengeCoverRetry,
   moveChallengeStep,
+  patchChallengeDraftVersion,
   removeChallengeStep,
   shouldSaveChallengeSteps,
   silentChallengeStep,
+  takeChallengeCoverRetry,
   validateChallengeForm,
   CHALLENGE_PRACTICE_TYPES,
   type ChallengeEditorForm,
@@ -48,6 +56,7 @@ import {
   type ChallengeStepDraft,
 } from '@/lib/studio/challengeEditor';
 import { formatDurationClock } from '@/lib/studio/formatDuration';
+import { validateRecipeCoverMeta } from '@/lib/studio/recipeEditor';
 
 type Props =
   | { mode: 'create' }
@@ -55,6 +64,18 @@ type Props =
 
 function nextStepId(): string {
   return `step-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
+}
+
+async function readImageSize(file: File): Promise<{ width: number; height: number } | null> {
+  if (typeof createImageBitmap !== 'function') return null;
+  try {
+    const bitmap = await createImageBitmap(file);
+    const size = { width: bitmap.width, height: bitmap.height };
+    bitmap.close();
+    return size;
+  } catch {
+    return null;
+  }
 }
 
 function ChallengePracticeSummaryView({ form }: { form: ChallengeEditorForm }) {
@@ -122,7 +143,15 @@ export default function ChallengeEditor(props: Props) {
   const [savedNote, setSavedNote] = useState<string | null>(null);
   const [confirmArchive, setConfirmArchive] = useState(false);
   const [pickerStepId, setPickerStepId] = useState<string | null>(null);
+  const [coverUrl, setCoverUrl] = useState<string | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [coverUploading, setCoverUploading] = useState(false);
+  const [coverUploadFailed, setCoverUploadFailed] = useState(false);
+  const [coverRetryNotice, setCoverRetryNotice] = useState(false);
   const busyRef = useRef(false);
+  const createdIdRef = useRef<number | null>(null);
+  const coverPreviewUrl = useRef<string | null>(null);
 
   const status = detail?.draft?.status ?? (props.mode === 'create' ? 'draft' : null);
   const editable =
@@ -130,8 +159,22 @@ export default function ChallengeEditor(props: Props) {
   const detailsDirty = challengeDetailsDirty(form, baseline);
   const stepsDirty = challengeStepsDirty(form, baseline);
   const dirty = detailsDirty || stepsDirty;
+  const coverPending = coverFile != null;
+  const submitAllowed = canSubmitChallenge({
+    status,
+    dirty,
+    coverPending,
+    coverUploading,
+    coverFailed: coverUploadFailed,
+  });
 
   const challengeId = props.mode === 'edit' ? props.challengeId : null;
+
+  useEffect(() => {
+    return () => {
+      if (coverPreviewUrl.current) URL.revokeObjectURL(coverPreviewUrl.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (challengeId == null) return;
@@ -147,7 +190,12 @@ export default function ChallengeEditor(props: Props) {
         setDetail(loaded);
         setForm(next);
         setBaseline(next);
+        setCoverUrl(loaded.draft.cover_url?.trim() ? loaded.draft.cover_url : null);
         setRevising(false);
+        if (takeChallengeCoverRetry(challengeId)) {
+          setCoverUploadFailed(true);
+          setCoverRetryNotice(true);
+        }
       } catch (err) {
         if (!cancelled) setError(parseChallengeApiFailure(err).detail);
       } finally {
@@ -175,8 +223,109 @@ export default function ChallengeEditor(props: Props) {
     setSavedNote(null);
   }
 
+  function clearSelectedCover() {
+    setCoverFile(null);
+    setCoverUploadFailed(false);
+    setCoverRetryNotice(false);
+    if (coverPreviewUrl.current) {
+      URL.revokeObjectURL(coverPreviewUrl.current);
+      coverPreviewUrl.current = null;
+    }
+    setCoverPreview(null);
+  }
+
+  function adoptCover(uploaded: StudioChallengeDetail) {
+    if (!uploaded.draft) return;
+    const applied = applyChallengeCoverResponse(form, uploaded.draft);
+    setCoverUrl(applied.version.coverUrl);
+    setDetail((current) => {
+      if (!current?.draft || !uploaded.draft) return uploaded;
+      return {
+        ...uploaded,
+        draft: patchChallengeDraftVersion(current.draft, uploaded.draft),
+      };
+    });
+    setRevising(false);
+  }
+
+  async function chooseCover(file: File | null) {
+    if (!file || busyRef.current || !editable) return;
+    const size = await readImageSize(file);
+    const coverIssue = validateRecipeCoverMeta({
+      mimeType: file.type,
+      sizeBytes: file.size,
+      width: size?.width,
+      height: size?.height,
+    });
+    if (coverIssue) {
+      setError(t(`coverIssue.${coverIssue}`));
+      return;
+    }
+    if (coverPreviewUrl.current) URL.revokeObjectURL(coverPreviewUrl.current);
+    const preview = URL.createObjectURL(file);
+    coverPreviewUrl.current = preview;
+    setCoverPreview(preview);
+    setCoverFile(file);
+    setCoverUploadFailed(false);
+    setCoverRetryNotice(false);
+    setError(null);
+  }
+
+  async function uploadCover() {
+    if (busyRef.current || !editable || !coverFile) return;
+    const validation = validateChallengeForm(form);
+    setIssue(validation);
+    if (validation) return;
+
+    busyRef.current = true;
+    setBusy(true);
+    setCoverUploading(true);
+    setCoverUploadFailed(false);
+    setError(null);
+    setSavedNote(null);
+    try {
+      const token = await getIdToken();
+      let id = props.mode === 'edit' ? props.challengeId : createdIdRef.current;
+      if (id == null) {
+        const created = await createStudioChallenge(
+          { ...buildChallengeDetailsBody(form), steps: buildChallengeStepsBody(form).steps },
+          token,
+        );
+        id = created.id;
+        createdIdRef.current = id;
+      }
+      try {
+        const uploaded = await uploadStudioChallengeCover(id, coverFile, token);
+        adoptCover(uploaded);
+        clearSelectedCover();
+        if (props.mode === 'create') {
+          router.replace(`/studio/challenges/${id}`);
+          return;
+        }
+      } catch (err) {
+        setCoverUploadFailed(true);
+        setCoverRetryNotice(false);
+        setError(t(`errors.${challengeCoverErrorKey(parseChallengeApiFailure(err))}`));
+        if (props.mode === 'create') {
+          markChallengeCoverRetry(id);
+          router.replace(`/studio/challenges/${id}`);
+        }
+      }
+    } catch (err) {
+      setError(parseChallengeApiFailure(err).detail);
+    } finally {
+      busyRef.current = false;
+      setBusy(false);
+      setCoverUploading(false);
+    }
+  }
+
   async function save() {
     if (busyRef.current || !editable) return;
+    if (props.mode === 'create' && coverFile) {
+      await uploadCover();
+      return;
+    }
     const validation = validateChallengeForm(form);
     setIssue(validation);
     if (validation) return;
@@ -245,6 +394,9 @@ export default function ChallengeEditor(props: Props) {
         setDetail(latest);
         setForm(next);
         setBaseline(next);
+        if (typeof latest.draft.cover_url === 'string' || latest.draft.cover_url === null) {
+          setCoverUrl(latest.draft.cover_url?.trim() ? latest.draft.cover_url : null);
+        }
         setRevising(false);
         setSavedNote(t('saved'));
       }
@@ -257,7 +409,7 @@ export default function ChallengeEditor(props: Props) {
   }
 
   async function submit() {
-    if (busyRef.current || props.mode !== 'edit' || dirty || !isChallengeDraftEditable(status)) return;
+    if (busyRef.current || props.mode !== 'edit' || !submitAllowed) return;
     const validation = validateChallengeForm(form);
     setIssue(validation);
     if (validation) return;
@@ -314,6 +466,14 @@ export default function ChallengeEditor(props: Props) {
   if (loading) {
     return <p className="studio-form-page__status">{t('loadingEditor')}</p>;
   }
+
+  const previewSrc = coverPreview || coverUrl;
+  const coverPhase = challengeCoverPhase({
+    hasLocalFile: coverFile != null,
+    uploading: coverUploading,
+    failed: coverUploadFailed,
+    hasCoverUrl: Boolean(coverUrl),
+  });
 
   return (
     <div className="studio-form-page">
@@ -582,6 +742,70 @@ export default function ChallengeEditor(props: Props) {
 
       <ChallengePracticeSummaryView form={form} />
 
+      <section className="studio-challenge-cover-section" aria-labelledby="challenge-cover-title">
+        <h2 id="challenge-cover-title" className="studio-form__legend">
+          {t('coverTitle')}
+        </h2>
+        <p className="studio-form__field-lede">{t('coverLede')}</p>
+        <p className="studio-form__field-lede">{t('coverOptional')}</p>
+        <p className="studio-form__field-lede">{t('coverLimits')}</p>
+        <p className="studio-form__field-lede">{t('coverLimitsMore')}</p>
+        {detail?.published_version_id && (revising || isChallengeDraftEditable(status)) ? (
+          <p className="studio-form__field-lede">{t('coverPublicNote')}</p>
+        ) : null}
+        {previewSrc ? (
+          // The image is a local preview or the URL returned by the server.
+          // eslint-disable-next-line @next/next/no-img-element
+          <img className="studio-challenge-cover" src={previewSrc} alt={t('coverAlt')} />
+        ) : null}
+        {coverPhase !== 'none' ? (
+          <p className={coverPhase === 'failed' ? 'studio-form__error' : 'studio-form-page__status'} role="status">
+            {t(`coverPhase.${coverPhase}`)}
+          </p>
+        ) : null}
+        <div className="studio-form__field">
+          <label htmlFor="challenge-cover">{t('coverChoose')}</label>
+          <input
+            id="challenge-cover"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            disabled={!editable || busy}
+            onChange={(event) => {
+              const file = event.target.files?.[0] ?? null;
+              event.target.value = '';
+              void chooseCover(file);
+            }}
+          />
+        </div>
+        <div className="studio-challenge-cover-actions">
+          {editable && coverFile ? (
+            <button type="button" className="studio-form__submit" disabled={busy} onClick={() => void uploadCover()}>
+              {coverUploading ? t('coverPhase.uploading') : t('coverUpload')}
+            </button>
+          ) : null}
+          {editable && coverFile && !coverUploading ? (
+            <button
+              type="button"
+              className="creator-workspace__media-btn creator-workspace__media-btn--ghost"
+              disabled={busy}
+              onClick={clearSelectedCover}
+            >
+              {t('coverCancel')}
+            </button>
+          ) : null}
+          {editable && coverUploadFailed && !coverFile ? (
+            <button
+              type="button"
+              className="creator-workspace__media-btn creator-workspace__media-btn--ghost"
+              disabled={busy}
+              onClick={clearSelectedCover}
+            >
+              {t('coverContinue')}
+            </button>
+          ) : null}
+        </div>
+      </section>
+
       {issue ? (
         <p className="studio-form__error" role="alert">
           {t(`issue.${issue}`)}
@@ -591,17 +815,21 @@ export default function ChallengeEditor(props: Props) {
         <p className="studio-form__error" role="alert">
           {error}
         </p>
+      ) : coverRetryNotice ? (
+        <p className="studio-form__error" role="alert">
+          {t('errors.coverRetry')}
+        </p>
       ) : null}
       {savedNote ? <p className="studio-form__section-note">{savedNote}</p> : null}
 
       <div className="studio-form__actions studio-challenge-actions">
         {editable ? (
           <button type="button" className="studio-form__submit" disabled={busy} onClick={() => void save()}>
-            {busy ? t('saving') : t('save')}
+            {busy && !coverUploading ? t('saving') : t('save')}
           </button>
         ) : null}
         {props.mode === 'edit' && isChallengeDraftEditable(status) ? (
-          <button type="button" className="creator-workspace__media-btn" disabled={busy || dirty} onClick={() => void submit()}>
+          <button type="button" className="creator-workspace__media-btn" disabled={busy || !submitAllowed} onClick={() => void submit()}>
             {t('submit')}
           </button>
         ) : null}

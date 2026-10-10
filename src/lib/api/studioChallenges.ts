@@ -1,6 +1,6 @@
-import { studioFetch, StudioApiError } from '@/lib/api/studioApiClient';
+import { studioFetch, studioFetchForm, StudioApiError } from '@/lib/api/studioApiClient';
 import type { ChallengeDetailsBody, ChallengeStepBody } from '@/lib/studio/challengeEditor';
-import { buildSessionOptionsPath, type SessionOptionOwner } from '@/lib/studio/challengeEditor';
+import { buildSessionOptionsPath, challengeCoverFormData, type SessionOptionOwner } from '@/lib/studio/challengeEditor';
 
 const BASE = '/api/studio/challenges';
 
@@ -39,6 +39,8 @@ export type StudioChallengeDraft = {
   title_he: string;
   description_en: string;
   description_he: string;
+  cover_url: string | null;
+  cover_storage_path: string | null;
   total_duration_seconds: number;
   submitted_at: string | null;
   approved_at: string | null;
@@ -123,6 +125,20 @@ export async function patchStudioChallenge(
 ): Promise<StudioChallengeDetail> {
   return withToken(token, (authToken) =>
     studioFetch<StudioChallengeDetail>(`${BASE}/${id}/`, { method: 'PATCH', body, token: authToken }),
+  );
+}
+
+export async function uploadStudioChallengeCover(
+  id: number,
+  file: File,
+  token: string | null,
+): Promise<StudioChallengeDetail> {
+  return withToken(token, (authToken) =>
+    studioFetchForm<StudioChallengeDetail>(`${BASE}/${id}/cover/`, {
+      method: 'POST',
+      formData: challengeCoverFormData(file),
+      token: authToken,
+    }),
   );
 }
 

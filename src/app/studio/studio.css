@@ -2694,13 +2694,26 @@
   gap: 0.75rem;
 }
 
-.studio-recipe-cover {
+.studio-recipe-cover,
+.studio-challenge-cover {
   display: block;
   width: min(100%, 16rem);
   aspect-ratio: 4 / 3;
   object-fit: cover;
   border-radius: 0.75rem;
   margin-bottom: 0.75rem;
+}
+
+.studio-challenge-cover-section {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.studio-challenge-cover-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 .studio-recipe-progress ol {
@@ -2752,7 +2765,8 @@
 
 @media (max-width: 40rem) {
   .studio-recipe-cover-choices > button,
-  .studio-recipe-cover-ai > .studio-form__submit {
+  .studio-recipe-cover-ai > .studio-form__submit,
+  .studio-challenge-cover-actions > button {
     flex: 1 1 100%;
     width: 100%;
   }

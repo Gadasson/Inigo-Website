@@ -133,6 +133,37 @@
     "approvedNote": "This approved version stays as it is. Saving a revision opens a new draft.",
     "newVersionNote": "A new version is for people who join after it is approved. People already participating stay on their current version.",
     "revise": "Revise",
+    "coverTitle": "Image for the challenge",
+    "coverLede": "You can add an image that gives the challenge a character. Without an image, Inigo will show a suitable illustration.",
+    "coverOptional": "An image is not required for saving or submitting.",
+    "coverLimits": "JPEG, PNG, or WEBP, up to 15MB.",
+    "coverLimitsMore": "Up to 10,000 pixels on a side, and up to 40 million pixels. The image is stored on the server.",
+    "coverAlt": "Challenge image",
+    "coverChoose": "Choose an image",
+    "coverUpload": "Upload the image",
+    "coverCancel": "Cancel this file",
+    "coverContinue": "Continue without the image",
+    "coverPublicNote": "The public image changes only after the new version is approved.",
+    "coverPhase": {
+      "pending": "Not uploaded yet",
+      "uploading": "Uploading",
+      "uploaded": "Uploaded",
+      "failed": "Upload failed"
+    },
+    "coverIssue": {
+      "type": "Upload a JPEG, PNG, or WEBP image.",
+      "size": "The image is larger than 15MB.",
+      "edge": "One side is longer than 10,000 pixels.",
+      "pixels": "The image has more than 40 million pixels."
+    },
+    "errors": {
+      "versionNotEditable": "A version waiting for review cannot be edited.",
+      "permission": "You do not have permission for this action.",
+      "coverUpload": "The image upload failed. You can try again on the same challenge.",
+      "coverRetry": "The challenge was saved, but the image was not uploaded. You can try again without creating another challenge.",
+      "image": "The image is not a JPEG, PNG, or WEBP, or it is larger than allowed.",
+      "generic": "Something went wrong. You can try again."
+    },
     "archive": "Archive",
     "archiveTitle": "Archive this challenge?",
     "archiveBody": "People will no longer be able to join it. The challenge itself stays in your list.",

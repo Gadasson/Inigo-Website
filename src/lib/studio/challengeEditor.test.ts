@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { CHALLENGES_CAPABILITY, parseStudioAccess } from '@/lib/api/studioBootstrap';
 import { shouldLoadStudioArea, studioAreaManageHref, studioHomeView, resolveStudioHomeTab } from '@/lib/studio/studioAreas';
@@ -22,7 +23,17 @@ import {
   shouldSaveChallengeSteps,
   silentChallengeStep,
   validateChallengeForm,
+  applyChallengeCoverResponse,
+  canSubmitChallenge,
+  challengeCoverErrorKey,
+  challengeCoverFailureKeepsDraft,
+  challengeCoverFormData,
+  challengeCoverPhase,
+  markChallengeCoverRetry,
+  patchChallengeDraftVersion,
+  takeChallengeCoverRetry,
 } from '@/lib/studio/challengeEditor';
+import { RECIPE_COVER_MAX_BYTES, validateRecipeCoverMeta } from '@/lib/studio/recipeEditor';
 
 describe('challenge permissions', () => {
   it('opens the challenges area only when enabled and challenges is true', () => {
@@ -272,5 +283,177 @@ describe('challenge steps and save errors', () => {
     const ongoing = challengeFormSummary(form);
     assert.equal(ongoing.weekCount, null);
     assert.equal(ongoing.practices[0]?.kind === 'silent' ? ongoing.practices[0].minutes : null, null);
+  });
+});
+
+describe('challenge cover', () => {
+  it('keeps a cover optional and out of the regular write body', () => {
+    const form = emptyChallengeForm();
+    form.titleHe = 'בוקר';
+    assert.equal(validateChallengeForm(form), null);
+    const body = buildChallengeDetailsBody(form);
+    assert.equal('cover_url' in body, false);
+    assert.equal('cover_storage_path' in body, false);
+    assert.equal(
+      canSubmitChallenge({
+        status: 'draft',
+        dirty: false,
+        coverPending: false,
+        coverUploading: false,
+        coverFailed: false,
+      }),
+      true,
+    );
+  });
+
+  it('posts the image as multipart and leaves content type to the browser', () => {
+    const file = new File([new Uint8Array([1, 2, 3])], 'cover.jpg', { type: 'image/jpeg' });
+    const body = challengeCoverFormData(file);
+    assert.equal(body.get('image'), file);
+    assert.equal(body.has('cover_url'), false);
+    assert.equal(body.has('cover_storage_path'), false);
+    assert.equal(validateRecipeCoverMeta({ mimeType: 'image/jpeg', sizeBytes: RECIPE_COVER_MAX_BYTES + 1 }), 'size');
+  });
+
+  it('keeps the new challenge id when the cover upload fails', () => {
+    const retry = challengeCoverFailureKeepsDraft(41);
+    assert.equal(retry.challengeId, 41);
+    assert.equal(retry.createAnother, false);
+    const storage = new Map<string, string>();
+    const memory = {
+      getItem: (key: string) => storage.get(key) ?? null,
+      setItem: (key: string, value: string) => {
+        storage.set(key, value);
+      },
+      removeItem: (key: string) => {
+        storage.delete(key);
+      },
+    };
+    markChallengeCoverRetry(41, memory);
+    assert.equal(takeChallengeCoverRetry(41, memory), true);
+    assert.equal(takeChallengeCoverRetry(41, memory), false);
+    assert.equal(
+      canSubmitChallenge({
+        status: 'draft',
+        dirty: false,
+        coverPending: false,
+        coverUploading: false,
+        coverFailed: true,
+      }),
+      false,
+    );
+  });
+
+  it('keeps local edits and adopts the draft opened by a cover upload', () => {
+    const local = emptyChallengeForm();
+    local.titleHe = 'עריכה שעוד לא נשמרה';
+    local.steps = [silentChallengeStep('local-step')];
+    const applied = applyChallengeCoverResponse(local, {
+      id: 9,
+      version_number: 2,
+      status: 'draft',
+      cover_url: 'https://storage.example/cover.jpg',
+      cover_storage_path: 'challenges/4/covers/a.jpg',
+    });
+    assert.equal(applied.form.titleHe, 'עריכה שעוד לא נשמרה');
+    assert.equal(applied.form.steps[0]?.id, 'local-step');
+    assert.equal(applied.version.versionId, 9);
+    assert.equal(applied.version.versionNumber, 2);
+    assert.equal(applied.version.status, 'draft');
+    assert.equal(applied.version.coverUrl, 'https://storage.example/cover.jpg');
+
+    const patched = patchChallengeDraftVersion(
+      {
+        id: 3,
+        version_number: 1,
+        status: 'approved' as const,
+        title_he: 'ישן',
+        cover_url: null,
+        cover_storage_path: null,
+      },
+      {
+        id: 9,
+        version_number: 2,
+        status: 'draft',
+        cover_url: 'https://storage.example/cover.jpg',
+        cover_storage_path: 'challenges/4/covers/a.jpg',
+      },
+    );
+    assert.equal(patched.title_he, 'ישן');
+    assert.equal(patched.id, 9);
+    assert.equal(patched.version_number, 2);
+    assert.equal(patched.status, 'draft');
+    assert.equal(patched.cover_storage_path, 'challenges/4/covers/a.jpg');
+  });
+
+  it('blocks submit while a cover is uploading, pending, or failed, and locks review', () => {
+    assert.equal(isChallengePendingReview('pending_review'), true);
+    assert.equal(isChallengeDraftEditable('pending_review'), false);
+    assert.equal(canReviseApprovedChallenge('pending_review'), false);
+    assert.equal(
+      canSubmitChallenge({
+        status: 'pending_review',
+        dirty: false,
+        coverPending: false,
+        coverUploading: false,
+        coverFailed: false,
+      }),
+      false,
+    );
+    assert.equal(
+      canSubmitChallenge({
+        status: 'draft',
+        dirty: false,
+        coverPending: true,
+        coverUploading: false,
+        coverFailed: false,
+      }),
+      false,
+    );
+    assert.equal(
+      canSubmitChallenge({
+        status: 'draft',
+        dirty: false,
+        coverPending: false,
+        coverUploading: true,
+        coverFailed: false,
+      }),
+      false,
+    );
+    assert.equal(challengeCoverPhase({ hasLocalFile: true, uploading: false, failed: false, hasCoverUrl: true }), 'pending');
+    assert.equal(challengeCoverPhase({ hasLocalFile: true, uploading: true, failed: false, hasCoverUrl: false }), 'uploading');
+    assert.equal(challengeCoverPhase({ hasLocalFile: false, uploading: false, failed: false, hasCoverUrl: true }), 'uploaded');
+    assert.equal(challengeCoverPhase({ hasLocalFile: true, uploading: false, failed: true, hasCoverUrl: false }), 'failed');
+    assert.equal(challengeCoverErrorKey({ reasonCode: 'cover_upload_failed', field: null }), 'coverUpload');
+    assert.equal(challengeCoverErrorKey({ reasonCode: 'validation_failed', field: 'image' }), 'image');
+    assert.equal(challengeCoverErrorKey({ reasonCode: 'version_not_editable', field: null }), 'versionNotEditable');
+    assert.equal(challengeCoverErrorKey({ reasonCode: 'not_owner', field: null }), 'permission');
+    const untouched = challengeSavePlan({
+      mode: 'edit',
+      revisingApproved: false,
+      detailsDirty: false,
+      stepsDirty: false,
+    });
+    assert.deepEqual(untouched, { sendDetails: false, sendSteps: false });
+    assert.equal(challengeCoverErrorKey({ reasonCode: 'permission_denied', field: null }), 'permission');
+  });
+
+  it('explains the optional cover in Hebrew and English', () => {
+    const he = JSON.parse(readFileSync('messages/studio.he.json', 'utf8')) as {
+      challenges: { coverLede: string; coverPhase: Record<string, string>; coverPublicNote: string };
+    };
+    const en = JSON.parse(readFileSync('messages/studio.en.json', 'utf8')) as {
+      challenges: { coverLede: string; coverPhase: Record<string, string>; coverPublicNote: string };
+    };
+    assert.equal(he.challenges.coverLede, 'אפשר להוסיף תמונה שתיתן לאתגר אופי. בלי תמונה, איניגו תציג איור מתאים.');
+    assert.equal(
+      en.challenges.coverLede,
+      'You can add an image that gives the challenge a character. Without an image, Inigo will show a suitable illustration.',
+    );
+    assert.deepEqual(Object.values(he.challenges.coverPhase), ['טרם הועלה', 'מעלה', 'הועלה', 'העלאה נכשלה']);
+    assert.equal(en.challenges.coverPhase.pending, 'Not uploaded yet');
+    assert.equal(en.challenges.coverPhase.failed, 'Upload failed');
+    assert.match(he.challenges.coverPublicNote, /אחרי אישור הגרסה החדשה/);
+    assert.match(en.challenges.coverPublicNote, /after the new version is approved/);
   });
 });
