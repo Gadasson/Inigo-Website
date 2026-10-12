@@ -1,6 +1,7 @@
 import createMiddleware from 'next-intl/middleware';
 import { NextRequest, NextResponse } from 'next/server';
 import { locales, defaultLocale } from './i18n/config';
+import { shouldBypassLocale } from './lib/localeBypass';
 
 const intlMiddleware = createMiddleware({
   // A list of all locales that are supported
@@ -19,33 +20,8 @@ const intlMiddleware = createMiddleware({
 export default function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Exclude share paths and association files from locale redirects
-  // These paths are handled by rewrites/proxies or served as static files
-  const excludedExactPaths = ['/app', '/app/'];
-
-  const excludedPaths = [
-    '/e/',
-    '/s/',
-    '/event/',
-    '/spot/',
-    '/m/',
-    '/i/',
-    '/moment/',
-    '/guided-session/',
-    '/guided-sessions/',
-    '/studio',
-    '/api/share/',
-    '/apple-app-site-association',
-    '/.well-known/',
-    '/static/share/'
-  ];
-
-  // Check if pathname matches any excluded path
-  const shouldExclude =
-    excludedExactPaths.includes(pathname) ||
-    excludedPaths.some(path => pathname.startsWith(path));
-
-  if (shouldExclude) {
+  // Share paths and association files stay off the locale prefix.
+  if (shouldBypassLocale(pathname)) {
     // Bypass locale middleware - let Vercel rewrites or static file serving handle it
     return NextResponse.next();
   }

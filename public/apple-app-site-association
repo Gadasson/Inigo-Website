@@ -15,7 +15,9 @@
           "/guided-sessions/*",
           "/m/*",
           "/moment/*",
-          "/i/*"
+          "/i/*",
+          "/recipe/*",
+          "/challenge/*"
         ]
       }
     ]

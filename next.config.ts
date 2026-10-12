@@ -13,6 +13,14 @@ const nextConfig: NextConfig = {
         source: '/api/og/guided-session/:path*',
         headers: [{ key: 'Vary', value: 'Accept-Encoding' }],
       },
+      {
+        source: '/api/og/recipe/:path*',
+        headers: [{ key: 'Vary', value: 'Accept-Encoding' }],
+      },
+      {
+        source: '/api/og/challenge/:path*',
+        headers: [{ key: 'Vary', value: 'Accept-Encoding' }],
+      },
     ];
   },
   async redirects() {
