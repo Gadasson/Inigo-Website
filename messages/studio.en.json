@@ -218,7 +218,6 @@
     "backToList": "My recipes",
     "pasteReady": "Paste a ready recipe",
     "manualCreate": "Create manually",
-    "pasteLede": "Write a recipe idea, or mark that this is your recipe and paste it. We will prepare instructions you can copy into ChatGPT or another AI tool.",
     "pasteMineLabel": "This is my recipe",
     "pasteMineLede": "When this is marked, the tool only arranges the recipe and fills a small gap. Without the mark, it prepares a recipe from the request.",
     "pasteRequestLabel": "What recipe would you like to make?",

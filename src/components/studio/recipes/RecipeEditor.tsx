@@ -654,10 +654,10 @@ export default function RecipeEditor(props: Props) {
       {screen === 'paste' && editable ? (
         <RecipePastePanel
           steps={[t('pasteStep1'), t('pasteStep2'), t('pasteStep3')]}
-          requestLede={t('pasteLede')}
           mineLabel={t('pasteMineLabel')}
           mineLede={t('pasteMineLede')}
           mineChecked={pasteIsMine}
+          hintLabel={hints('fieldHelp')}
           requestLabel={t(pasteIsMine ? 'pasteMineRequestLabel' : 'pasteRequestLabel')}
           requestPlaceholder={t(pasteIsMine ? 'pasteMineRequestPlaceholder' : 'pasteRequestPlaceholder')}
           request={pasteRequest}

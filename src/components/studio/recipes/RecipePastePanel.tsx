@@ -1,11 +1,13 @@
 'use client';
 
+import StudioFieldHint from '@/components/studio/StudioFieldHint';
+
 type Props = {
   steps: readonly [string, string, string];
-  requestLede: string;
   mineLabel: string;
   mineLede: string;
   mineChecked: boolean;
+  hintLabel: string;
   requestLabel: string;
   requestPlaceholder: string;
   request: string;
@@ -33,10 +35,10 @@ type Props = {
 
 export default function RecipePastePanel({
   steps,
-  requestLede,
   mineLabel,
   mineLede,
   mineChecked,
+  hintLabel,
   requestLabel,
   requestPlaceholder,
   request,
@@ -68,8 +70,7 @@ export default function RecipePastePanel({
           <li key={step}>{step}</li>
         ))}
       </ol>
-      <p className="studio-form__field-lede">{requestLede}</p>
-      <div>
+      <div className="studio-recipe-paste__mine">
         <label className="studio-recipe-check" htmlFor="recipe-mine">
           <input
             id="recipe-mine"
@@ -80,7 +81,7 @@ export default function RecipePastePanel({
           />
           <span>{mineLabel}</span>
         </label>
-        <p className="studio-form__field-lede">{mineLede}</p>
+        <StudioFieldHint id="recipe-mine-hint" text={mineLede} label={hintLabel} />
       </div>
       <div className="studio-form__field">
         <label htmlFor="recipe-request">{requestLabel}</label>
@@ -115,8 +116,10 @@ export default function RecipePastePanel({
         </div>
       ) : null}
       <div className="studio-form__field">
-        <label htmlFor="recipe-paste">{pasteLabel}</label>
-        <p className="studio-form__field-lede">{reviewNote}</p>
+        <div className="studio-form__label-row">
+          <label htmlFor="recipe-paste">{pasteLabel}</label>
+          <StudioFieldHint id="recipe-paste-hint" text={reviewNote} label={hintLabel} />
+        </div>
         <textarea
           id="recipe-paste"
           className="studio-recipe-paste__input"
