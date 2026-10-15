@@ -65,6 +65,17 @@ describe('recipe import parsing', () => {
     const englishPrompt = recipeImportPrompt('en', undefined, 'lentil salad for four');
     assert.equal(englishPrompt.includes('lentil salad for four'), true);
     assert.equal(englishPrompt.indexOf('My request:') < englishPrompt.indexOf('lentil salad for four'), true);
+    assert.equal(hebrewPrompt.includes('הכן מתכון לפי הבקשה שלי'), true);
+    const mine = recipeImportPrompt('he', undefined, 'כוס עדשים, בצל, לטגן ולבשל', 'mine');
+    assert.equal(mine.includes('שמור על המצרכים, הכמויות והשלבים כפי שכתבתי'), true);
+    assert.equal(mine.includes('הכן מתכון לפי הבקשה שלי'), false);
+    assert.equal(mine.indexOf('המתכון שלי:') < mine.indexOf('כוס עדשים, בצל, לטגן ולבשל'), true);
+    const mineEn = recipeImportPrompt('en', undefined, 'a cup of lentils', 'mine');
+    assert.equal(mineEn.includes('keep the ingredients, amounts, and steps as I wrote them'), true);
+    assert.equal(mineEn.indexOf('My recipe:') < mineEn.indexOf('a cup of lentils'), true);
+    const copiedMine = recipePromptCopy('he', 'כוס עדשים', true, undefined, 'mine');
+    assert.equal(copiedMine.status, 'copied');
+    if (copiedMine.status === 'copied') assert.equal(copiedMine.prompt.includes('המתכון שלי:'), true);
 
     assert.equal(recipePromptCopy('he', '  ', true).status, 'needRequest');
     const copied = recipePromptCopy('he', request, true);

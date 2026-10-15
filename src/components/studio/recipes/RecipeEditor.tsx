@@ -62,6 +62,7 @@ import {
   recipeImportNeedsConfirmation,
   recipeImportPrompt,
   recipePromptCopy,
+  type RecipePromptMode,
   DEFAULT_RECIPE_IMPORT_CATALOG,
   type RecipeImportResult,
 } from '@/lib/studio/recipeImport';
@@ -149,6 +150,7 @@ export default function RecipeEditor(props: Props) {
     props.mode === 'create' ? 'choose' : 'form',
   );
   const [pasteRequest, setPasteRequest] = useState('');
+  const [pasteIsMine, setPasteIsMine] = useState(false);
   const [pasteText, setPasteText] = useState('');
   const [importError, setImportError] = useState<string | null>(null);
   const [pendingImport, setPendingImport] = useState<Extract<RecipeImportResult, { ok: true }> | null>(null);
@@ -294,13 +296,14 @@ export default function RecipeEditor(props: Props) {
   async function copyRecipePrompt() {
     const localeKey = locale === 'he' ? 'he' : 'en';
     const catalog = importCatalog();
+    const mode: RecipePromptMode = pasteIsMine ? 'mine' : 'request';
     if (!pasteRequest.trim()) {
       setPromptCopied(false);
       setPromptFallback(null);
-      setCopyNeedsRequest(recipePromptCopy(localeKey, pasteRequest, false, catalog).status === 'needRequest');
+      setCopyNeedsRequest(recipePromptCopy(localeKey, pasteRequest, false, catalog, mode).status === 'needRequest');
       return;
     }
-    const prompt = recipeImportPrompt(localeKey, catalog, pasteRequest);
+    const prompt = recipeImportPrompt(localeKey, catalog, pasteRequest, mode);
     let clipboardWrote = false;
     try {
       await navigator.clipboard.writeText(prompt);
@@ -308,7 +311,7 @@ export default function RecipeEditor(props: Props) {
     } catch {
       clipboardWrote = false;
     }
-    const outcome = recipePromptCopy(localeKey, pasteRequest, clipboardWrote, catalog);
+    const outcome = recipePromptCopy(localeKey, pasteRequest, clipboardWrote, catalog, mode);
     setCopyNeedsRequest(false);
     setPromptCopied(outcome.status === 'copied');
     setPromptFallback(outcome.status === 'manual' ? outcome.prompt : null);
@@ -652,10 +655,13 @@ export default function RecipeEditor(props: Props) {
         <RecipePastePanel
           steps={[t('pasteStep1'), t('pasteStep2'), t('pasteStep3')]}
           requestLede={t('pasteLede')}
-          requestLabel={t('pasteRequestLabel')}
-          requestPlaceholder={t('pasteRequestPlaceholder')}
+          mineLabel={t('pasteMineLabel')}
+          mineLede={t('pasteMineLede')}
+          mineChecked={pasteIsMine}
+          requestLabel={t(pasteIsMine ? 'pasteMineRequestLabel' : 'pasteRequestLabel')}
+          requestPlaceholder={t(pasteIsMine ? 'pasteMineRequestPlaceholder' : 'pasteRequestPlaceholder')}
           request={pasteRequest}
-          requestError={copyNeedsRequest ? t('pasteRequestMissing') : null}
+          requestError={copyNeedsRequest ? t(pasteIsMine ? 'pasteMineRequestMissing' : 'pasteRequestMissing') : null}
           copyLabel={t('copyPrompt')}
           copiedLabel={promptCopied ? t('promptCopied') : null}
           manualCopyLabel={promptFallback ? t('pasteCopyManual') : null}
@@ -670,6 +676,12 @@ export default function RecipeEditor(props: Props) {
           disabled={busy}
           onRequest={(value) => {
             setPasteRequest(value);
+            setCopyNeedsRequest(false);
+            setPromptCopied(false);
+            setPromptFallback(null);
+          }}
+          onMine={(value) => {
+            setPasteIsMine(value);
             setCopyNeedsRequest(false);
             setPromptCopied(false);
             setPromptFallback(null);

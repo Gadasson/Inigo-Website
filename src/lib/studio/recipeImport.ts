@@ -118,6 +118,8 @@ export function recipePastePerformsRequest(): false {
   return false;
 }
 
+export type RecipePromptMode = 'request' | 'mine';
+
 export type RecipePromptCopy =
   | { status: 'needRequest' }
   | { status: 'copied'; prompt: string }
@@ -129,10 +131,11 @@ export function recipePromptCopy(
   request: string,
   clipboardWrote: boolean,
   catalog: RecipeImportCatalog = DEFAULT_RECIPE_IMPORT_CATALOG,
+  mode: RecipePromptMode = 'request',
 ): RecipePromptCopy {
   const trimmed = request.trim();
   if (!trimmed) return { status: 'needRequest' };
-  const prompt = recipeImportPrompt(locale, catalog, trimmed);
+  const prompt = recipeImportPrompt(locale, catalog, trimmed, mode);
   return clipboardWrote ? { status: 'copied', prompt } : { status: 'manual', prompt };
 }
 
@@ -140,6 +143,7 @@ export function recipeImportPrompt(
   locale: 'he' | 'en',
   catalog: RecipeImportCatalog = DEFAULT_RECIPE_IMPORT_CATALOG,
   request = '',
+  mode: RecipePromptMode = 'request',
 ): string {
   const meals = catalog.mealTypes.join(', ');
   const times = catalog.timeSuitability.join(', ');
@@ -165,7 +169,7 @@ export function recipeImportPrompt(
   const instructions =
     locale === 'he'
       ? [
-      'הכן מתכון לפי הבקשה שלי, והחזר אובייקט JSON אחד בלבד. בלי טקסט לפניו או אחריו.',
+      recipePromptOpening('he', mode),
       'כתוב את המתכון בעברית ובאנגלית. אם שפה אחת אינה מלאה, החזר לפחות שפה שלמה אחת: כותרת, שם לכל מצרך, וטקסט לכל שלב.',
       'הזמן הוא הזמן הכולל בדקות עד שהמנה מוכנה, כולל המתנה, בישול או קירור.',
       'אל תמציא מקור, קרדיט, טענות רפואיות או סיווג תזונה.',
@@ -173,7 +177,7 @@ export function recipeImportPrompt(
       'אם לא מסרתי קרדיט, אל תכלול את credit_he ואת credit_en.',
       'image_is_illustration נשאר false, אלא אם אמרתי שהתמונה תהיה המחשה.',
       'אין להוסיף שדות תמונה, כתובות אחסון, מזהה מתכון או סטטוס.',
-      'זו הצעה שאני צריך לבדוק לפני פרסום.',
+      recipePromptReviewLine('he', mode),
       `סוגי מנה מותרים: ${meals}.`,
       `זמני יום מותרים: ${times}.`,
       'מותר ליצור מתכונים עם בשר או דגים. vegetarian ו-vegan הן תגיות אופציונליות בלבד. אם אינן מתאימות, החזר dietary_tags: [].',
@@ -182,7 +186,7 @@ export function recipeImportPrompt(
       shape,
     ].join('\n')
       : [
-    'Prepare a recipe from my request and return one JSON object only. No text before or after it.',
+    recipePromptOpening('en', mode),
     'Write the recipe in Hebrew and English. If one language is incomplete, still return at least one complete language: a title, a name for every ingredient, and text for every step.',
     'The time is the total minutes until the dish is ready, including waiting, cooking, or cooling.',
     'Do not invent a source, a credit, medical claims, or a dietary label.',
@@ -190,7 +194,7 @@ export function recipeImportPrompt(
     'If I did not give a credit, leave credit_he and credit_en out of the object.',
     'image_is_illustration stays false unless I said the image will be an illustration.',
     'Do not add image fields, storage addresses, a recipe id, or statuses.',
-    'This is a suggestion I need to review before publishing.',
+    recipePromptReviewLine('en', mode),
     `Allowed dish types: ${meals}.`,
     `Allowed times of day: ${times}.`,
     'Recipes with meat or fish are allowed. vegetarian and vegan are optional tags only. If they do not apply, return dietary_tags: [].',
@@ -198,11 +202,35 @@ export function recipeImportPrompt(
     'The shape:',
     shape,
   ].join('\n');
-  return withRecipeRequest(instructions, locale, request);
+  return withRecipeRequest(instructions, locale, request, mode);
 }
 
-function withRecipeRequest(instructions: string, locale: 'he' | 'en', request: string): string {
-  const heading = locale === 'he' ? 'הבקשה שלי:' : 'My request:';
+function recipePromptOpening(locale: 'he' | 'en', mode: RecipePromptMode): string {
+  if (mode === 'mine') {
+    return locale === 'he'
+      ? 'הטקסט תחת «המתכון שלי» הוא המתכון שלי. סדר אותו למבנה, ושמור על המצרכים, הכמויות והשלבים כפי שכתבתי. השלם רק פרט קטן שחסר כדי שהמבנה יהיה תקין: תרגום לשפה השנייה, סוג מנה, או זמן כולל כשהוא ברור מהשלבים. אל תחפש מתכון אחר, אל תחליף מצרכים, ואל תכתוב מנה חדשה. החזר אובייקט JSON אחד בלבד, בלי טקסט לפניו או אחריו.'
+      : 'The text under "My recipe" is my recipe. Arrange it into the structure and keep the ingredients, amounts, and steps as I wrote them. Fill only a small gap that the structure needs: a translation into the other language, a dish type, or a total time when the steps make it clear. Do not look up another recipe, do not replace ingredients, and do not write a new dish. Return one JSON object only, with no text before or after it.';
+  }
+  return locale === 'he'
+    ? 'הכן מתכון לפי הבקשה שלי, והחזר אובייקט JSON אחד בלבד. בלי טקסט לפניו או אחריו.'
+    : 'Prepare a recipe from my request and return one JSON object only. No text before or after it.';
+}
+
+function recipePromptReviewLine(locale: 'he' | 'en', mode: RecipePromptMode): string {
+  if (mode === 'mine') {
+    return locale === 'he' ? 'אני בודק את הסידור לפני פרסום.' : 'I review the arrangement before publishing.';
+  }
+  return locale === 'he' ? 'זו הצעה שאני צריך לבדוק לפני פרסום.' : 'This is a suggestion I need to review before publishing.';
+}
+
+function withRecipeRequest(
+  instructions: string,
+  locale: 'he' | 'en',
+  request: string,
+  mode: RecipePromptMode,
+): string {
+  const heading =
+    mode === 'mine' ? (locale === 'he' ? 'המתכון שלי:' : 'My recipe:') : locale === 'he' ? 'הבקשה שלי:' : 'My request:';
   const trimmed = request.trim();
   return trimmed ? `${instructions}\n${heading}\n${trimmed}` : `${instructions}\n${heading}`;
 }

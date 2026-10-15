@@ -3,6 +3,9 @@
 type Props = {
   steps: readonly [string, string, string];
   requestLede: string;
+  mineLabel: string;
+  mineLede: string;
+  mineChecked: boolean;
   requestLabel: string;
   requestPlaceholder: string;
   request: string;
@@ -20,6 +23,7 @@ type Props = {
   error: string | null;
   disabled?: boolean;
   onRequest: (value: string) => void;
+  onMine: (value: boolean) => void;
   onText: (value: string) => void;
   onCopy: () => void;
   onShow: () => void;
@@ -30,6 +34,9 @@ type Props = {
 export default function RecipePastePanel({
   steps,
   requestLede,
+  mineLabel,
+  mineLede,
+  mineChecked,
   requestLabel,
   requestPlaceholder,
   request,
@@ -47,6 +54,7 @@ export default function RecipePastePanel({
   error,
   disabled = false,
   onRequest,
+  onMine,
   onText,
   onCopy,
   onShow,
@@ -61,6 +69,19 @@ export default function RecipePastePanel({
         ))}
       </ol>
       <p className="studio-form__field-lede">{requestLede}</p>
+      <div>
+        <label className="studio-recipe-check" htmlFor="recipe-mine">
+          <input
+            id="recipe-mine"
+            type="checkbox"
+            checked={mineChecked}
+            disabled={disabled}
+            onChange={(event) => onMine(event.target.checked)}
+          />
+          <span>{mineLabel}</span>
+        </label>
+        <p className="studio-form__field-lede">{mineLede}</p>
+      </div>
       <div className="studio-form__field">
         <label htmlFor="recipe-request">{requestLabel}</label>
         <textarea
