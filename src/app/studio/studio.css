@@ -2794,28 +2794,11 @@
   flex: none;
 }
 
-.studio-recipe-paste__mine {
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-}
-
-.studio-recipe-paste__mine .studio-recipe-check {
-  margin-top: 0;
-}
-
 .studio-recipe-choices,
 .studio-recipe-paste,
 .studio-recipe-preview {
   display: grid;
   gap: 1rem;
-}
-
-.studio-recipe-paste__steps {
-  margin: 0;
-  padding-inline-start: 1.25rem;
-  display: grid;
-  gap: 0.35rem;
 }
 
 .studio-recipe-paste__input,

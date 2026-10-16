@@ -3,9 +3,10 @@
 import StudioFieldHint from '@/components/studio/StudioFieldHint';
 
 type Props = {
-  steps: readonly [string, string, string];
+  modeLabel: string;
+  ideaLabel: string;
   mineLabel: string;
-  mineLede: string;
+  guide: string;
   mineChecked: boolean;
   hintLabel: string;
   requestLabel: string;
@@ -34,9 +35,10 @@ type Props = {
 };
 
 export default function RecipePastePanel({
-  steps,
+  modeLabel,
+  ideaLabel,
   mineLabel,
-  mineLede,
+  guide,
   mineChecked,
   hintLabel,
   requestLabel,
@@ -65,23 +67,31 @@ export default function RecipePastePanel({
 }: Props) {
   return (
     <div className="studio-recipe-paste">
-      <ol className="studio-recipe-paste__steps">
-        {steps.map((step) => (
-          <li key={step}>{step}</li>
-        ))}
-      </ol>
-      <div className="studio-recipe-paste__mine">
-        <label className="studio-recipe-check" htmlFor="recipe-mine">
-          <input
-            id="recipe-mine"
-            type="checkbox"
-            checked={mineChecked}
+      <div className="studio-form__field">
+        <span id="recipe-mode-label" className="studio-form__legend">
+          {modeLabel}
+        </span>
+        <div className="studio-time-suitability" role="group" aria-labelledby="recipe-mode-label">
+          <button
+            type="button"
+            className={`studio-time-suitability__chip${mineChecked ? '' : ' studio-time-suitability__chip--selected'}`}
+            aria-pressed={!mineChecked}
             disabled={disabled}
-            onChange={(event) => onMine(event.target.checked)}
-          />
-          <span>{mineLabel}</span>
-        </label>
-        <StudioFieldHint id="recipe-mine-hint" text={mineLede} label={hintLabel} />
+            onClick={() => onMine(false)}
+          >
+            {ideaLabel}
+          </button>
+          <button
+            type="button"
+            className={`studio-time-suitability__chip${mineChecked ? ' studio-time-suitability__chip--selected' : ''}`}
+            aria-pressed={mineChecked}
+            disabled={disabled}
+            onClick={() => onMine(true)}
+          >
+            {mineLabel}
+          </button>
+        </div>
+        <p className="studio-form__field-lede">{guide}</p>
       </div>
       <div className="studio-form__field">
         <label htmlFor="recipe-request">{requestLabel}</label>
