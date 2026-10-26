@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
+import { useStudioAccess } from '@/contexts/StudioAccessContext';
 import { CHALLENGES_CAPABILITY } from '@/lib/api/studioBootstrap';
 import { studioAreaManageHref } from '@/lib/studio/studioAreas';
 import StudioConfirmDialog from '@/components/studio/StudioConfirmDialog';
@@ -24,11 +25,13 @@ import {
 } from '@/lib/api/studioChallenges';
 import {
   addChallengeStep,
+  applyChallengeActivity,
   applyChallengeCoverResponse,
   buildChallengeDetailsBody,
-  buildChallengeStepsBody,
   canReviseApprovedChallenge,
-  canSubmitChallenge,
+  challengeSubmitPlan,
+  challengeActivity,
+  challengeActivitySwitchNeedsConfirm,
   challengeCoverErrorKey,
   challengeCoverPhase,
   challengeDetailsDirty,
@@ -37,6 +40,8 @@ import {
   challengeSaveOutcome,
   challengeSavePlan,
   challengeStepsDirty,
+  challengeStepsWrite,
+  gratitudeEditingBlocked,
   emptyChallengeForm,
   guidedChallengeStep,
   isChallengeDraftEditable,
@@ -50,6 +55,7 @@ import {
   takeChallengeCoverRetry,
   validateChallengeForm,
   CHALLENGE_PRACTICE_TYPES,
+  type ChallengeActivity,
   type ChallengeEditorForm,
   type ChallengeFormIssue,
   type ChallengePracticeSummary,
@@ -88,6 +94,7 @@ function ChallengePracticeSummaryView({ form }: { form: ChallengeEditorForm }) {
   }
 
   function practiceLabel(practice: ChallengePracticeSummary): string {
+    if (practice.kind === 'gratitude') return t('activityGratitude');
     if (practice.kind === 'silent') {
       const name = practice.practiceType ? t(`practice.${practice.practiceType}`) : t('kindSilent');
       return practice.minutes == null ? name : `${name} ${minutePhrase(practice.minutes)}`;
@@ -130,6 +137,7 @@ function ChallengePracticeSummaryView({ form }: { form: ChallengeEditorForm }) {
 
 export default function ChallengeEditor(props: Props) {
   const { getIdToken } = useAuth();
+  const { gratitudeStepSupported } = useStudioAccess();
   const router = useRouter();
   const t = useTranslations('challenges');
   const [form, setForm] = useState<ChallengeEditorForm>(emptyChallengeForm);
@@ -142,6 +150,7 @@ export default function ChallengeEditor(props: Props) {
   const [error, setError] = useState<string | null>(null);
   const [savedNote, setSavedNote] = useState<string | null>(null);
   const [confirmArchive, setConfirmArchive] = useState(false);
+  const [pendingActivity, setPendingActivity] = useState<ChallengeActivity | null>(null);
   const [pickerStepId, setPickerStepId] = useState<string | null>(null);
   const [coverUrl, setCoverUrl] = useState<string | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
@@ -154,18 +163,22 @@ export default function ChallengeEditor(props: Props) {
   const coverPreviewUrl = useRef<string | null>(null);
 
   const status = detail?.draft?.status ?? (props.mode === 'create' ? 'draft' : null);
+  const gratitudeBlocked = gratitudeEditingBlocked(form, gratitudeStepSupported);
   const editable =
-    props.mode === 'create' || isChallengeDraftEditable(status) || (revising && canReviseApprovedChallenge(status));
+    !gratitudeBlocked &&
+    (props.mode === 'create' || isChallengeDraftEditable(status) || (revising && canReviseApprovedChallenge(status)));
   const detailsDirty = challengeDetailsDirty(form, baseline);
   const stepsDirty = challengeStepsDirty(form, baseline);
   const dirty = detailsDirty || stepsDirty;
   const coverPending = coverFile != null;
-  const submitAllowed = canSubmitChallenge({
+  const submitPlan = challengeSubmitPlan({
+    mode: props.mode,
     status,
     dirty,
     coverPending,
     coverUploading,
     coverFailed: coverUploadFailed,
+    gratitudeBlocked,
   });
 
   const challengeId = props.mode === 'edit' ? props.challengeId : null;
@@ -190,6 +203,7 @@ export default function ChallengeEditor(props: Props) {
         setDetail(loaded);
         setForm(next);
         setBaseline(next);
+        setPendingActivity(null);
         setCoverUrl(loaded.draft.cover_url?.trim() ? loaded.draft.cover_url : null);
         setRevising(false);
         if (takeChallengeCoverRetry(challengeId)) {
@@ -273,6 +287,8 @@ export default function ChallengeEditor(props: Props) {
 
   async function uploadCover() {
     if (busyRef.current || !editable || !coverFile) return;
+    const stepsWrite = challengeStepsWrite(form, gratitudeStepSupported);
+    if (!stepsWrite.ok) return;
     const validation = validateChallengeForm(form);
     setIssue(validation);
     if (validation) return;
@@ -288,7 +304,7 @@ export default function ChallengeEditor(props: Props) {
       let id = props.mode === 'edit' ? props.challengeId : createdIdRef.current;
       if (id == null) {
         const created = await createStudioChallenge(
-          { ...buildChallengeDetailsBody(form), steps: buildChallengeStepsBody(form).steps },
+          { ...buildChallengeDetailsBody(form), steps: stepsWrite.steps },
           token,
         );
         id = created.id;
@@ -322,6 +338,8 @@ export default function ChallengeEditor(props: Props) {
 
   async function save() {
     if (busyRef.current || !editable) return;
+    const stepsWrite = challengeStepsWrite(form, gratitudeStepSupported);
+    if (!stepsWrite.ok) return;
     if (props.mode === 'create' && coverFile) {
       await uploadCover();
       return;
@@ -350,7 +368,7 @@ export default function ChallengeEditor(props: Props) {
     try {
       const token = await getIdToken();
       const details = buildChallengeDetailsBody(form);
-      const steps = buildChallengeStepsBody(form).steps;
+      const steps = stepsWrite.steps;
       if (props.mode === 'create') {
         const created = await createStudioChallenge({ ...details, steps }, token);
         router.replace(`/studio/challenges/${created.id}`);
@@ -409,7 +427,8 @@ export default function ChallengeEditor(props: Props) {
   }
 
   async function submit() {
-    if (busyRef.current || props.mode !== 'edit' || !submitAllowed) return;
+    if (busyRef.current || !submitPlan.send) return;
+    if (props.mode !== 'edit') return;
     const validation = validateChallengeForm(form);
     setIssue(validation);
     if (validation) return;
@@ -452,6 +471,24 @@ export default function ChallengeEditor(props: Props) {
     }
   }
 
+  function commitActivity(next: ChallengeActivity) {
+    setForm((current) => applyChallengeActivity(current, next));
+    setPickerStepId(null);
+    setIssue(null);
+    setSavedNote(null);
+    setPendingActivity(null);
+  }
+
+  function requestActivity(next: ChallengeActivity) {
+    if (!editable || busy || next === challengeActivity(form)) return;
+    if (next === 'gratitude' && !gratitudeStepSupported) return;
+    if (challengeActivitySwitchNeedsConfirm({ form, baseline, persisted: props.mode === 'edit' })) {
+      setPendingActivity(next);
+      return;
+    }
+    commitActivity(next);
+  }
+
   function chooseSession(stepId: string, option: ChallengeSessionOption) {
     updateStep(stepId, {
       kind: 'guided',
@@ -467,6 +504,7 @@ export default function ChallengeEditor(props: Props) {
     return <p className="studio-form-page__status">{t('loadingEditor')}</p>;
   }
 
+  const activity = challengeActivity(form);
   const previewSrc = coverPreview || coverUrl;
   const coverPhase = challengeCoverPhase({
     hasLocalFile: coverFile != null,
@@ -496,7 +534,7 @@ export default function ChallengeEditor(props: Props) {
         <p className="studio-form__section-note">{t('newVersionNote')}</p>
       ) : null}
 
-      {canReviseApprovedChallenge(status) && !revising ? (
+      {canReviseApprovedChallenge(status) && !revising && !gratitudeBlocked ? (
         <button type="button" className="studio-form__submit" disabled={busy} onClick={() => setRevising(true)}>
           {t('revise')}
         </button>
@@ -597,6 +635,56 @@ export default function ChallengeEditor(props: Props) {
         </div>
       ) : null}
 
+      {gratitudeStepSupported ? (
+      <fieldset className="studio-form__field studio-challenge-activity-field" disabled={!editable || busy}>
+        <legend className="studio-form__legend">{t('activity')}</legend>
+        <div className="studio-challenge-activity">
+          <label className="studio-challenge-activity__option">
+            <input
+              id="challenge-activity-practice"
+              type="radio"
+              name="challenge-activity"
+              value="practice"
+              checked={activity === 'practice'}
+              aria-describedby="challenge-activity-practice-lede"
+              onChange={() => requestActivity('practice')}
+            />
+            {t('activityPractice')}
+          </label>
+          <label className="studio-challenge-activity__option">
+            <input
+              id="challenge-activity-gratitude"
+              type="radio"
+              name="challenge-activity"
+              value="gratitude"
+              checked={activity === 'gratitude'}
+              aria-describedby="challenge-activity-gratitude-lede"
+              onChange={() => requestActivity('gratitude')}
+            />
+            {t('activityGratitude')}
+          </label>
+        </div>
+      </fieldset>
+      ) : null}
+      {gratitudeStepSupported || activity === 'gratitude' ? (
+        <>
+      <p
+        id="challenge-activity-practice-lede"
+        className={activity === 'practice' ? 'studio-form__field-lede' : 'visually-hidden'}
+      >
+        {t('activityPracticeLede')}
+      </p>
+      <p
+        id="challenge-activity-gratitude-lede"
+        className={activity === 'gratitude' ? 'studio-form__field-lede' : 'visually-hidden'}
+      >
+        {t('gratitudeLede')}
+      </p>
+        </>
+      ) : null}
+
+      {activity === 'practice' ? (
+        <>
       <h2 className="studio-form__legend">{t('stepsTitle')}</h2>
       <p className="studio-form__field-lede">{t('stepsLede')}</p>
       <p className="studio-form__field-lede">{t('stepsOrderLede')}</p>
@@ -604,6 +692,9 @@ export default function ChallengeEditor(props: Props) {
         {form.steps.map((step, index) => (
           <li key={step.id} className="studio-challenge-step">
             <p className="studio-challenge-step__index">{t('practicePosition', { position: index + 1 })}</p>
+            {step.kind === 'gratitude' ? (
+              <p className="studio-form__field-lede">{t('gratitudeLede')}</p>
+            ) : (
             <div className="studio-form__field">
               <label htmlFor={`step-kind-${step.id}`}>{t('stepKind')}</label>
               <p id={`step-kind-${step.id}-lede`} className="studio-form__field-lede">
@@ -625,7 +716,8 @@ export default function ChallengeEditor(props: Props) {
                 <option value="guided">{t('kindGuided')}</option>
               </select>
             </div>
-            {step.kind === 'silent' ? (
+            )}
+            {step.kind === 'gratitude' ? null : step.kind === 'silent' ? (
               <>
                 <div className="studio-form__field">
                   <label htmlFor={`step-practice-${step.id}`}>{t('practiceType')}</label>
@@ -739,6 +831,8 @@ export default function ChallengeEditor(props: Props) {
           </button>
         </div>
       ) : null}
+        </>
+      ) : null}
 
       <ChallengePracticeSummaryView form={form} />
 
@@ -829,9 +923,20 @@ export default function ChallengeEditor(props: Props) {
           </button>
         ) : null}
         {props.mode === 'edit' && isChallengeDraftEditable(status) ? (
-          <button type="button" className="creator-workspace__media-btn" disabled={busy || !submitAllowed} onClick={() => void submit()}>
+          <button
+            type="button"
+            className="creator-workspace__media-btn"
+            disabled={busy || !submitPlan.send}
+            aria-describedby={gratitudeBlocked ? 'challenge-gratitude-unsupported' : undefined}
+            onClick={() => void submit()}
+          >
             {t('submit')}
           </button>
+        ) : null}
+        {gratitudeBlocked ? (
+          <p id="challenge-gratitude-unsupported" className="studio-form__error" role="status">
+            {t('gratitudeUnsupported')}
+          </p>
         ) : null}
         {props.mode === 'edit' && !detail?.archived_at ? (
           <button
@@ -855,6 +960,19 @@ export default function ChallengeEditor(props: Props) {
         confirmBusyLabel={t('saving')}
         onCancel={() => setConfirmArchive(false)}
         onConfirm={() => void archive()}
+      />
+      <StudioConfirmDialog
+        open={pendingActivity != null}
+        title={t('activitySwitchTitle')}
+        message={t('activitySwitchBody')}
+        cancelLabel={t('activitySwitchCancel')}
+        confirmLabel={t('activitySwitchConfirm')}
+        confirmBusy={busy}
+        confirmBusyLabel={t('saving')}
+        onCancel={() => setPendingActivity(null)}
+        onConfirm={() => {
+          if (pendingActivity) commitActivity(pendingActivity);
+        }}
       />
     </div>
   );

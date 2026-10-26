@@ -18,7 +18,7 @@ export type StudioChallengeSummary = {
 
 export type StudioChallengeStep = {
   position: number;
-  kind: 'silent' | 'guided';
+  kind: 'silent' | 'guided' | 'gratitude';
   practice_type: string | null;
   duration_minutes: number | null;
   guided_template_id: number | null;

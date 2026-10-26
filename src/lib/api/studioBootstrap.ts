@@ -156,6 +156,23 @@ export function isApprovedStudioCreator(
   return parseStudioAccess(bootstrap).enabled;
 }
 
+/**
+ * `challenge_capabilities.supported_step_kinds` on the bootstrap root.
+ * Gratitude is available only when that value is an array of strings that
+ * includes `gratitude`. A missing or malformed value does not grant it.
+ * Silent and guided steps do not read this field. The exposure gate is not read.
+ * Studio entry still depends on `studio_access`.
+ */
+export function serverSupportsGratitudeChallengeStep(
+  bootstrap: StudioBootstrapResponse | null | undefined,
+): boolean {
+  const capabilities = bootstrap?.challenge_capabilities;
+  if (!isRecord(capabilities)) return false;
+  const kinds = capabilities.supported_step_kinds;
+  if (!Array.isArray(kinds) || kinds.some((kind) => typeof kind !== 'string')) return false;
+  return kinds.includes('gratitude');
+}
+
 export function hasStudioCapability(
   access: Pick<ParsedStudioAccess, 'enabled' | 'capabilities'> | null | undefined,
   capability: StudioCapabilityId,

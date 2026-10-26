@@ -14,6 +14,7 @@ import {
   emptyStudioCapabilities,
   fetchStudioBootstrap,
   parseStudioAccess,
+  serverSupportsGratitudeChallengeStep,
   type StudioCapabilities,
   type StudioPublishingLimits,
 } from '@/lib/api/studioBootstrap';
@@ -58,6 +59,7 @@ type StudioAccessContextValue = {
   enabled: boolean;
   capabilities: StudioCapabilities;
   publishingLimits: StudioPublishingLimits;
+  gratitudeStepSupported: boolean;
   refresh: () => void;
 };
 
@@ -133,6 +135,7 @@ export function StudioAccessProvider({ children }: { children: ReactNode }) {
               userId,
               generation,
               access: parseStudioAccess(bootstrap),
+              gratitudeStepSupported: serverSupportsGratitudeChallengeStep(bootstrap),
             }),
           );
         } catch (error) {
@@ -224,10 +227,11 @@ export function StudioAccessProvider({ children }: { children: ReactNode }) {
   const enabled = session.phase === 'connected' && session.access?.enabled === true;
   const capabilities = enabled && session.access ? session.access.capabilities : emptyStudioCapabilities();
   const publishingLimits = session.access?.publishingLimits ?? EMPTY_LIMITS;
+  const gratitudeStepSupported = enabled && session.gratitudeStepSupported === true;
 
   const value = useMemo(
-    () => ({ status, enabled, capabilities, publishingLimits, refresh }),
-    [status, enabled, capabilities, publishingLimits, refresh],
+    () => ({ status, enabled, capabilities, publishingLimits, gratitudeStepSupported, refresh }),
+    [status, enabled, capabilities, publishingLimits, gratitudeStepSupported, refresh],
   );
 
   return <StudioAccessContext.Provider value={value}>{children}</StudioAccessContext.Provider>;

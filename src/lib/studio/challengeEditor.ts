@@ -11,9 +11,11 @@ export type ChallengePracticeType = (typeof CHALLENGE_PRACTICE_TYPES)[number];
 export type ChallengeSchedule = 'fixed_weeks' | 'ongoing';
 export type ChallengeVersionStatus = 'draft' | 'pending_review' | 'approved';
 
+export type ChallengeActivity = 'practice' | 'gratitude';
+
 export type ChallengeStepDraft = {
   id: string;
-  kind: 'silent' | 'guided';
+  kind: 'silent' | 'guided' | 'gratitude';
   practiceType: ChallengePracticeType | '';
   durationMinutes: string;
   guidedTemplateId: number | null;
@@ -40,7 +42,8 @@ export type ChallengeFormIssue =
   | 'steps_count'
   | 'practice_type'
   | 'duration_minutes'
-  | 'guided_session';
+  | 'guided_session'
+  | 'gratitude_steps';
 
 export type ChallengeDetailsBody = {
   title_en: string;
@@ -52,9 +55,15 @@ export type ChallengeDetailsBody = {
   week_count: number | null;
 };
 
+/**
+ * A gratitude step is only `{ kind: "gratitude" }`.
+ * Studio bootstrap capabilities do not say whether a server accepts that kind.
+ * The exposure gate is not that signal, and a closed gate must not block a draft.
+ */
 export type ChallengeStepBody =
   | { kind: 'silent'; practice_type: ChallengePracticeType; duration_minutes: number }
-  | { kind: 'guided'; guided_template_id: number };
+  | { kind: 'guided'; guided_template_id: number }
+  | { kind: 'gratitude' };
 
 /** A draft can be saved. Pending review cannot. An approved version stays read-only until save. */
 export function isChallengeDraftEditable(status: string | null | undefined): boolean {
@@ -116,6 +125,50 @@ export function guidedChallengeStep(id: string): ChallengeStepDraft {
   };
 }
 
+export function gratitudeChallengeStep(id: string): ChallengeStepDraft {
+  return {
+    id,
+    kind: 'gratitude',
+    practiceType: '',
+    durationMinutes: '',
+    guidedTemplateId: null,
+    guidedTitle: '',
+    guidedDurationSeconds: null,
+    guidedMediaKind: null,
+  };
+}
+
+/** A gratitude challenge is exactly one gratitude step. Anything else stays a practice challenge. */
+export function challengeActivity(form: ChallengeEditorForm): ChallengeActivity {
+  return form.steps.length === 1 && form.steps[0]?.kind === 'gratitude' ? 'gratitude' : 'practice';
+}
+
+/** Replace the steps for the other activity. Titles, days, and schedule stay. */
+export function applyChallengeActivity(
+  form: ChallengeEditorForm,
+  activity: ChallengeActivity,
+): ChallengeEditorForm {
+  if (challengeActivity(form) === activity) return form;
+  const id = form.steps[0]?.id ?? 'step-1';
+  return {
+    ...form,
+    steps: [activity === 'gratitude' ? gratitudeChallengeStep(id) : silentChallengeStep(id)],
+  };
+}
+
+/**
+ * A saved challenge, or steps changed in this visit, need confirmation
+ * before a type switch replaces them.
+ */
+export function challengeActivitySwitchNeedsConfirm(input: {
+  form: ChallengeEditorForm;
+  baseline: ChallengeEditorForm;
+  persisted: boolean;
+}): boolean {
+  if (input.persisted) return true;
+  return challengeStepsDirty(input.form, input.baseline);
+}
+
 export function validateChallengeForm(form: ChallengeEditorForm): ChallengeFormIssue | null {
   if (!form.titleEn.trim() && !form.titleHe.trim()) return 'title';
   if (!Number.isInteger(form.daysPerWeek) || form.daysPerWeek < 1 || form.daysPerWeek > 7) {
@@ -127,6 +180,10 @@ export function validateChallengeForm(form: ChallengeEditorForm): ChallengeFormI
   }
   if (form.steps.length < CHALLENGE_STEP_MIN || form.steps.length > CHALLENGE_STEP_MAX) {
     return 'steps_count';
+  }
+  if (form.steps.some((step) => step.kind === 'gratitude')) {
+    if (form.steps.length !== 1 || form.steps[0]?.kind !== 'gratitude') return 'gratitude_steps';
+    return null;
   }
   for (const step of form.steps) {
     if (step.kind === 'silent') {
@@ -141,8 +198,12 @@ export function validateChallengeForm(form: ChallengeEditorForm): ChallengeFormI
       ) {
         return 'duration_minutes';
       }
-    } else if (!Number.isInteger(step.guidedTemplateId) || (step.guidedTemplateId ?? 0) < 1) {
-      return 'guided_session';
+    } else if (step.kind === 'guided') {
+      if (!Number.isInteger(step.guidedTemplateId) || (step.guidedTemplateId ?? 0) < 1) {
+        return 'guided_session';
+      }
+    } else {
+      return 'gratitude_steps';
     }
   }
   return null;
@@ -160,20 +221,42 @@ export function buildChallengeDetailsBody(form: ChallengeEditorForm): ChallengeD
   };
 }
 
+export type ChallengeStepsWrite =
+  | { ok: true; steps: ChallengeStepBody[] }
+  | { ok: false; reason: 'gratitude_unsupported' };
+
+/** A gratitude step is sent only when this bootstrap says the server accepts it. */
+export function challengeStepsWrite(
+  form: ChallengeEditorForm,
+  gratitudeSupported: boolean,
+): ChallengeStepsWrite {
+  if (form.steps.some((step) => step.kind === 'gratitude') && !gratitudeSupported) {
+    return { ok: false, reason: 'gratitude_unsupported' };
+  }
+  return { ok: true, steps: buildChallengeStepsBody(form).steps };
+}
+
+/** An existing gratitude draft stays as it was loaded when the server cannot edit it. */
+export function gratitudeEditingBlocked(form: ChallengeEditorForm, gratitudeSupported: boolean): boolean {
+  return form.steps.some((step) => step.kind === 'gratitude') && !gratitudeSupported;
+}
+
 export function buildChallengeStepsBody(form: ChallengeEditorForm): { steps: ChallengeStepBody[] } {
   return {
-    steps: form.steps.map((step) =>
-      step.kind === 'silent'
-        ? {
-            kind: 'silent',
-            practice_type: step.practiceType as ChallengePracticeType,
-            duration_minutes: Number(step.durationMinutes),
-          }
-        : {
-            kind: 'guided',
-            guided_template_id: step.guidedTemplateId as number,
-          },
-    ),
+    steps: form.steps.map((step) => {
+      if (step.kind === 'gratitude') return { kind: 'gratitude' };
+      if (step.kind === 'silent') {
+        return {
+          kind: 'silent',
+          practice_type: step.practiceType as ChallengePracticeType,
+          duration_minutes: Number(step.durationMinutes),
+        };
+      }
+      return {
+        kind: 'guided',
+        guided_template_id: step.guidedTemplateId as number,
+      };
+    }),
   };
 }
 
@@ -278,7 +361,8 @@ export function buildSessionOptionsPath(input: { q?: string; ownerKind?: Session
 
 export type ChallengePracticeSummary =
   | { kind: 'silent'; practiceType: ChallengePracticeType | ''; minutes: number | null }
-  | { kind: 'guided'; title: string; seconds: number | null };
+  | { kind: 'guided'; title: string; seconds: number | null }
+  | { kind: 'gratitude' };
 
 export type ChallengeFormSummary = {
   practices: ChallengePracticeSummary[];
@@ -305,6 +389,7 @@ export function challengeFormSummary(form: ChallengeEditorForm): ChallengeFormSu
     schedule: form.schedule,
     weekCount,
     practices: form.steps.map((step) => {
+      if (step.kind === 'gratitude') return { kind: 'gratitude' as const };
       if (step.kind === 'guided') {
         const seconds = step.guidedDurationSeconds;
         return {
@@ -334,7 +419,7 @@ export function challengeListTitle(
 }
 
 export type ChallengeServerStep = {
-  kind: 'silent' | 'guided';
+  kind: 'silent' | 'guided' | 'gratitude' | string;
   practice_type: string | null;
   duration_minutes: number | null;
   guided_template_id: number | null;
@@ -389,6 +474,23 @@ export function canSubmitChallenge(input: {
     !input.coverUploading &&
     !input.coverFailed
   );
+}
+
+/**
+ * An unsupported gratitude draft does not submit.
+ * A supported draft uses the same readiness rules as before.
+ */
+export function challengeSubmitPlan(input: {
+  mode: 'create' | 'edit';
+  status: string | null | undefined;
+  dirty: boolean;
+  coverPending: boolean;
+  coverUploading: boolean;
+  coverFailed: boolean;
+  gratitudeBlocked: boolean;
+}): { send: boolean } {
+  if (input.mode !== 'edit' || input.gratitudeBlocked) return { send: false };
+  return { send: canSubmitChallenge(input) };
 }
 
 /** After a failed upload, the draft id stays and another challenge is not created. */
@@ -500,21 +602,23 @@ export function challengeFormFromServer(input: {
     daysPerWeek: input.draft.days_per_week,
     schedule: input.draft.schedule,
     weekCount: input.draft.week_count == null ? '' : String(input.draft.week_count),
-    steps: input.steps.map((step, index) =>
-      step.kind === 'guided'
-        ? {
-            ...guidedChallengeStep(`step-${index + 1}`),
-            guidedTemplateId: step.guided_template_id,
-            guidedTitle: step.title ?? '',
-            guidedDurationSeconds: step.duration_seconds,
-          }
-        : {
-            ...silentChallengeStep(`step-${index + 1}`),
-            practiceType: (CHALLENGE_PRACTICE_TYPES as readonly string[]).includes(step.practice_type ?? '')
-              ? (step.practice_type as ChallengePracticeType)
-              : '',
-            durationMinutes: step.duration_minutes == null ? '' : String(step.duration_minutes),
-          },
-    ),
+    steps: input.steps.map((step, index) => {
+      if (step.kind === 'gratitude') return gratitudeChallengeStep(`step-${index + 1}`);
+      if (step.kind === 'guided') {
+        return {
+          ...guidedChallengeStep(`step-${index + 1}`),
+          guidedTemplateId: step.guided_template_id,
+          guidedTitle: step.title ?? '',
+          guidedDurationSeconds: step.duration_seconds,
+        };
+      }
+      return {
+        ...silentChallengeStep(`step-${index + 1}`),
+        practiceType: (CHALLENGE_PRACTICE_TYPES as readonly string[]).includes(step.practice_type ?? '')
+          ? (step.practice_type as ChallengePracticeType)
+          : '',
+        durationMinutes: step.duration_minutes == null ? '' : String(step.duration_minutes),
+      };
+    }),
   };
 }

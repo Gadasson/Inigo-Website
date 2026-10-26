@@ -8,6 +8,8 @@ export type StudioAccessSession = {
   generation: number;
   phase: StudioCheckPhase;
   access: ParsedStudioAccess | null;
+  /** True only after a connected bootstrap lists `gratitude` in supported step kinds. */
+  gratitudeStepSupported: boolean;
   message: string | null;
   refreshInFlight: boolean;
 };
@@ -22,6 +24,7 @@ export function createStudioAccessSession(): StudioAccessSession {
     generation: 0,
     phase: 'idle',
     access: null,
+    gratitudeStepSupported: false,
     message: null,
     refreshInFlight: false,
   };
@@ -33,6 +36,7 @@ export function signOutStudioAccess(state: StudioAccessSession, generation: numb
     generation,
     phase: 'idle',
     access: null,
+    gratitudeStepSupported: false,
     message: null,
     refreshInFlight: false,
   };
@@ -49,6 +53,7 @@ export function beginStudioAccessRefresh(
     generation: input.generation,
     phase: clearForLoad ? 'loading' : state.phase,
     access: clearForLoad ? null : state.access,
+    gratitudeStepSupported: clearForLoad ? false : state.gratitudeStepSupported,
     message: clearForLoad ? null : state.message,
     refreshInFlight: true,
   };
@@ -63,7 +68,12 @@ export function isCurrentStudioAccessResult(
 
 export function applyStudioAccessSuccess(
   state: StudioAccessSession,
-  result: { userId: string; generation: number; access: ParsedStudioAccess },
+  result: {
+    userId: string;
+    generation: number;
+    access: ParsedStudioAccess;
+    gratitudeStepSupported?: boolean;
+  },
 ): StudioAccessSession {
   if (!isCurrentStudioAccessResult(state, result)) return state;
   if (!result.access.enabled) {
@@ -71,6 +81,7 @@ export function applyStudioAccessSuccess(
       ...state,
       phase: 'denied',
       access: null,
+      gratitudeStepSupported: false,
       message: STUDIO_ACCESS_DENIED_MESSAGE,
       refreshInFlight: false,
     };
@@ -79,6 +90,7 @@ export function applyStudioAccessSuccess(
     ...state,
     phase: 'connected',
     access: result.access,
+    gratitudeStepSupported: result.gratitudeStepSupported === true,
     message: null,
     refreshInFlight: false,
   };
@@ -113,6 +125,7 @@ export function applyStudioAccessFailure(
       ...state,
       phase: 'denied',
       access: null,
+      gratitudeStepSupported: false,
       message: result.message || STUDIO_ACCESS_DENIED_MESSAGE,
       refreshInFlight: false,
     };
@@ -123,6 +136,7 @@ export function applyStudioAccessFailure(
       ...state,
       phase: 'offline',
       access: null,
+      gratitudeStepSupported: false,
       message: result.message,
       refreshInFlight: false,
     };
@@ -132,6 +146,7 @@ export function applyStudioAccessFailure(
     ...state,
     phase: 'error',
     access: null,
+    gratitudeStepSupported: false,
     message: result.message,
     refreshInFlight: false,
   };

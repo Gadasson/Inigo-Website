@@ -86,6 +86,16 @@
     "scheduleFixed": "Fixed number of weeks",
     "scheduleFixedLede": "The challenge ends after the number of weeks you choose.",
     "weekCount": "Number of weeks",
+    "activity": "Challenge type",
+    "activityPractice": "Practice",
+    "activityPracticeLede": "A practice challenge: quiet steps or guided sessions, with a time for each step.",
+    "activityGratitude": "Gratitude writing",
+    "gratitudeLede": "Writing gratitude in Inigo counts a day in the challenge. It does not need to be shared with the community.",
+    "gratitudeUnsupported": "This server does not support editing a gratitude-writing challenge.",
+    "activitySwitchTitle": "Change the challenge type?",
+    "activitySwitchBody": "The steps you already edited will be replaced. Without confirmation, they stay as they are.",
+    "activitySwitchConfirm": "Change",
+    "activitySwitchCancel": "Cancel",
     "stepsTitle": "What do you practice each day?",
     "stepsLede": "Choose one practice, or a sequence of up to five. Participants repeat the same task on each practice day — practices are not split across different days of the week. If you choose a sequence, the whole sequence must be completed in order for the day to count.",
     "stepsOrderLede": "Changing the order sets the order people follow.",
@@ -199,7 +209,8 @@
       "steps_count": "A challenge needs 1 to 5 steps.",
       "practice_type": "Each quiet step needs a practice type.",
       "duration_minutes": "Each quiet step needs a duration from 1 to 180 minutes.",
-      "guided_session": "Each guided step needs a session chosen from the list."
+      "guided_session": "Each guided step needs a session chosen from the list.",
+      "gratitude_steps": "A gratitude-writing challenge is a single step, with no quiet practice or guided session."
     }
   },
   "recipes": {

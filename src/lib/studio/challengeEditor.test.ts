@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
-import { CHALLENGES_CAPABILITY, parseStudioAccess } from '@/lib/api/studioBootstrap';
+import { CHALLENGES_CAPABILITY, parseStudioAccess, serverSupportsGratitudeChallengeStep } from '@/lib/api/studioBootstrap';
 import { shouldLoadStudioArea, studioAreaManageHref, studioHomeView, resolveStudioHomeTab } from '@/lib/studio/studioAreas';
 import {
   addChallengeStep,
@@ -19,6 +19,7 @@ import {
   challengeSaveOutcome,
   challengeSavePlan,
   emptyChallengeForm,
+  gratitudeChallengeStep,
   guidedChallengeStep,
   isChallengeDraftEditable,
   isChallengePendingReview,
@@ -27,8 +28,14 @@ import {
   shouldSaveChallengeSteps,
   silentChallengeStep,
   validateChallengeForm,
+  applyChallengeActivity,
   applyChallengeCoverResponse,
   canSubmitChallenge,
+  challengeSubmitPlan,
+  challengeActivity,
+  challengeActivitySwitchNeedsConfirm,
+  challengeStepsWrite,
+  gratitudeEditingBlocked,
   challengeCoverErrorKey,
   challengeCoverFailureKeepsDraft,
   challengeCoverFormData,
@@ -478,6 +485,368 @@ describe('dance timer steps', () => {
       assert.ok(he.challenges.practice[practice]);
       assert.ok(en.challenges.practice[practice]);
     }
+  });
+});
+
+describe('gratitude writing challenges', () => {
+  const draft = {
+    title_en: 'Thanks',
+    title_he: 'הודיה',
+    description_en: 'A note',
+    description_he: 'הערה',
+    days_per_week: 4,
+    schedule: 'fixed_weeks' as const,
+    week_count: 3,
+  };
+
+  function gratitudeForm() {
+    const form = applyChallengeActivity(
+      {
+        ...emptyChallengeForm(),
+        titleEn: 'Thanks',
+        titleHe: 'הודיה',
+        descriptionEn: 'A note',
+        descriptionHe: 'הערה',
+        daysPerWeek: 4,
+        schedule: 'fixed_weeks',
+        weekCount: '3',
+      },
+      'gratitude',
+    );
+    return form;
+  }
+
+  function serverGratitudeStep(durationMinutes: number | null = null, durationSeconds: number | null = null) {
+    return {
+      kind: 'gratitude' as const,
+      practice_type: null,
+      duration_minutes: durationMinutes,
+      guided_template_id: null,
+      title: null,
+      duration_seconds: durationSeconds,
+    };
+  }
+
+  it('saves one gratitude step and keeps the existing day and schedule fields', () => {
+    const form = gratitudeForm();
+    assert.equal(challengeActivity(form), 'gratitude');
+    assert.equal(form.daysPerWeek, 4);
+    assert.equal(form.schedule, 'fixed_weeks');
+    assert.equal(form.weekCount, '3');
+    assert.equal(validateChallengeForm(form), null);
+    assert.deepEqual(buildChallengeDetailsBody(form), {
+      title_en: 'Thanks',
+      title_he: 'הודיה',
+      description_en: 'A note',
+      description_he: 'הערה',
+      days_per_week: 4,
+      schedule: 'fixed_weeks',
+      week_count: 3,
+    });
+    assert.deepEqual(buildChallengeStepsBody(form).steps, [{ kind: 'gratitude' }]);
+    assert.deepEqual(Object.keys(buildChallengeStepsBody(form).steps[0] ?? {}), ['kind']);
+    assert.deepEqual(challengeFormSummary(form).practices, [{ kind: 'gratitude' }]);
+  });
+
+  it('does not send practice fields or a zero duration, even if those inputs were filled locally', () => {
+    const form = gratitudeForm();
+    form.steps[0] = {
+      ...form.steps[0],
+      practiceType: 'dance',
+      durationMinutes: '0',
+      guidedTemplateId: 9,
+      guidedDurationSeconds: 0,
+    };
+    assert.equal(validateChallengeForm(form), null);
+    assert.equal(JSON.stringify(buildChallengeStepsBody(form).steps[0]), '{"kind":"gratitude"}');
+    assert.deepEqual(challengeFormSummary(form).practices, [{ kind: 'gratitude' }]);
+    assert.equal('minutes' in (challengeFormSummary(form).practices[0] ?? {}), false);
+  });
+
+  it('creates, reloads, edits, and saves a gratitude challenge without turning it into a practice', () => {
+    const created = gratitudeForm();
+    const loaded = challengeFormFromServer({
+      draft,
+      steps: [serverGratitudeStep(0, 0)],
+    });
+    assert.equal(challengeActivity(loaded), 'gratitude');
+    assert.equal(loaded.steps[0]?.kind, 'gratitude');
+    assert.equal(loaded.steps[0]?.durationMinutes, '');
+    assert.equal(loaded.steps[0]?.practiceType, '');
+    assert.equal(loaded.steps[0]?.guidedTemplateId, null);
+    assert.equal(loaded.daysPerWeek, 4);
+    assert.equal(loaded.weekCount, '3');
+    assert.equal(validateChallengeForm(loaded), null);
+    assert.deepEqual(buildChallengeStepsBody(loaded).steps, buildChallengeStepsBody(created).steps);
+
+    const edited = { ...loaded, titleHe: 'הודיה חדשה', daysPerWeek: 2, weekCount: '6' };
+    assert.equal(challengeStepsDirty(edited, loaded), false);
+    assert.equal(validateChallengeForm(edited), null);
+    assert.deepEqual(buildChallengeStepsBody(edited).steps, [{ kind: 'gratitude' }]);
+
+    const reloaded = challengeFormFromServer({
+      draft: { ...draft, title_he: 'הודיה חדשה', days_per_week: 2, week_count: 6 },
+      steps: [serverGratitudeStep()],
+    });
+    assert.equal(reloaded.titleHe, 'הודיה חדשה');
+    assert.equal(reloaded.daysPerWeek, 2);
+    assert.equal(reloaded.weekCount, '6');
+    assert.equal(challengeActivity(reloaded), 'gratitude');
+    assert.notEqual(reloaded.steps[0]?.kind, 'silent');
+    assert.notEqual(reloaded.steps[0]?.practiceType, 'meditation');
+    assert.deepEqual(buildChallengeStepsBody(reloaded).steps, [{ kind: 'gratitude' }]);
+  });
+
+  it('rejects a gratitude step mixed with silent or guided steps, including dance', () => {
+    const withDance = gratitudeForm();
+    withDance.steps = [
+      gratitudeChallengeStep('thanks'),
+      { ...silentChallengeStep('dance'), practiceType: 'dance', durationMinutes: '8' },
+    ];
+    assert.equal(validateChallengeForm(withDance), 'gratitude_steps');
+
+    const withGuided = gratitudeForm();
+    withGuided.steps = [
+      gratitudeChallengeStep('thanks'),
+      { ...guidedChallengeStep('guided'), guidedTemplateId: 4 },
+    ];
+    assert.equal(validateChallengeForm(withGuided), 'gratitude_steps');
+
+    const two = gratitudeForm();
+    two.steps = [gratitudeChallengeStep('a'), gratitudeChallengeStep('b')];
+    assert.equal(validateChallengeForm(two), 'gratitude_steps');
+
+    const danceOnly = emptyChallengeForm();
+    danceOnly.titleHe = 'ריקוד';
+    danceOnly.steps = [{ ...silentChallengeStep('dance'), practiceType: 'dance', durationMinutes: '8' }];
+    assert.equal(validateChallengeForm(danceOnly), null);
+    assert.deepEqual(buildChallengeStepsBody(danceOnly).steps, [
+      { kind: 'silent', practice_type: 'dance', duration_minutes: 8 },
+    ]);
+  });
+
+  it('asks before replacing edited or saved steps, and keeps them until the switch is applied', () => {
+    const untouched = emptyChallengeForm();
+    untouched.titleHe = 'בוקר';
+    assert.equal(
+      challengeActivitySwitchNeedsConfirm({ form: untouched, baseline: emptyChallengeForm(), persisted: false }),
+      false,
+    );
+    const toGratitude = applyChallengeActivity(untouched, 'gratitude');
+    assert.equal(toGratitude.titleHe, 'בוקר');
+    assert.equal(toGratitude.daysPerWeek, untouched.daysPerWeek);
+    assert.deepEqual(buildChallengeStepsBody(toGratitude).steps, [{ kind: 'gratitude' }]);
+    assert.equal(
+      challengeActivitySwitchNeedsConfirm({ form: toGratitude, baseline: untouched, persisted: false }),
+      true,
+    );
+
+    const edited = emptyChallengeForm();
+    edited.steps = [{ ...silentChallengeStep('dance'), practiceType: 'dance', durationMinutes: '12' }];
+    assert.equal(
+      challengeActivitySwitchNeedsConfirm({ form: edited, baseline: emptyChallengeForm(), persisted: false }),
+      true,
+    );
+    assert.equal(edited.steps[0]?.practiceType, 'dance');
+    assert.deepEqual(buildChallengeStepsBody(edited).steps, [
+      { kind: 'silent', practice_type: 'dance', duration_minutes: 12 },
+    ]);
+
+    const saved = challengeFormFromServer({
+      draft,
+      steps: [
+        {
+          kind: 'silent',
+          practice_type: 'dance',
+          duration_minutes: 12,
+          guided_template_id: null,
+          title: null,
+          duration_seconds: null,
+        },
+      ],
+    });
+    assert.equal(challengeActivitySwitchNeedsConfirm({ form: saved, baseline: saved, persisted: true }), true);
+    assert.equal(saved.steps[0]?.practiceType, 'dance');
+    const replaced = applyChallengeActivity(saved, 'gratitude');
+    assert.equal(saved.steps[0]?.practiceType, 'dance');
+    assert.equal(replaced.daysPerWeek, saved.daysPerWeek);
+    assert.equal(replaced.weekCount, saved.weekCount);
+    assert.deepEqual(buildChallengeStepsBody(replaced).steps, [{ kind: 'gratitude' }]);
+    assert.equal(
+      challengeActivitySwitchNeedsConfirm({ form: replaced, baseline: replaced, persisted: true }),
+      true,
+    );
+  });
+
+  it('withholds gratitude when the step-kind field is missing, and still saves a practice', () => {
+    const bootstrap = {
+      studio_access: { enabled: true, capabilities: { guided_sessions: true, challenges: true, recipes: false } },
+    };
+    assert.equal(serverSupportsGratitudeChallengeStep(bootstrap), false);
+    assert.equal(parseStudioAccess(bootstrap).capabilities.challenges, true);
+    assert.equal(shouldLoadStudioArea(CHALLENGES_CAPABILITY, parseStudioAccess(bootstrap)), true);
+
+    const loaded = challengeFormFromServer({ draft, steps: [serverGratitudeStep(0, 0)] });
+    const before = structuredClone(loaded);
+    assert.equal(gratitudeEditingBlocked(loaded, false), true);
+    assert.deepEqual(challengeStepsWrite(loaded, false), { ok: false, reason: 'gratitude_unsupported' });
+    assert.deepEqual(loaded, before);
+    assert.equal(loaded.steps[0]?.kind, 'gratitude');
+    assert.equal(loaded.titleHe, 'הודיה');
+    assert.notEqual(challengeActivity(loaded), 'practice');
+
+    const dance = emptyChallengeForm();
+    dance.titleHe = 'ריקוד';
+    dance.steps = [{ ...silentChallengeStep('dance'), practiceType: 'dance', durationMinutes: '12' }];
+    assert.deepEqual(challengeStepsWrite(dance, false), {
+      ok: true,
+      steps: [{ kind: 'silent', practice_type: 'dance', duration_minutes: 12 }],
+    });
+  });
+
+  it('withholds gratitude when the step-kind field is malformed', () => {
+    const studioAccess = { enabled: true, capabilities: { challenges: true } };
+    const malformed = [
+      { studio_access: studioAccess, challenge_capabilities: null },
+      { studio_access: studioAccess, challenge_capabilities: 'gratitude' },
+      { studio_access: studioAccess, challenge_capabilities: [] },
+      { studio_access: studioAccess, challenge_capabilities: { supported_step_kinds: 'gratitude' } },
+      { studio_access: studioAccess, challenge_capabilities: { supported_step_kinds: null } },
+      { studio_access: studioAccess, challenge_capabilities: { supported_step_kinds: ['silent', 1, 'gratitude'] } },
+      { studio_access: studioAccess, challenge_capabilities: { supported_step_kinds: [true] } },
+    ];
+    for (const bootstrap of malformed) {
+      assert.equal(serverSupportsGratitudeChallengeStep(bootstrap), false);
+      assert.equal(parseStudioAccess(bootstrap).capabilities.challenges, true);
+    }
+
+    const loaded = challengeFormFromServer({ draft, steps: [serverGratitudeStep()] });
+    assert.equal(challengeStepsWrite(loaded, false).ok, false);
+    assert.equal(loaded.steps[0]?.kind, 'gratitude');
+    assert.equal(loaded.descriptionHe, 'הערה');
+    assert.equal(loaded.daysPerWeek, 4);
+    const practice = emptyChallengeForm();
+    practice.titleHe = 'בוקר';
+    assert.equal(validateChallengeForm(practice), null);
+    assert.equal(challengeStepsWrite(practice, false).ok, true);
+  });
+
+  it('withholds gratitude when the supported list has no gratitude kind', () => {
+    const bootstrap = {
+      studio_access: { enabled: true, capabilities: { challenges: true } },
+      challenge_capabilities: { supported_step_kinds: ['silent', 'guided'] },
+    };
+    assert.equal(serverSupportsGratitudeChallengeStep(bootstrap), false);
+    assert.equal(parseStudioAccess(bootstrap).capabilities.challenges, true);
+
+    const loaded = challengeFormFromServer({ draft, steps: [serverGratitudeStep()] });
+    assert.equal(gratitudeEditingBlocked(loaded, false), true);
+    assert.deepEqual(challengeStepsWrite(loaded, false), { ok: false, reason: 'gratitude_unsupported' });
+    assert.equal(loaded.steps[0]?.kind, 'gratitude');
+    assert.equal(loaded.weekCount, '3');
+
+    const practice = emptyChallengeForm();
+    practice.titleEn = 'Morning';
+    practice.steps = [
+      { ...silentChallengeStep('breath'), practiceType: 'breathing', durationMinutes: '5' },
+      { ...guidedChallengeStep('guided'), guidedTemplateId: 4 },
+    ];
+    assert.deepEqual(challengeStepsWrite(practice, false), {
+      ok: true,
+      steps: [
+        { kind: 'silent', practice_type: 'breathing', duration_minutes: 5 },
+        { kind: 'guided', guided_template_id: 4 },
+      ],
+    });
+  });
+
+  it('allows a gratitude draft when the server lists gratitude, even if the exposure gate is closed', () => {
+    const bootstrap = {
+      studio_access: { enabled: true, capabilities: { guided_sessions: false, challenges: true } },
+      challenge_capabilities: { supported_step_kinds: ['silent', 'guided', 'gratitude'] },
+      remote_config: {
+        feature_gates: {
+          gratitude_challenge_enabled: { enabled: false, required_tier: 'free', paywall_mode: 'none' },
+        },
+      },
+    };
+    assert.equal(serverSupportsGratitudeChallengeStep(bootstrap), true);
+    const access = parseStudioAccess(bootstrap);
+    assert.equal(access.enabled, true);
+    assert.equal(access.capabilities.challenges, true);
+    assert.equal(shouldLoadStudioArea(CHALLENGES_CAPABILITY, access), true);
+    assert.equal(Object.hasOwn(access.capabilities, 'gratitude'), false);
+
+    const withoutStudio = {
+      challenge_capabilities: { supported_step_kinds: ['gratitude'] },
+      remote_config: { feature_gates: { gratitude_challenge_enabled: { enabled: true } } },
+    };
+    assert.equal(serverSupportsGratitudeChallengeStep(withoutStudio), true);
+    assert.equal(parseStudioAccess(withoutStudio).enabled, false);
+    assert.equal(parseStudioAccess(withoutStudio).capabilities.challenges, false);
+    assert.equal(shouldLoadStudioArea(CHALLENGES_CAPABILITY, parseStudioAccess(withoutStudio)), false);
+
+    const ready = {
+      mode: 'edit' as const,
+      status: 'draft',
+      dirty: false,
+      coverPending: false,
+      coverUploading: false,
+      coverFailed: false,
+    };
+    assert.equal(challengeSubmitPlan({ ...ready, gratitudeBlocked: true }).send, false);
+    assert.equal(challengeSubmitPlan({ ...ready, gratitudeBlocked: false }).send, true);
+    assert.equal(challengeSubmitPlan({ ...ready, dirty: true, gratitudeBlocked: false }).send, false);
+    assert.equal(challengeSubmitPlan({ ...ready, coverPending: true, gratitudeBlocked: false }).send, false);
+    assert.equal(challengeSubmitPlan({ ...ready, status: 'pending_review', gratitudeBlocked: false }).send, false);
+    assert.equal(
+      challengeSubmitPlan({ ...ready, mode: 'create', gratitudeBlocked: false }).send,
+      false,
+    );
+    const editorSource = readFileSync('src/components/studio/challenges/ChallengeEditor.tsx', 'utf8');
+    const guardAt = editorSource.indexOf('if (busyRef.current || !submitPlan.send) return;');
+    const requestAt = editorSource.indexOf('submitStudioChallenge(');
+    assert.ok(guardAt >= 0 && requestAt > guardAt);
+    assert.match(editorSource, /disabled=\{busy \|\| !submitPlan\.send\}/);
+    assert.match(editorSource, /id="challenge-gratitude-unsupported"/);
+
+    const form = gratitudeForm();
+    assert.equal(gratitudeEditingBlocked(form, true), false);
+    const write = challengeStepsWrite(form, true);
+    assert.deepEqual(write, { ok: true, steps: [{ kind: 'gratitude' }] });
+    assert.equal(write.ok ? JSON.stringify(write.steps[0]) : '', '{"kind":"gratitude"}');
+  });
+
+  it('names gratitude writing in Hebrew and English and keeps dance on the quiet step', () => {
+    const he = JSON.parse(readFileSync('messages/studio.he.json', 'utf8')) as {
+      challenges: Record<string, string> & { practice: Record<string, string>; issue: Record<string, string> };
+    };
+    const en = JSON.parse(readFileSync('messages/studio.en.json', 'utf8')) as {
+      challenges: Record<string, string> & { practice: Record<string, string>; issue: Record<string, string> };
+    };
+    assert.equal(he.challenges.activityGratitude, 'כתיבת הודיה');
+    assert.equal(en.challenges.activityGratitude, 'Gratitude writing');
+    assert.equal(
+      he.challenges.gratitudeLede,
+      'כתיבת הודיה באיניגו מזכה יום באתגר. אין צורך לשתף אותה בקהילה.',
+    );
+    assert.match(en.challenges.gratitudeLede, /Writing gratitude in Inigo/);
+    assert.equal(he.challenges.issue.gratitude_steps.length > 0, true);
+    assert.equal(en.challenges.issue.gratitude_steps.length > 0, true);
+    assert.equal(he.challenges.gratitudeUnsupported, 'השרת אינו תומך בעריכת אתגר כתיבת הודיה.');
+    assert.equal(en.challenges.gratitudeUnsupported, 'This server does not support editing a gratitude-writing challenge.');
+    assert.equal(he.challenges.practice.dance, 'ריקוד');
+    assert.equal(en.challenges.practice.dance, 'Dance');
+
+    const editor = readFileSync('src/components/studio/challenges/ChallengeEditor.tsx', 'utf8');
+    assert.match(editor, /id="challenge-activity-gratitude"/);
+    assert.match(editor, /aria-describedby="challenge-activity-gratitude-lede"/);
+    assert.match(editor, /practice\.kind === 'gratitude'/);
+    assert.match(editor, /challengeActivitySwitchNeedsConfirm/);
+    assert.match(editor, /gratitudeStepSupported/);
+    assert.match(editor, /challengeStepsWrite/);
+    assert.match(editor, /gratitudeUnsupported/);
+    assert.match(editor, /CHALLENGE_PRACTICE_TYPES\.map/);
   });
 });
 
