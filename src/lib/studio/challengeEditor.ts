@@ -5,7 +5,7 @@ export const CHALLENGE_STEP_MAX = 5;
 export const CHALLENGE_SILENT_MINUTES_MIN = 1;
 export const CHALLENGE_SILENT_MINUTES_MAX = 180;
 
-export const CHALLENGE_PRACTICE_TYPES = ['meditation', 'walking', 'breathing'] as const;
+export const CHALLENGE_PRACTICE_TYPES = ['meditation', 'walking', 'breathing', 'dance'] as const;
 export type ChallengePracticeType = (typeof CHALLENGE_PRACTICE_TYPES)[number];
 
 export type ChallengeSchedule = 'fixed_weeks' | 'ongoing';

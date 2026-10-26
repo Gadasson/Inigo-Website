@@ -92,7 +92,7 @@
     "practicePosition": "Practice {position}",
     "stepKind": "Practice type",
     "kindSilent": "Quiet practice",
-    "kindSilentLede": "Choose meditation, walking, or breathing, and the practice time required.",
+    "kindSilentLede": "Choose meditation, walking, breathing, or dance, and the practice time required.",
     "kindGuided": "Guided session",
     "kindGuidedLede": "Choose a free session from the library. You can also choose sessions from other guides. Completing the practice in the challenge requires the session to end naturally.",
     "practiceType": "Practice",
@@ -178,7 +178,8 @@
     "practice": {
       "meditation": "Meditation",
       "walking": "Walking",
-      "breathing": "Breathing"
+      "breathing": "Breathing",
+      "dance": "Dance"
     },
     "media": {
       "audio": "Audio",

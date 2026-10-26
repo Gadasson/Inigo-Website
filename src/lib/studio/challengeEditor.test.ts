@@ -5,6 +5,9 @@ import { CHALLENGES_CAPABILITY, parseStudioAccess } from '@/lib/api/studioBootst
 import { shouldLoadStudioArea, studioAreaManageHref, studioHomeView, resolveStudioHomeTab } from '@/lib/studio/studioAreas';
 import {
   addChallengeStep,
+  CHALLENGE_PRACTICE_TYPES,
+  CHALLENGE_SILENT_MINUTES_MAX,
+  CHALLENGE_SILENT_MINUTES_MIN,
   buildChallengeDetailsBody,
   buildChallengeStepsBody,
   buildSessionOptionsPath,
@@ -12,6 +15,7 @@ import {
   challengeFormFromServer,
   challengeFormSummary,
   challengeRevisionSaveMethods,
+  challengeStepsDirty,
   challengeSaveOutcome,
   challengeSavePlan,
   emptyChallengeForm,
@@ -283,6 +287,197 @@ describe('challenge steps and save errors', () => {
     const ongoing = challengeFormSummary(form);
     assert.equal(ongoing.weekCount, null);
     assert.equal(ongoing.practices[0]?.kind === 'silent' ? ongoing.practices[0].minutes : null, null);
+  });
+});
+
+describe('dance timer steps', () => {
+  const draft = {
+    title_en: 'Dance',
+    title_he: 'ריקוד',
+    description_en: '',
+    description_he: '',
+    days_per_week: 3,
+    schedule: 'ongoing' as const,
+    week_count: null,
+  };
+
+  function danceForm() {
+    const form = emptyChallengeForm();
+    form.titleEn = 'Dance';
+    form.titleHe = 'ריקוד';
+    form.steps = [
+      { ...silentChallengeStep('dance'), practiceType: 'dance', durationMinutes: '12' },
+    ];
+    return form;
+  }
+
+  it('keeps dance on the shared timer list and the same 1–180 minute bounds', () => {
+    assert.equal(CHALLENGE_SILENT_MINUTES_MIN, 1);
+    assert.equal(CHALLENGE_SILENT_MINUTES_MAX, 180);
+    assert.ok(CHALLENGE_PRACTICE_TYPES.includes('dance'));
+    assert.equal(
+      readFileSync('src/components/studio/challenges/ChallengeEditor.tsx', 'utf8').includes(
+        'CHALLENGE_PRACTICE_TYPES.map',
+      ),
+      true,
+    );
+
+    const form = danceForm();
+    assert.equal(validateChallengeForm(form), null);
+    assert.deepEqual(buildChallengeStepsBody(form).steps, [
+      { kind: 'silent', practice_type: 'dance', duration_minutes: 12 },
+    ]);
+
+    form.steps[0] = { ...form.steps[0], durationMinutes: '1' };
+    assert.equal(validateChallengeForm(form), null);
+    form.steps[0] = { ...form.steps[0], durationMinutes: '180' };
+    assert.equal(validateChallengeForm(form), null);
+    assert.deepEqual(buildChallengeStepsBody(form).steps, [
+      { kind: 'silent', practice_type: 'dance', duration_minutes: 180 },
+    ]);
+
+    const meditation = danceForm();
+    meditation.steps[0] = { ...meditation.steps[0], practiceType: 'meditation', durationMinutes: '180' };
+    assert.equal(validateChallengeForm(meditation), null);
+
+    for (const minutes of ['0', '181', '']) {
+      form.steps[0] = { ...form.steps[0], practiceType: 'dance', durationMinutes: minutes };
+      assert.equal(validateChallengeForm(form), 'duration_minutes');
+    }
+  });
+
+  it('saves, edits, and reloads a single dance step without turning it into meditation', () => {
+    const created = danceForm();
+    const saved = challengeFormFromServer({
+      draft,
+      steps: [
+        {
+          kind: 'silent',
+          practice_type: 'dance',
+          duration_minutes: 12,
+          guided_template_id: null,
+          title: null,
+          duration_seconds: null,
+        },
+      ],
+    });
+    assert.equal(saved.steps[0]?.kind, 'silent');
+    assert.equal(saved.steps[0]?.practiceType, 'dance');
+    assert.notEqual(saved.steps[0]?.practiceType, 'meditation');
+    assert.equal(saved.steps[0]?.durationMinutes, '12');
+    assert.equal(validateChallengeForm(saved), null);
+    assert.deepEqual(buildChallengeStepsBody(saved).steps, buildChallengeStepsBody(created).steps);
+    assert.deepEqual(challengeFormSummary(saved).practices, [
+      { kind: 'silent', practiceType: 'dance', minutes: 12 },
+    ]);
+
+    const edited = {
+      ...saved,
+      steps: saved.steps.map((step) => ({ ...step, durationMinutes: '20' })),
+    };
+    assert.equal(challengeStepsDirty(edited, saved), true);
+    assert.deepEqual(buildChallengeStepsBody(edited).steps, [
+      { kind: 'silent', practice_type: 'dance', duration_minutes: 20 },
+    ]);
+
+    const unknown = challengeFormFromServer({
+      draft,
+      steps: [
+        {
+          kind: 'silent',
+          practice_type: 'yoga',
+          duration_minutes: 5,
+          guided_template_id: null,
+          title: null,
+          duration_seconds: null,
+        },
+      ],
+    });
+    assert.equal(unknown.steps[0]?.practiceType, '');
+    assert.notEqual(unknown.steps[0]?.practiceType, 'meditation');
+    assert.notEqual(unknown.steps[0]?.practiceType, 'dance');
+  });
+
+  it('keeps dance inside a mixed step sequence on save and reload', () => {
+    const form = danceForm();
+    form.steps = [
+      { ...silentChallengeStep('dance'), practiceType: 'dance', durationMinutes: '8' },
+      { ...silentChallengeStep('breath'), practiceType: 'breathing', durationMinutes: '5' },
+      {
+        ...guidedChallengeStep('guided'),
+        guidedTemplateId: 4,
+        guidedTitle: 'Morning Sit',
+        guidedDurationSeconds: 600,
+      },
+    ];
+    assert.equal(validateChallengeForm(form), null);
+    assert.deepEqual(buildChallengeStepsBody(form).steps, [
+      { kind: 'silent', practice_type: 'dance', duration_minutes: 8 },
+      { kind: 'silent', practice_type: 'breathing', duration_minutes: 5 },
+      { kind: 'guided', guided_template_id: 4 },
+    ]);
+
+    const reloaded = challengeFormFromServer({
+      draft,
+      steps: [
+        {
+          kind: 'silent',
+          practice_type: 'dance',
+          duration_minutes: 8,
+          guided_template_id: null,
+          title: null,
+          duration_seconds: null,
+        },
+        {
+          kind: 'silent',
+          practice_type: 'breathing',
+          duration_minutes: 5,
+          guided_template_id: null,
+          title: null,
+          duration_seconds: null,
+        },
+        {
+          kind: 'guided',
+          practice_type: null,
+          duration_minutes: null,
+          guided_template_id: 4,
+          title: 'Morning Sit',
+          duration_seconds: 600,
+        },
+      ],
+    });
+    assert.deepEqual(
+      reloaded.steps.map((step) =>
+        step.kind === 'silent'
+          ? { kind: step.kind, practiceType: step.practiceType, durationMinutes: step.durationMinutes }
+          : { kind: step.kind, guidedTemplateId: step.guidedTemplateId },
+      ),
+      [
+        { kind: 'silent', practiceType: 'dance', durationMinutes: '8' },
+        { kind: 'silent', practiceType: 'breathing', durationMinutes: '5' },
+        { kind: 'guided', guidedTemplateId: 4 },
+      ],
+    );
+    assert.equal(reloaded.steps[0]?.practiceType, 'dance');
+    assert.notEqual(reloaded.steps[0]?.practiceType, 'meditation');
+    assert.deepEqual(buildChallengeStepsBody(reloaded).steps, buildChallengeStepsBody(form).steps);
+  });
+
+  it('names dance in Hebrew and English on the quiet-step control', () => {
+    const he = JSON.parse(readFileSync('messages/studio.he.json', 'utf8')) as {
+      challenges: { kindSilentLede: string; practice: Record<string, string> };
+    };
+    const en = JSON.parse(readFileSync('messages/studio.en.json', 'utf8')) as {
+      challenges: { kindSilentLede: string; practice: Record<string, string> };
+    };
+    assert.equal(he.challenges.practice.dance, 'ריקוד');
+    assert.equal(en.challenges.practice.dance, 'Dance');
+    assert.match(he.challenges.kindSilentLede, /ריקוד/);
+    assert.match(en.challenges.kindSilentLede, /dance/);
+    for (const practice of CHALLENGE_PRACTICE_TYPES) {
+      assert.ok(he.challenges.practice[practice]);
+      assert.ok(en.challenges.practice[practice]);
+    }
   });
 });
 

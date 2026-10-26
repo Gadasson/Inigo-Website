@@ -92,7 +92,7 @@
     "practicePosition": "תרגול {position}",
     "stepKind": "סוג התרגול",
     "kindSilent": "תרגול שקט",
-    "kindSilentLede": "בחרו מדיטציה, הליכה או נשימה, ואת זמן התרגול הנדרש.",
+    "kindSilentLede": "בחרו מדיטציה, הליכה, נשימה או ריקוד, ואת זמן התרגול הנדרש.",
     "kindGuided": "סשן מודרך",
     "kindGuidedLede": "בחרו סשן חינמי מהספרייה. אפשר לבחור גם סשנים של מדריכים אחרים. להשלמת התרגול באתגר נדרש סיום טבעי של הסשן.",
     "practiceType": "תרגול",
@@ -178,7 +178,8 @@
     "practice": {
       "meditation": "מדיטציה",
       "walking": "הליכה",
-      "breathing": "נשימה"
+      "breathing": "נשימה",
+      "dance": "ריקוד"
     },
     "media": {
       "audio": "שמע",
