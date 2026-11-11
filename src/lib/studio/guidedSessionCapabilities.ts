@@ -16,6 +16,8 @@ export const LIVE_SAFE_EDIT_FIELDS = [
   'sound_gender',
   'time_suitability',
   'sub_category_codes',
+  'practice_start_audio_seconds',
+  'practice_start_video_seconds',
 ] as const;
 
 export type LiveSafeEditField = (typeof LIVE_SAFE_EDIT_FIELDS)[number];

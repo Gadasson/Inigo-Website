@@ -27,6 +27,8 @@ export type LiveGuidedSessionPatch = Partial<{
   sound_gender: string;
   time_suitability: TimeSuitabilityValue[];
   sub_category_codes: string[];
+  practice_start_audio_seconds: number | null;
+  practice_start_video_seconds: number | null;
 }>;
 
 function tagsEqual(left: string, right: string): boolean {

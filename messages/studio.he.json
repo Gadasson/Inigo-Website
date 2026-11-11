@@ -703,7 +703,16 @@
     "retryAttach": "ניסיון צירוף חוזר",
     "retryOptimization": "ניסיון חוזר",
     "discard": "מחיקת הקובץ שהועלה",
-    "audioUnsupported": "הדפדפן שלכם אינו תומך בהשמעת אודיו."
+    "audioUnsupported": "הדפדפן שלכם אינו תומך בהשמעת אודיו.",
+    "practiceStartLabel": "תחילת התרגול",
+    "practiceStartHelper": "אופציונלי. דקות:שניות מתוך המדיה. שדה ריק = מתחיל מההתחלה.",
+    "practiceStartFromPlayer": "להגדיר לפי המיקום בנגן",
+    "practiceStartClear": "ניקוי",
+    "practiceStartSaving": "שומר…",
+    "practiceStartMinutesAria": "דקות לתחילת התרגול",
+    "practiceStartSecondsAria": "שניות לתחילת התרגול",
+    "practiceStartInvalid": "בחרו זמן לפני סוף הסשן.",
+    "practiceStartNoPlayer": "נגנו קצת במדיה ואז הגדירו לפי המיקום."
   },
   "replacement": {
     "currentVideo": "הווידאו הנוכחי",

@@ -93,6 +93,10 @@ export type StudioGuidedSession = {
   thumbnail_optimization_status?: 'pending' | 'processing' | 'ready' | 'failed' | null;
   audio_url?: string | null;
   video_url?: string | null;
+  /** Whole seconds into audio where practice begins; null = start of media. */
+  practice_start_audio_seconds?: number | null;
+  /** Whole seconds into video where practice begins; null = start of media. */
+  practice_start_video_seconds?: number | null;
   has_audio?: boolean;
   has_video?: boolean;
   /** Raw worker status; prefer display_status in UI. */
@@ -133,6 +137,8 @@ export type UpdateGuidedSessionDraftPayload = Partial<{
   tags: string[];
   sub_category_codes?: string[];
   time_suitability: TimeSuitabilityValue[];
+  practice_start_audio_seconds: number | null;
+  practice_start_video_seconds: number | null;
 }>;
 
 type StudioGuidedSessionListResponse =

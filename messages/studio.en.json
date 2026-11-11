@@ -703,7 +703,16 @@
     "retryAttach": "Retry attach",
     "retryOptimization": "Retry",
     "discard": "Discard uploaded file",
-    "audioUnsupported": "Your browser does not support audio playback."
+    "audioUnsupported": "Your browser does not support audio playback.",
+    "practiceStartLabel": "Practice start",
+    "practiceStartHelper": "Optional. Minutes:seconds into the media. Leave empty to start from the beginning.",
+    "practiceStartFromPlayer": "Set from player position",
+    "practiceStartClear": "Clear",
+    "practiceStartSaving": "Saving…",
+    "practiceStartMinutesAria": "Practice start minutes",
+    "practiceStartSecondsAria": "Practice start seconds",
+    "practiceStartInvalid": "Choose a time before the end of the session.",
+    "practiceStartNoPlayer": "Play a little of the media, then set from the player position."
   },
   "replacement": {
     "currentVideo": "Current video",

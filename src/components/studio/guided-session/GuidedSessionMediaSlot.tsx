@@ -5,6 +5,7 @@ import {
   type GuidedSessionMediaActivity,
   type GuidedSessionMediaSlotConfig,
   getVideoOptimizationDisplayStatus,
+  guidedSessionCanonicalVideoUrl,
   guidedSessionMediaFileName,
   guidedSessionMediaUrl,
   hasGuidedSessionPrimaryMediaConflict,
@@ -40,6 +41,7 @@ import { parseStudioApiError } from '@/lib/studio/parseStudioApiError';
 import type { StudioGuidedSession } from '@/lib/api/studioGuidedSessions';
 import StudioConfirmDialog from '@/components/studio/StudioConfirmDialog';
 import LoadingRemoteImage from '@/components/LoadingRemoteImage';
+import PracticeStartOffsetField from '@/components/studio/guided-session/PracticeStartOffsetField';
 import { useTranslations } from 'next-intl';
 
 type Props = {
@@ -119,6 +121,7 @@ export default function GuidedSessionMediaSlot({
   const tv = useTranslations('mediaValidation');
   const te = useTranslations('mediaError');
   const inputRef = useRef<HTMLInputElement>(null);
+  const playbackRef = useRef<HTMLMediaElement | null>(null);
   const localObjectUrlRef = useRef<string | null>(null);
   const [phase, setPhase] = useState<SlotPhase>('idle');
   const [uploadPercent, setUploadPercent] = useState(0);
@@ -171,6 +174,8 @@ export default function GuidedSessionMediaSlot({
   const videoOptStatus =
     slot.role === 'video' ? getVideoOptimizationDisplayStatus(session) : null;
   const attachedUrl = guidedSessionMediaUrl(session, slot.role);
+  const playableVideoUrl =
+    slot.role === 'video' ? guidedSessionCanonicalVideoUrl(session) : null;
   const attachedName = guidedSessionMediaFileName(session, slot.role);
   const isAttached =
     slot.role === 'video' ? hasGuidedSessionVideo(session) : Boolean(attachedUrl);
@@ -512,6 +517,9 @@ export default function GuidedSessionMediaSlot({
 
         {slot.role === 'audio' && attachedUrl && !hasPendingAttach ? (
           <audio
+            ref={(element) => {
+              playbackRef.current = element;
+            }}
             className="creator-workspace__media-audio"
             controls
             preload="metadata"
@@ -519,6 +527,32 @@ export default function GuidedSessionMediaSlot({
           >
             {t('audioUnsupported')}
           </audio>
+        ) : null}
+
+        {slot.role === 'video' && playableVideoUrl && !hasPendingAttach ? (
+          <video
+            ref={(element) => {
+              playbackRef.current = element;
+            }}
+            className="creator-workspace__media-video"
+            controls
+            preload="metadata"
+            playsInline
+            src={playableVideoUrl}
+          />
+        ) : null}
+
+        {(slot.role === 'audio' || slot.role === 'video') &&
+        isAttached &&
+        !hasPendingAttach &&
+        (slot.role === 'audio' ? Boolean(attachedUrl) : Boolean(playableVideoUrl)) ? (
+          <PracticeStartOffsetField
+            session={session}
+            mediaKind={slot.role}
+            mediaRef={playbackRef}
+            disabled={disabled}
+            onSessionUpdated={onSessionUpdated}
+          />
         ) : null}
 
         {error ? (

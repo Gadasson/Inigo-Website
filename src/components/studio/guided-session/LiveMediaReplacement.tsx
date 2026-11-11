@@ -32,6 +32,7 @@ import {
   type ReplacementActivity,
 } from '@/lib/studio/mediaReplacement';
 import { getStudioApiErrorCode, parseStudioApiError } from '@/lib/studio/parseStudioApiError';
+import PracticeStartOffsetField from '@/components/studio/guided-session/PracticeStartOffsetField';
 
 type Props = {
   session: StudioGuidedSession;
@@ -44,6 +45,7 @@ export default function LiveMediaReplacement({ session, onSessionUpdated }: Prop
   const tv = useTranslations('mediaValidation');
   const tm = useTranslations('media');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const playbackRef = useRef<HTMLMediaElement | null>(null);
   const [uploading, setUploading] = useState(false);
   const [percent, setPercent] = useState(0);
   const [busy, setBusy] = useState<'retry' | 'discard' | null>(null);
@@ -209,12 +211,37 @@ export default function LiveMediaReplacement({ session, onSessionUpdated }: Prop
           <span className="creator-workspace__replacement-live">{t('liveBadge')}</span>
         </div>
         {currentUrl && mediaType === 'video' ? (
-          <video className="creator-workspace__media-video" controls preload="metadata" src={currentUrl} />
+          <video
+            ref={(element) => {
+              playbackRef.current = element;
+            }}
+            className="creator-workspace__media-video"
+            controls
+            preload="metadata"
+            playsInline
+            src={currentUrl}
+          />
         ) : null}
         {currentUrl && mediaType === 'audio' ? (
-          <audio className="creator-workspace__media-audio" controls preload="metadata" src={currentUrl}>
+          <audio
+            ref={(element) => {
+              playbackRef.current = element;
+            }}
+            className="creator-workspace__media-audio"
+            controls
+            preload="metadata"
+            src={currentUrl}
+          >
             {tm('audioUnsupported')}
           </audio>
+        ) : null}
+        {currentUrl ? (
+          <PracticeStartOffsetField
+            session={session}
+            mediaKind={mediaType}
+            mediaRef={playbackRef}
+            onSessionUpdated={onSessionUpdated}
+          />
         ) : null}
       </article>
 
