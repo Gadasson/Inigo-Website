@@ -37,6 +37,7 @@ import {
   challengeDetailsDirty,
   challengeFormFromServer,
   challengeFormSummary,
+  challengeRecommendationIntentsDirty,
   challengeSaveOutcome,
   challengeSavePlan,
   challengeStepsDirty,
@@ -53,8 +54,11 @@ import {
   shouldSaveChallengeSteps,
   silentChallengeStep,
   takeChallengeCoverRetry,
+  toggleChallengeRecommendationIntent,
   validateChallengeForm,
+  withChallengeRecommendationIntents,
   CHALLENGE_PRACTICE_TYPES,
+  CHALLENGE_RECOMMENDATION_INTENTS,
   type ChallengeActivity,
   type ChallengeEditorForm,
   type ChallengeFormIssue,
@@ -148,6 +152,7 @@ export default function ChallengeEditor(props: Props) {
   const [busy, setBusy] = useState(false);
   const [issue, setIssue] = useState<ChallengeFormIssue | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [recommendationIntentsError, setRecommendationIntentsError] = useState<string | null>(null);
   const [savedNote, setSavedNote] = useState<string | null>(null);
   const [confirmArchive, setConfirmArchive] = useState(false);
   const [pendingActivity, setPendingActivity] = useState<ChallengeActivity | null>(null);
@@ -167,6 +172,7 @@ export default function ChallengeEditor(props: Props) {
   const editable =
     !gratitudeBlocked &&
     (props.mode === 'create' || isChallengeDraftEditable(status) || (revising && canReviseApprovedChallenge(status)));
+  const intentsDirty = challengeRecommendationIntentsDirty(form, baseline);
   const detailsDirty = challengeDetailsDirty(form, baseline);
   const stepsDirty = challengeStepsDirty(form, baseline);
   const dirty = detailsDirty || stepsDirty;
@@ -204,6 +210,7 @@ export default function ChallengeEditor(props: Props) {
         setForm(next);
         setBaseline(next);
         setPendingActivity(null);
+        setRecommendationIntentsError(null);
         setCoverUrl(loaded.draft.cover_url?.trim() ? loaded.draft.cover_url : null);
         setRevising(false);
         if (takeChallengeCoverRetry(challengeId)) {
@@ -298,15 +305,17 @@ export default function ChallengeEditor(props: Props) {
     setCoverUploading(true);
     setCoverUploadFailed(false);
     setError(null);
+    setRecommendationIntentsError(null);
     setSavedNote(null);
     try {
       const token = await getIdToken();
       let id = props.mode === 'edit' ? props.challengeId : createdIdRef.current;
       if (id == null) {
-        const created = await createStudioChallenge(
-          { ...buildChallengeDetailsBody(form), steps: stepsWrite.steps },
-          token,
-        );
+        const details = withChallengeRecommendationIntents(buildChallengeDetailsBody(form), form, {
+          mode: 'create',
+          intentsDirty: true,
+        });
+        const created = await createStudioChallenge({ ...details, steps: stepsWrite.steps }, token);
         id = created.id;
         createdIdRef.current = id;
       }
@@ -328,7 +337,11 @@ export default function ChallengeEditor(props: Props) {
         }
       }
     } catch (err) {
-      setError(parseChallengeApiFailure(err).detail);
+      const failure = parseChallengeApiFailure(err);
+      if (failure.reasonCode === 'validation_failed' && failure.field === 'recommendation_intents') {
+        setRecommendationIntentsError(t('errors.recommendationIntents'));
+      }
+      setError(failure.detail);
     } finally {
       busyRef.current = false;
       setBusy(false);
@@ -362,12 +375,16 @@ export default function ChallengeEditor(props: Props) {
     busyRef.current = true;
     setBusy(true);
     setError(null);
+    setRecommendationIntentsError(null);
     setSavedNote(null);
     const detailsFailed = { current: false };
     const stepsFailed = { current: false };
     try {
       const token = await getIdToken();
-      const details = buildChallengeDetailsBody(form);
+      const details = withChallengeRecommendationIntents(buildChallengeDetailsBody(form), form, {
+        mode: props.mode,
+        intentsDirty,
+      });
       const steps = stepsWrite.steps;
       if (props.mode === 'create') {
         const created = await createStudioChallenge({ ...details, steps }, token);
@@ -381,7 +398,11 @@ export default function ChallengeEditor(props: Props) {
           latest = await patchStudioChallenge(props.challengeId, details, token);
         } catch (err) {
           detailsFailed.current = true;
-          setError(t('saveDetailsFailed', { detail: parseChallengeApiFailure(err).detail }));
+          const failure = parseChallengeApiFailure(err);
+          if (failure.reasonCode === 'validation_failed' && failure.field === 'recommendation_intents') {
+            setRecommendationIntentsError(t('errors.recommendationIntents'));
+          }
+          setError(t('saveDetailsFailed', { detail: failure.detail }));
         }
       }
       if (
@@ -412,6 +433,7 @@ export default function ChallengeEditor(props: Props) {
         setDetail(latest);
         setForm(next);
         setBaseline(next);
+        setRecommendationIntentsError(null);
         if (typeof latest.draft.cover_url === 'string' || latest.draft.cover_url === null) {
           setCoverUrl(latest.draft.cover_url?.trim() ? latest.draft.cover_url : null);
         }
@@ -419,7 +441,11 @@ export default function ChallengeEditor(props: Props) {
         setSavedNote(t('saved'));
       }
     } catch (err) {
-      setError(parseChallengeApiFailure(err).detail);
+      const failure = parseChallengeApiFailure(err);
+      if (failure.reasonCode === 'validation_failed' && failure.field === 'recommendation_intents') {
+        setRecommendationIntentsError(t('errors.recommendationIntents'));
+      }
+      setError(failure.detail);
     } finally {
       busyRef.current = false;
       setBusy(false);
@@ -632,6 +658,51 @@ export default function ChallengeEditor(props: Props) {
             disabled={!editable || busy}
             onChange={(event) => setForm({ ...form, weekCount: event.target.value.replace(/\D/g, '') })}
           />
+        </div>
+      ) : null}
+
+      {form.recommendationIntentsSupported ? (
+        <div className="studio-form__field">
+          <span id="challenge-recommendation-label" className="studio-form__legend">
+            {t('recommendationIntents')}
+          </span>
+          <p id="challenge-recommendation-lede" className="studio-form__field-lede">
+            {t('recommendationIntentsLede')}
+          </p>
+          <div
+            role="group"
+            aria-labelledby="challenge-recommendation-label"
+            aria-describedby={
+              recommendationIntentsError
+                ? 'challenge-recommendation-lede challenge-recommendation-error'
+                : 'challenge-recommendation-lede'
+            }
+          >
+            {CHALLENGE_RECOMMENDATION_INTENTS.map((intent) => (
+              <label key={intent} className="studio-recipe-check" htmlFor={`challenge-recommendation-${intent}`}>
+                <input
+                  id={`challenge-recommendation-${intent}`}
+                  type="checkbox"
+                  checked={form.recommendationIntents.includes(intent)}
+                  disabled={!editable || busy}
+                  onChange={() => {
+                    setForm({
+                      ...form,
+                      recommendationIntents: toggleChallengeRecommendationIntent(form.recommendationIntents, intent),
+                    });
+                    setRecommendationIntentsError(null);
+                    setSavedNote(null);
+                  }}
+                />
+                <span>{t(`recommendationIntent.${intent}`)}</span>
+              </label>
+            ))}
+          </div>
+          {recommendationIntentsError ? (
+            <p id="challenge-recommendation-error" className="studio-form__error" role="alert">
+              {recommendationIntentsError}
+            </p>
+          ) : null}
         </div>
       ) : null}
 

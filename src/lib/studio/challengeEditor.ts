@@ -8,6 +8,9 @@ export const CHALLENGE_SILENT_MINUTES_MAX = 180;
 export const CHALLENGE_PRACTICE_TYPES = ['meditation', 'walking', 'breathing', 'dance'] as const;
 export type ChallengePracticeType = (typeof CHALLENGE_PRACTICE_TYPES)[number];
 
+export const CHALLENGE_RECOMMENDATION_INTENTS = ['slow_down', 'move_more'] as const;
+export type ChallengeRecommendationIntent = (typeof CHALLENGE_RECOMMENDATION_INTENTS)[number];
+
 export type ChallengeSchedule = 'fixed_weeks' | 'ongoing';
 export type ChallengeVersionStatus = 'draft' | 'pending_review' | 'approved';
 
@@ -32,6 +35,9 @@ export type ChallengeEditorForm = {
   daysPerWeek: number;
   schedule: ChallengeSchedule;
   weekCount: string;
+  /** False when an existing draft response omitted the field (legacy server). */
+  recommendationIntentsSupported: boolean;
+  recommendationIntents: ChallengeRecommendationIntent[];
   steps: ChallengeStepDraft[];
 };
 
@@ -53,6 +59,7 @@ export type ChallengeDetailsBody = {
   days_per_week: number;
   schedule: ChallengeSchedule;
   week_count: number | null;
+  recommendation_intents?: ChallengeRecommendationIntent[];
 };
 
 /**
@@ -95,8 +102,37 @@ export function emptyChallengeForm(): ChallengeEditorForm {
     daysPerWeek: 3,
     schedule: 'ongoing',
     weekCount: '',
+    recommendationIntentsSupported: true,
+    recommendationIntents: [],
     steps: [silentChallengeStep('step-1')],
   };
+}
+
+/** Keep only known intents, in stable display order. Missing field ≠ []. */
+export function parseChallengeRecommendationIntents(value: unknown): {
+  supported: boolean;
+  intents: ChallengeRecommendationIntent[];
+} {
+  if (!Array.isArray(value)) return { supported: false, intents: [] };
+  const selected = new Set(
+    value.filter((item): item is ChallengeRecommendationIntent =>
+      (CHALLENGE_RECOMMENDATION_INTENTS as readonly string[]).includes(item as string),
+    ),
+  );
+  return {
+    supported: true,
+    intents: CHALLENGE_RECOMMENDATION_INTENTS.filter((intent) => selected.has(intent)),
+  };
+}
+
+export function toggleChallengeRecommendationIntent(
+  current: ChallengeRecommendationIntent[],
+  intent: ChallengeRecommendationIntent,
+): ChallengeRecommendationIntent[] {
+  const selected = new Set(current);
+  if (selected.has(intent)) selected.delete(intent);
+  else selected.add(intent);
+  return CHALLENGE_RECOMMENDATION_INTENTS.filter((item) => selected.has(item));
 }
 
 export function silentChallengeStep(id: string): ChallengeStepDraft {
@@ -221,6 +257,24 @@ export function buildChallengeDetailsBody(form: ChallengeEditorForm): ChallengeD
   };
 }
 
+/**
+ * Create always includes the field when the UI shows it.
+ * Edit omits it when unchanged; clearing every choice sends [].
+ * Legacy drafts that omitted the field never send it.
+ */
+export function withChallengeRecommendationIntents(
+  body: ChallengeDetailsBody,
+  form: ChallengeEditorForm,
+  input: { mode: 'create' | 'edit'; intentsDirty: boolean },
+): ChallengeDetailsBody {
+  if (!form.recommendationIntentsSupported) return body;
+  if (input.mode === 'edit' && !input.intentsDirty) return body;
+  return {
+    ...body,
+    recommendation_intents: form.recommendationIntents.slice(),
+  };
+}
+
 export type ChallengeStepsWrite =
   | { ok: true; steps: ChallengeStepBody[] }
   | { ok: false; reason: 'gratitude_unsupported' };
@@ -260,8 +314,20 @@ export function buildChallengeStepsBody(form: ChallengeEditorForm): { steps: Cha
   };
 }
 
+export function challengeRecommendationIntentsDirty(
+  form: ChallengeEditorForm,
+  baseline: ChallengeEditorForm,
+): boolean {
+  if (!form.recommendationIntentsSupported && !baseline.recommendationIntentsSupported) return false;
+  if (form.recommendationIntentsSupported !== baseline.recommendationIntentsSupported) return true;
+  return JSON.stringify(form.recommendationIntents) !== JSON.stringify(baseline.recommendationIntents);
+}
+
 export function challengeDetailsDirty(form: ChallengeEditorForm, baseline: ChallengeEditorForm): boolean {
-  return JSON.stringify(buildChallengeDetailsBody(form)) !== JSON.stringify(buildChallengeDetailsBody(baseline));
+  if (JSON.stringify(buildChallengeDetailsBody(form)) !== JSON.stringify(buildChallengeDetailsBody(baseline))) {
+    return true;
+  }
+  return challengeRecommendationIntentsDirty(form, baseline);
 }
 
 export function challengeStepsDirty(form: ChallengeEditorForm, baseline: ChallengeEditorForm): boolean {
@@ -591,9 +657,11 @@ export function challengeFormFromServer(input: {
     days_per_week: number;
     schedule: ChallengeSchedule;
     week_count: number | null;
+    recommendation_intents?: unknown;
   };
   steps: ChallengeServerStep[];
 }): ChallengeEditorForm {
+  const recommendation = parseChallengeRecommendationIntents(input.draft.recommendation_intents);
   return {
     titleEn: input.draft.title_en,
     titleHe: input.draft.title_he,
@@ -602,6 +670,8 @@ export function challengeFormFromServer(input: {
     daysPerWeek: input.draft.days_per_week,
     schedule: input.draft.schedule,
     weekCount: input.draft.week_count == null ? '' : String(input.draft.week_count),
+    recommendationIntentsSupported: recommendation.supported,
+    recommendationIntents: recommendation.intents,
     steps: input.steps.map((step, index) => {
       if (step.kind === 'gratitude') return gratitudeChallengeStep(`step-${index + 1}`);
       if (step.kind === 'guided') {

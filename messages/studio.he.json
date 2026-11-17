@@ -86,6 +86,12 @@
     "scheduleFixed": "מספר שבועות קבוע",
     "scheduleFixedLede": "האתגר מסתיים אחרי מספר השבועות שבחרתם.",
     "weekCount": "מספר שבועות",
+    "recommendationIntents": "למי האתגר יכול להתאים?",
+    "recommendationIntentsLede": "הבחירה עוזרת לנו להציע את האתגר לאנשים שמחפשים תרגול כזה.",
+    "recommendationIntent": {
+      "slow_down": "להוריד הילוך",
+      "move_more": "לזוז יותר"
+    },
     "activity": "סוג האתגר",
     "activityPractice": "תרגול",
     "activityPracticeLede": "אתגר שמבוסס על תרגול: שלבים שקטים או סשנים מודרכים, עם זמן לכל שלב.",
@@ -172,6 +178,7 @@
       "coverUpload": "העלאת התמונה נכשלה. אפשר לנסות שוב על אותו אתגר.",
       "coverRetry": "האתגר נשמר, אבל התמונה לא עלתה. אפשר לנסות שוב בלי ליצור אתגר נוסף.",
       "image": "התמונה אינה JPEG, PNG או WEBP, או שהיא חורגת מהגודל המותר.",
+      "recommendationIntents": "בחירת ההתאמה אינה תקינה. אפשר לנסות שוב.",
       "generic": "משהו השתבש. אפשר לנסות שוב."
     },
     "archive": "ארכוב",

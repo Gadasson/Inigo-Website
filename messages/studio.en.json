@@ -86,6 +86,12 @@
     "scheduleFixed": "Fixed number of weeks",
     "scheduleFixedLede": "The challenge ends after the number of weeks you choose.",
     "weekCount": "Number of weeks",
+    "recommendationIntents": "Who might this challenge suit?",
+    "recommendationIntentsLede": "This choice helps us suggest the challenge to people looking for that kind of practice.",
+    "recommendationIntent": {
+      "slow_down": "Slow down",
+      "move_more": "Move more"
+    },
     "activity": "Challenge type",
     "activityPractice": "Practice",
     "activityPracticeLede": "A practice challenge: quiet steps or guided sessions, with a time for each step.",
@@ -172,6 +178,7 @@
       "coverUpload": "The image upload failed. You can try again on the same challenge.",
       "coverRetry": "The challenge was saved, but the image was not uploaded. You can try again without creating another challenge.",
       "image": "The image is not a JPEG, PNG, or WEBP, or it is larger than allowed.",
+      "recommendationIntents": "The audience choice is not valid. You can try again.",
       "generic": "Something went wrong. You can try again."
     },
     "archive": "Archive",

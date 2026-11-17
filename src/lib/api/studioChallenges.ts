@@ -39,6 +39,8 @@ export type StudioChallengeDraft = {
   title_he: string;
   description_en: string;
   description_he: string;
+  /** Present on newer servers; omit ≠ empty list. */
+  recommendation_intents?: string[];
   cover_url: string | null;
   cover_storage_path: string | null;
   total_duration_seconds: number;

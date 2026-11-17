@@ -12,8 +12,10 @@ import {
   buildChallengeStepsBody,
   buildSessionOptionsPath,
   canReviseApprovedChallenge,
+  challengeDetailsDirty,
   challengeFormFromServer,
   challengeFormSummary,
+  challengeRecommendationIntentsDirty,
   challengeRevisionSaveMethods,
   challengeStepsDirty,
   challengeSaveOutcome,
@@ -24,10 +26,13 @@ import {
   isChallengeDraftEditable,
   isChallengePendingReview,
   moveChallengeStep,
+  parseChallengeRecommendationIntents,
   removeChallengeStep,
   shouldSaveChallengeSteps,
   silentChallengeStep,
+  toggleChallengeRecommendationIntent,
   validateChallengeForm,
+  withChallengeRecommendationIntents,
   applyChallengeActivity,
   applyChallengeCoverResponse,
   canSubmitChallenge,
@@ -1019,5 +1024,123 @@ describe('challenge cover', () => {
     assert.equal(en.challenges.coverPhase.failed, 'Upload failed');
     assert.match(he.challenges.coverPublicNote, /אחרי אישור הגרסה החדשה/);
     assert.match(en.challenges.coverPublicNote, /after the new version is approved/);
+  });
+});
+
+describe('challenge recommendation intents', () => {
+  const draftBase = {
+    title_en: 'Morning',
+    title_he: 'בוקר',
+    description_en: '',
+    description_he: '',
+    days_per_week: 3,
+    schedule: 'ongoing' as const,
+    week_count: null,
+  };
+
+  it('treats a missing field as unsupported, and [] as an empty supported choice', () => {
+    assert.deepEqual(parseChallengeRecommendationIntents(undefined), { supported: false, intents: [] });
+    assert.deepEqual(parseChallengeRecommendationIntents(null), { supported: false, intents: [] });
+    assert.deepEqual(parseChallengeRecommendationIntents([]), { supported: true, intents: [] });
+    assert.deepEqual(parseChallengeRecommendationIntents(['move_more', 'slow_down', 'other']), {
+      supported: true,
+      intents: ['slow_down', 'move_more'],
+    });
+  });
+
+  it('restores choices on reload and hides them when the draft omits the field', () => {
+    const withIntents = challengeFormFromServer({
+      draft: { ...draftBase, recommendation_intents: ['move_more'] },
+      steps: [],
+    });
+    assert.equal(withIntents.recommendationIntentsSupported, true);
+    assert.deepEqual(withIntents.recommendationIntents, ['move_more']);
+
+    const legacy = challengeFormFromServer({ draft: draftBase, steps: [] });
+    assert.equal(legacy.recommendationIntentsSupported, false);
+    assert.deepEqual(legacy.recommendationIntents, []);
+  });
+
+  it('includes recommendation_intents on create, omits unchanged values on edit, and sends [] when cleared', () => {
+    const form = emptyChallengeForm();
+    form.titleHe = 'בוקר';
+    form.recommendationIntents = ['slow_down'];
+    const created = withChallengeRecommendationIntents(buildChallengeDetailsBody(form), form, {
+      mode: 'create',
+      intentsDirty: true,
+    });
+    assert.deepEqual(created.recommendation_intents, ['slow_down']);
+    assert.equal('inspiration_tags' in created, false);
+    assert.equal('affinity' in created, false);
+
+    const baseline = { ...form };
+    const untouched = withChallengeRecommendationIntents(buildChallengeDetailsBody(form), form, {
+      mode: 'edit',
+      intentsDirty: challengeRecommendationIntentsDirty(form, baseline),
+    });
+    assert.equal('recommendation_intents' in untouched, false);
+
+    const cleared = { ...form, recommendationIntents: [] as typeof form.recommendationIntents };
+    const clearedBody = withChallengeRecommendationIntents(buildChallengeDetailsBody(cleared), cleared, {
+      mode: 'edit',
+      intentsDirty: challengeRecommendationIntentsDirty(cleared, baseline),
+    });
+    assert.deepEqual(clearedBody.recommendation_intents, []);
+
+    const legacy = { ...form, recommendationIntentsSupported: false, recommendationIntents: [] };
+    const legacyBody = withChallengeRecommendationIntents(buildChallengeDetailsBody(legacy), legacy, {
+      mode: 'edit',
+      intentsDirty: true,
+    });
+    assert.equal('recommendation_intents' in legacyBody, false);
+  });
+
+  it('marks an intents-only change dirty so save sends PATCH details', () => {
+    const baseline = emptyChallengeForm();
+    baseline.titleHe = 'בוקר';
+    baseline.recommendationIntents = ['slow_down'];
+    const edited = {
+      ...baseline,
+      recommendationIntents: toggleChallengeRecommendationIntent(baseline.recommendationIntents, 'move_more'),
+    };
+    assert.deepEqual(edited.recommendationIntents, ['slow_down', 'move_more']);
+    assert.equal(challengeRecommendationIntentsDirty(edited, baseline), true);
+    assert.equal(challengeDetailsDirty(edited, baseline), true);
+    assert.deepEqual(
+      challengeSavePlan({
+        mode: 'edit',
+        revisingApproved: false,
+        detailsDirty: challengeDetailsDirty(edited, baseline),
+        stepsDirty: challengeStepsDirty(edited, baseline),
+      }),
+      { sendDetails: true, sendSteps: false },
+    );
+  });
+
+  it('labels the audience field in Hebrew and English', () => {
+    const he = JSON.parse(readFileSync('messages/studio.he.json', 'utf8')) as {
+      challenges: {
+        recommendationIntents: string;
+        recommendationIntentsLede: string;
+        recommendationIntent: Record<string, string>;
+        errors: { recommendationIntents: string };
+      };
+    };
+    const en = JSON.parse(readFileSync('messages/studio.en.json', 'utf8')) as {
+      challenges: {
+        recommendationIntents: string;
+        recommendationIntentsLede: string;
+        recommendationIntent: Record<string, string>;
+        errors: { recommendationIntents: string };
+      };
+    };
+    assert.equal(he.challenges.recommendationIntents, 'למי האתגר יכול להתאים?');
+    assert.equal(he.challenges.recommendationIntent.slow_down, 'להוריד הילוך');
+    assert.equal(he.challenges.recommendationIntent.move_more, 'לזוז יותר');
+    assert.match(he.challenges.recommendationIntentsLede, /להציע את האתגר/);
+    assert.equal(en.challenges.recommendationIntents, 'Who might this challenge suit?');
+    assert.equal(en.challenges.recommendationIntent.slow_down, 'Slow down');
+    assert.equal(en.challenges.recommendationIntent.move_more, 'Move more');
+    assert.match(en.challenges.errors.recommendationIntents, /audience choice/i);
   });
 });
