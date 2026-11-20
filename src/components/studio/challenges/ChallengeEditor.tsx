@@ -10,6 +10,7 @@ import { CHALLENGES_CAPABILITY } from '@/lib/api/studioBootstrap';
 import { studioAreaManageHref } from '@/lib/studio/studioAreas';
 import StudioConfirmDialog from '@/components/studio/StudioConfirmDialog';
 import StudioFieldHint from '@/components/studio/StudioFieldHint';
+import ChallengePracticeTypeGlyph from '@/components/studio/challenges/ChallengePracticeTypeGlyph';
 import ChallengeSessionPicker from '@/components/studio/challenges/ChallengeSessionPicker';
 import {
   archiveStudioChallenge,
@@ -792,20 +793,23 @@ export default function ChallengeEditor(props: Props) {
               <>
                 <div className="studio-form__field">
                   <label htmlFor={`step-practice-${step.id}`}>{t('practiceType')}</label>
-                  <select
-                    id={`step-practice-${step.id}`}
-                    value={step.practiceType}
-                    disabled={!editable || busy}
-                    onChange={(event) =>
-                      updateStep(step.id, { practiceType: event.target.value as ChallengeStepDraft['practiceType'] })
-                    }
-                  >
-                    {CHALLENGE_PRACTICE_TYPES.map((practice) => (
-                      <option key={practice} value={practice}>
-                        {t(`practice.${practice}`)}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="studio-challenge-practice-type">
+                    <ChallengePracticeTypeGlyph practiceType={step.practiceType} />
+                    <select
+                      id={`step-practice-${step.id}`}
+                      value={step.practiceType}
+                      disabled={!editable || busy}
+                      onChange={(event) =>
+                        updateStep(step.id, { practiceType: event.target.value as ChallengeStepDraft['practiceType'] })
+                      }
+                    >
+                      {CHALLENGE_PRACTICE_TYPES.map((practice) => (
+                        <option key={practice} value={practice}>
+                          {t(`practice.${practice}`)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
                 <div className="studio-form__field">
                   <label htmlFor={`step-minutes-${step.id}`}>{t('durationMinutes')}</label>

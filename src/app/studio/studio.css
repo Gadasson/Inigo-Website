@@ -2739,6 +2739,23 @@
   font-weight: 600;
 }
 
+.studio-challenge-practice-type {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.studio-challenge-practice-type select {
+  flex: 1;
+  min-width: 0;
+}
+
+.studio-challenge-practice-glyph {
+  flex: 0 0 auto;
+  color: rgb(var(--inigo-accent-rgb));
+  opacity: 0.88;
+}
+
 .studio-challenge-step__guided p {
   margin: 0 0 0.5rem;
 }

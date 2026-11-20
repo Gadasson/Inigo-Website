@@ -13,6 +13,16 @@ export class StudioApiError extends Error {
   }
 }
 
+/**
+ * Studio can author and reload silent dance / jump-rope challenge steps.
+ * The server accepts 1, true, or yes. These declare read capability only;
+ * they do not turn on the start feature gates.
+ */
+export const STUDIO_TIMER_PRACTICE_SUPPORT_HEADERS = {
+  'X-Inigo-Supports-Dance-Practice': '1',
+  'X-Inigo-Supports-Jump-Rope-Practice': '1',
+} as const;
+
 type StudioFetchOptions = {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   body?: unknown;
@@ -71,6 +81,7 @@ export async function studioFetch<T>(
 
   const headers: Record<string, string> = {
     Accept: 'application/json',
+    ...STUDIO_TIMER_PRACTICE_SUPPORT_HEADERS,
   };
 
   if (token) {
@@ -125,7 +136,10 @@ export async function studioFetchForm<T>(
   },
 ): Promise<T> {
   const { method = 'POST', formData, token, signal } = options;
-  const headers: Record<string, string> = { Accept: 'application/json' };
+  const headers: Record<string, string> = {
+    Accept: 'application/json',
+    ...STUDIO_TIMER_PRACTICE_SUPPORT_HEADERS,
+  };
   if (token) headers.Authorization = `Bearer ${token}`;
 
   let response: Response;

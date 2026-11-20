@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { CHALLENGES_CAPABILITY, parseStudioAccess, serverSupportsGratitudeChallengeStep } from '@/lib/api/studioBootstrap';
 import { shouldLoadStudioArea, studioAreaManageHref, studioHomeView, resolveStudioHomeTab } from '@/lib/studio/studioAreas';
+import { challengePracticeTypeIconName } from '@/lib/studio/challengePracticeTypeIcon';
 import {
   addChallengeStep,
   CHALLENGE_PRACTICE_TYPES,
@@ -490,6 +491,217 @@ describe('dance timer steps', () => {
       assert.ok(he.challenges.practice[practice]);
       assert.ok(en.challenges.practice[practice]);
     }
+  });
+});
+
+describe('jump_rope timer steps', () => {
+  const draft = {
+    title_en: 'Jump rope',
+    title_he: 'קפיצה בחבל',
+    description_en: '',
+    description_he: '',
+    days_per_week: 3,
+    schedule: 'ongoing' as const,
+    week_count: null,
+  };
+
+  function jumpRopeForm() {
+    const form = emptyChallengeForm();
+    form.titleEn = 'Jump rope';
+    form.titleHe = 'קפיצה בחבל';
+    form.steps = [
+      { ...silentChallengeStep('jump'), practiceType: 'jump_rope', durationMinutes: '12' },
+    ];
+    return form;
+  }
+
+  it('keeps jump_rope on the shared timer list and the same 1–180 minute bounds', () => {
+    assert.equal(CHALLENGE_SILENT_MINUTES_MIN, 1);
+    assert.equal(CHALLENGE_SILENT_MINUTES_MAX, 180);
+    assert.ok(CHALLENGE_PRACTICE_TYPES.includes('jump_rope'));
+    assert.equal(
+      readFileSync('src/components/studio/challenges/ChallengeEditor.tsx', 'utf8').includes(
+        'CHALLENGE_PRACTICE_TYPES.map',
+      ),
+      true,
+    );
+    assert.equal(
+      readFileSync('src/components/studio/challenges/ChallengeEditor.tsx', 'utf8').includes(
+        'ChallengePracticeTypeGlyph',
+      ),
+      true,
+    );
+
+    const form = jumpRopeForm();
+    assert.equal(validateChallengeForm(form), null);
+    assert.deepEqual(buildChallengeStepsBody(form).steps, [
+      { kind: 'silent', practice_type: 'jump_rope', duration_minutes: 12 },
+    ]);
+
+    form.steps[0] = { ...form.steps[0], durationMinutes: '1' };
+    assert.equal(validateChallengeForm(form), null);
+    form.steps[0] = { ...form.steps[0], durationMinutes: '180' };
+    assert.equal(validateChallengeForm(form), null);
+    assert.deepEqual(buildChallengeStepsBody(form).steps, [
+      { kind: 'silent', practice_type: 'jump_rope', duration_minutes: 180 },
+    ]);
+
+    const meditation = jumpRopeForm();
+    meditation.steps[0] = { ...meditation.steps[0], practiceType: 'meditation', durationMinutes: '180' };
+    assert.equal(validateChallengeForm(meditation), null);
+
+    for (const minutes of ['0', '181', '']) {
+      form.steps[0] = { ...form.steps[0], practiceType: 'jump_rope', durationMinutes: minutes };
+      assert.equal(validateChallengeForm(form), 'duration_minutes');
+    }
+  });
+
+  it('saves, edits, and reloads a single jump_rope step without turning it into meditation', () => {
+    const created = jumpRopeForm();
+    const saved = challengeFormFromServer({
+      draft,
+      steps: [
+        {
+          kind: 'silent',
+          practice_type: 'jump_rope',
+          duration_minutes: 12,
+          guided_template_id: null,
+          title: null,
+          duration_seconds: null,
+        },
+      ],
+    });
+    assert.equal(saved.steps[0]?.kind, 'silent');
+    assert.equal(saved.steps[0]?.practiceType, 'jump_rope');
+    assert.notEqual(saved.steps[0]?.practiceType, 'meditation');
+    assert.equal(saved.steps[0]?.durationMinutes, '12');
+    assert.equal(validateChallengeForm(saved), null);
+    assert.deepEqual(buildChallengeStepsBody(saved).steps, buildChallengeStepsBody(created).steps);
+    assert.deepEqual(challengeFormSummary(saved).practices, [
+      { kind: 'silent', practiceType: 'jump_rope', minutes: 12 },
+    ]);
+
+    const edited = {
+      ...saved,
+      steps: saved.steps.map((step) => ({ ...step, durationMinutes: '20' })),
+    };
+    assert.equal(challengeStepsDirty(edited, saved), true);
+    assert.deepEqual(buildChallengeStepsBody(edited).steps, [
+      { kind: 'silent', practice_type: 'jump_rope', duration_minutes: 20 },
+    ]);
+
+    const unknown = challengeFormFromServer({
+      draft,
+      steps: [
+        {
+          kind: 'silent',
+          practice_type: 'yoga',
+          duration_minutes: 5,
+          guided_template_id: null,
+          title: null,
+          duration_seconds: null,
+        },
+      ],
+    });
+    assert.equal(unknown.steps[0]?.practiceType, '');
+    assert.notEqual(unknown.steps[0]?.practiceType, 'meditation');
+    assert.notEqual(unknown.steps[0]?.practiceType, 'jump_rope');
+  });
+
+  it('keeps jump_rope inside a mixed step sequence on save and reload', () => {
+    const form = jumpRopeForm();
+    form.steps = [
+      { ...silentChallengeStep('jump'), practiceType: 'jump_rope', durationMinutes: '8' },
+      { ...silentChallengeStep('breath'), practiceType: 'breathing', durationMinutes: '5' },
+      {
+        ...guidedChallengeStep('guided'),
+        guidedTemplateId: 4,
+        guidedTitle: 'Morning Sit',
+        guidedDurationSeconds: 600,
+      },
+    ];
+    assert.equal(validateChallengeForm(form), null);
+    assert.deepEqual(buildChallengeStepsBody(form).steps, [
+      { kind: 'silent', practice_type: 'jump_rope', duration_minutes: 8 },
+      { kind: 'silent', practice_type: 'breathing', duration_minutes: 5 },
+      { kind: 'guided', guided_template_id: 4 },
+    ]);
+
+    const reloaded = challengeFormFromServer({
+      draft,
+      steps: [
+        {
+          kind: 'silent',
+          practice_type: 'jump_rope',
+          duration_minutes: 8,
+          guided_template_id: null,
+          title: null,
+          duration_seconds: null,
+        },
+        {
+          kind: 'silent',
+          practice_type: 'breathing',
+          duration_minutes: 5,
+          guided_template_id: null,
+          title: null,
+          duration_seconds: null,
+        },
+        {
+          kind: 'guided',
+          practice_type: null,
+          duration_minutes: null,
+          guided_template_id: 4,
+          title: 'Morning Sit',
+          duration_seconds: 600,
+        },
+      ],
+    });
+    assert.deepEqual(
+      reloaded.steps.map((step) =>
+        step.kind === 'silent'
+          ? { kind: step.kind, practiceType: step.practiceType, durationMinutes: step.durationMinutes }
+          : { kind: step.kind, guidedTemplateId: step.guidedTemplateId },
+      ),
+      [
+        { kind: 'silent', practiceType: 'jump_rope', durationMinutes: '8' },
+        { kind: 'silent', practiceType: 'breathing', durationMinutes: '5' },
+        { kind: 'guided', guidedTemplateId: 4 },
+      ],
+    );
+    assert.equal(reloaded.steps[0]?.practiceType, 'jump_rope');
+    assert.notEqual(reloaded.steps[0]?.practiceType, 'meditation');
+    assert.deepEqual(buildChallengeStepsBody(reloaded).steps, buildChallengeStepsBody(form).steps);
+  });
+
+  it('names jump_rope in Hebrew and English and keeps the jump-rope icon mark', () => {
+    const he = JSON.parse(readFileSync('messages/studio.he.json', 'utf8')) as {
+      challenges: { kindSilentLede: string; practice: Record<string, string> };
+    };
+    const en = JSON.parse(readFileSync('messages/studio.en.json', 'utf8')) as {
+      challenges: { kindSilentLede: string; practice: Record<string, string> };
+    };
+    assert.equal(he.challenges.practice.jump_rope, 'קפיצה בחבל');
+    assert.equal(en.challenges.practice.jump_rope, 'Jump rope');
+    assert.match(he.challenges.kindSilentLede, /קפיצה בחבל/);
+    assert.match(en.challenges.kindSilentLede, /jump rope/);
+    assert.equal(challengePracticeTypeIconName('jump_rope'), 'jump-rope');
+    assert.match(
+      readFileSync('src/components/studio/challenges/ChallengePracticeTypeGlyph.tsx', 'utf8'),
+      /practiceType === 'jump_rope'/,
+    );
+    for (const practice of CHALLENGE_PRACTICE_TYPES) {
+      assert.ok(he.challenges.practice[practice]);
+      assert.ok(en.challenges.practice[practice]);
+      assert.ok(challengePracticeTypeIconName(practice));
+    }
+  });
+
+  it('declares dance and jump-rope capability headers on the studio request layer', () => {
+    const client = readFileSync('src/lib/api/studioApiClient.ts', 'utf8');
+    assert.match(client, /X-Inigo-Supports-Dance-Practice/);
+    assert.match(client, /X-Inigo-Supports-Jump-Rope-Practice/);
+    assert.match(client, /STUDIO_TIMER_PRACTICE_SUPPORT_HEADERS/);
+    assert.equal(client.includes('...STUDIO_TIMER_PRACTICE_SUPPORT_HEADERS'), true);
   });
 });
 

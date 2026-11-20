@@ -5,7 +5,20 @@ export const CHALLENGE_STEP_MAX = 5;
 export const CHALLENGE_SILENT_MINUTES_MIN = 1;
 export const CHALLENGE_SILENT_MINUTES_MAX = 180;
 
-export const CHALLENGE_PRACTICE_TYPES = ['meditation', 'walking', 'breathing', 'dance'] as const;
+/**
+ * Quiet timer practices Studio may author on silent challenge steps.
+ * Matches server PRACTICE_TYPES for studio challenge writes. The dance /
+ * jump_rope *start* feature gates are not consulted here — those gate
+ * beginning a practice for end users, not drafting a step. Unknown values
+ * from the server stay empty on reload (no meditation fallback).
+ */
+export const CHALLENGE_PRACTICE_TYPES = [
+  'meditation',
+  'walking',
+  'breathing',
+  'dance',
+  'jump_rope',
+] as const;
 export type ChallengePracticeType = (typeof CHALLENGE_PRACTICE_TYPES)[number];
 
 export const CHALLENGE_RECOMMENDATION_INTENTS = ['slow_down', 'move_more'] as const;
